@@ -1,6 +1,6 @@
 # How to Contribute
 
-Thank you for your interest in contributing to the **Wizard Template** project! Contributions are welcome and greatly appreciated. This guide will help you get started.
+Thank you for your interest in contributing to the project! Contributions are welcome and greatly appreciated. This guide will help you get started.
 
 ## Reporting Issues
 
@@ -83,7 +83,6 @@ verify the package on different Python versions and under different conditions t
 ## Continuous Integration
 
 - The workflow [ci.yaml](https://github.com/fschuch/xarray-binfile/blob/main/.github/workflows/ci.yaml) performs the verifications on every push and pull request, and deploys the package if running from a valid tag.
-- The workflow [update-pre-commits.yaml](https://github.com/fschuch/xarray-binfile/blob/main/.github/workflows/update-pre-commits.yaml) is scheduled to run weekly to ensure the pre-commit hooks are up-to-date.
 - Dependabot is enabled to keep the dependencies up-to-date ([dependabot.yml](https://github.com/fschuch/xarray-binfile/blob/main/.github/dependabot.yml)).
 
 ## Development Workflow
