@@ -64,8 +64,11 @@ class RawBinaryEntrypoint(BackendEntrypoint):
         except Exception as err:
             error_message = f"Error reading metadata from {file_path}: {err}"
             raise ValueError(error_message) from err
-        if (isinstance(drop_variables, str) and file_metadata.name == drop_variables) or (
-            isinstance(drop_variables, Iterable) and file_metadata.name in drop_variables
+        if (
+            isinstance(drop_variables, str) and file_metadata.name == drop_variables
+        ) or (
+            isinstance(drop_variables, Iterable)
+            and file_metadata.name in drop_variables
         ):
             return Dataset()
         return BinaryEngineBackendArray(metadata=file_metadata).get_xarray_dataset()

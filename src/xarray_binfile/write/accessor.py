@@ -24,7 +24,11 @@ class BinaryEngineDataset:
         """
         self._data_set = data_set
 
-    def to_file(self, write_specs_getter: WriteSpecsGetterProtocol, directory: Path | None = None) -> None:
+    def to_file(
+        self,
+        write_specs_getter: WriteSpecsGetterProtocol,
+        directory: Path | None = None,
+    ) -> None:
         """
         Writes the dataset to binary files.
 
@@ -51,7 +55,11 @@ class BinaryEngineDataArray:
         """
         self._data_array = data_array
 
-    def to_file(self, write_specs_getter: WriteSpecsGetterProtocol, directory: Path | None = None) -> None:
+    def to_file(
+        self,
+        write_specs_getter: WriteSpecsGetterProtocol,
+        directory: Path | None = None,
+    ) -> None:
         """
         Writes the data array to binary files.
 

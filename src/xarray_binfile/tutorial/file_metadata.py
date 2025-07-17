@@ -73,8 +73,12 @@ class FileSpecsGetter:
         """
         for time in data_array.coords["time"]:
             yield WriteSpecs(
-                filename=self.filename_template.format(name=data_array.name, digits=int(time)),
-                sub_array=data_array.sel(time=time).transpose(*self._base_dims, missing_dims="raise"),
+                filename=self.filename_template.format(
+                    name=data_array.name, digits=int(time)
+                ),
+                sub_array=data_array.sel(time=time).transpose(
+                    *self._base_dims, missing_dims="raise"
+                ),
             )
 
     @cached_property

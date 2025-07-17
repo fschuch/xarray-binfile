@@ -92,7 +92,10 @@ class BinaryEngineBackendArray(BackendArray):
             True if the key is a slice, False otherwise.
         """
 
-        return any(_is_coord_sliced(s, k) for k, s in zip(key, self.metadata.shape, strict=True))
+        return any(
+            _is_coord_sliced(s, k)
+            for k, s in zip(key, self.metadata.shape, strict=True)
+        )
 
     def _wrap_numpy_fromfile(self, file) -> np.typing.NDArray:
         """
@@ -104,9 +107,9 @@ class BinaryEngineBackendArray(BackendArray):
         Returns:
             The data read from the file.
         """
-        return np.fromfile(file, dtype=self.metadata.dtype, count=np.prod(self.metadata.shape)).reshape(
-            self.metadata.shape
-        )
+        return np.fromfile(
+            file, dtype=self.metadata.dtype, count=np.prod(self.metadata.shape)
+        ).reshape(self.metadata.shape)
 
     def _wrap_numpy_memmap(self, file, key: tuple[slice, ...]) -> np.typing.NDArray:
         """
@@ -119,7 +122,13 @@ class BinaryEngineBackendArray(BackendArray):
         Returns:
             The data read from the file.
         """
-        memory_map = np.memmap(file, dtype=self.metadata.dtype, mode="r", shape=self.metadata.shape, order="C")
+        memory_map = np.memmap(
+            file,
+            dtype=self.metadata.dtype,
+            mode="r",
+            shape=self.metadata.shape,
+            order="C",
+        )
         return np.asarray(memory_map[key])  # ensure we actually read the data
 
     def _read_binary_at_slices(self, file, key: tuple[slice, ...]) -> np.typing.NDArray:
@@ -145,7 +154,12 @@ class BinaryEngineBackendArray(BackendArray):
             The Xarray Dataset representation of the backend array.
         """
         return xr.Dataset(
-            data_vars={self.metadata.name: (self.metadata.dims, indexing.LazilyIndexedArray(self))},
+            data_vars={
+                self.metadata.name: (
+                    self.metadata.dims,
+                    indexing.LazilyIndexedArray(self),
+                )
+            },
             coords=self.metadata.coords,
             attrs=self.metadata.attrs,
         )

@@ -51,7 +51,9 @@ class TestArrayBenchmark:
 
     @pytest.fixture
     def metadata(self, file_path):
-        read_specs_getter = file_read_specs_getter_factory(coords={"x": range(1000), "y": range(100), "z": range(100)})
+        read_specs_getter = file_read_specs_getter_factory(
+            coords={"x": range(1000), "y": range(100), "z": range(100)}
+        )
         return read_specs_getter(file_path)
 
     @pytest.fixture

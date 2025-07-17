@@ -47,7 +47,11 @@ class DatasetGenerator:
         Returns:
             A random xarray DataArray.
         """
-        return xr.DataArray(data=self._get_numpy_array(metadata), coords=metadata.coords, attrs=metadata.attrs)
+        return xr.DataArray(
+            data=self._get_numpy_array(metadata),
+            coords=metadata.coords,
+            attrs=metadata.attrs,
+        )
 
     def _get_dataset(self, metadata: ReadSpecs) -> xr.Dataset:
         """
