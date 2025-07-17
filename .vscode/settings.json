@@ -1,0 +1,27 @@
+{
+    "[python]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit",
+            "source.organizeImports.ruff": "explicit"
+        }
+    },
+    "editor.rulers": [
+        80,
+        120
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "files.exclude": {
+        "**/.coverage*": true,
+        "**/.mypy_cache": true,
+        "**/.pytest_cache": true,
+        "**/.ruff_cache": true,
+        "**/.venv": true,
+        "**/build": true
+    },
+    "cSpell.enabled": true,
+    "cSpell.language": "en",
+    "python.envFile": "${workspaceFolder}/.venv/wizard-template"
+}

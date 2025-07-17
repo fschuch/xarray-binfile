@@ -1,0 +1,73 @@
+# Book settings
+# Learn more at https://jupyterbook.org/customize/config.html
+
+title: The Wizard Template for Python Projects
+author: Felipe N. Schuch
+copyright: "2023"
+description: A general-purpose template that aims to provide a magical start to any Python project
+logo: logo.png
+
+# Force re-execution of notebooks on each build.
+# See https://jupyterbook.org/content/execute.html
+execute:
+  execute_notebooks: force
+  stderr_output: remove
+  allow_errors: false
+  timeout: 120
+
+# Define the name of the latex output file for PDF builds
+latex:
+  latex_documents:
+    targetname: book.tex
+
+# Add a bibtex file so that we can create citations
+bibtex_bibfiles:
+  - references.bib
+
+# Information about where the book exists on the web
+repository:
+  url: https://github.com/fschuch/wizard-template # Online location of your book
+  path_to_book: docs # Optional path to your book, relative to the repository root
+  branch: main # Which branch of the repository should be used when creating links (optional)
+
+# Add GitHub buttons to your book
+# See https://jupyterbook.org/customize/config.html#add-a-link-to-your-repository
+html:
+  home_page_in_navbar: false
+  use_edit_page_button: true
+  use_issues_button: true
+  use_repository_button: true
+
+sphinx:
+  extra_extensions:
+    - sphinx_github_changelog
+    - sphinx.ext.autodoc
+    - sphinx.ext.intersphinx
+    - sphinx.ext.napoleon
+  config:
+    #https://github.com/executablebooks/jupyter-book/issues/1950#issuecomment-1454801479
+    suppress_warnings: ["mystnb.unknown_mime_type"]
+
+    intersphinx_mapping:
+      python:
+        - "https://docs.python.org/3"
+        - null
+
+    napoleon_include_special_with_doc: true
+    napoleon_google_docstring: true
+    napoleon_numpy_docstring: false
+
+    html_theme_options:
+      icon_links:
+        # - name: "Stars"
+        #   url: "https://github.com/fschuch/wizard-template/"
+        #   icon: "https://img.shields.io/github/stars/fschuch/wizard-template?style=social"
+        #   type: "url"
+        - name: "Releases"
+          url: "https://github.com/fschuch/wizard-template/releases"
+          icon: "https://img.shields.io/github/v/release/fschuch/wizard-template?style=social"
+          type: "url"
+        - name: "Use this Template"
+          url: "https://github.com/new?template_name=wizard-template&template_owner=fschuch"
+          icon: "https://img.shields.io/badge/Use_this_Template-%23447CAA?style=social&logo=github"
+          type: "url"
