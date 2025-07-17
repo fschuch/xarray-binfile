@@ -2,7 +2,7 @@
 
 import pytest
 
-from wizard_template.core import demo_function
+from xarray_binfile.core import demo_function
 
 
 @pytest.mark.parametrize(("incoming_int", "expected_result"), [(2, 4), (3, 6), (5, 10)])

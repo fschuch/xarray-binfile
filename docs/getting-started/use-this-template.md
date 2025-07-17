@@ -1,11 +1,11 @@
 # How to use this Template
 
-1. Create your project by clicking on [Use this template](https://github.com/new?template_name=wizard-template&template_owner=fschuch) to generate a new repository from this template. Choose a name for your project, and optionally, a description. Ensure to mark the repository as public or private according to your needs.
+1. Create your project by clicking on [Use this template](https://github.com/new?template_name=xarray-binfile&template_owner=fschuch) to generate a new repository from this template. Choose a name for your project, and optionally, a description. Ensure to mark the repository as public or private according to your needs.
 
    ````{note}
    If you are using GitHub, you can also use the [GitHub CLI](https://cli.github.com/) to create a new repository from this template:
    ```bash
-   gh repo create <your-repo-name> --template fschuch/wizard-template
+   gh repo create <your-repo-name> --template fschuch/xarray-binfile
    ```
    ````
 
@@ -56,7 +56,7 @@
    plugins: cov-6.2.1
    collected 8 items
 
-   src/wizard_template/core.py .                                           [ 12%]
+   src/xarray_binfile/core.py .                                           [ 12%]
    tests/test_core.py ......                                               [ 87%]
    tools/rename_project_content.py s                                       [100%]
 
@@ -64,8 +64,8 @@
 
    Name                              Stmts   Miss Branch BrPart    Cover   Missing
    -------------------------------------------------------------------------------
-   src/wizard_template/__init__.py       2      0      0      0  100.00%
-   src/wizard_template/core.py           8      0      2      0  100.00%
+   src/xarray_binfile/__init__.py       2      0      0      0  100.00%
+   src/xarray_binfile/core.py           8      0      2      0  100.00%
    tests/__init__.py                     0      0      0      0  100.00%
    tests/test_core.py                   10      0      0      0  100.00%
    -------------------------------------------------------------------------------
