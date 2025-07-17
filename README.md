@@ -4,7 +4,7 @@
 <a href="https://github.com/fschuch/xarray-binfile"><img src="https://raw.githubusercontent.com/fschuch/xarray-binfile/refs/heads/main/docs/logo.png" alt="Wizard template logo" width="320"></a>
 </p>
 <p align="center">
-    <em>Let the wizard do the heavy lifting so you can focus on your craft</em>
+    <em>Custom Xarray file engine to handle raw binary files</em>
 </p>
 
 ______________________________________________________________________
@@ -33,5 +33,5 @@ Check out the documentation for more details on how to use the template and its 
 
 ## Copyright and License
 
-© 2023 [Felipe N. Schuch](https://github.com/fschuch).
+© 2025 [Felipe N. Schuch](https://github.com/fschuch).
 All content is under [MIT License](https://github.com/fschuch/xarray-binfile/blob/main/LICENSE).
