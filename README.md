@@ -1,4 +1,4 @@
-# The Wizard Template for Python Projects
+# Xarray-binfile
 
 <p align="center">
 <a href="https://github.com/fschuch/xarray-binfile"><img src="https://raw.githubusercontent.com/fschuch/xarray-binfile/refs/heads/main/docs/logo.png" alt="Wizard template logo" width="320"></a>
@@ -27,9 +27,7 @@ ______________________________________________________________________
 
 ## Overview
 
-This is a general-purpose template that aims to provide a magical start to any Python project. It includes the initial configuration of quality assurance tools, documentation, and automated actions to deploy a Python package.
-
-Check out the documentation for more details on how to use the template and its features: <https://docs.fschuch.com/xarray-binfile>.
+Xarray-binfile is a Python package designed to extend the capabilities of Xarray, a powerful library for working with labeled multi-dimensional arrays. This package provides a custom file engine specifically for reading and writing raw binary files, enabling users to leverage Xarray's data structures while working with binary data formats.
 
 ## Copyright and License
 
