@@ -23,5 +23,5 @@
     },
     "cSpell.enabled": true,
     "cSpell.language": "en",
-    "python.envFile": "${workspaceFolder}/.venv/wizard-template"
+    "python.envFile": "${workspaceFolder}/.venv/xarray-binfile"
 }

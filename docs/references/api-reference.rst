@@ -5,6 +5,6 @@ API reference
 Core
 ----
 
-.. automodule:: wizard_template.core
+.. automodule:: xarray_binfile.core
    :members:
    :show-inheritance:
