@@ -1,4 +1,4 @@
-# The Wizard Template for Python Projects
+# Xarray-binfile
 
 <p align="center">
 <a href="https://github.com/fschuch/xarray-binfile"><img src="https://raw.githubusercontent.com/fschuch/xarray-binfile/refs/heads/main/docs/logo.png" alt="Wizard template logo" width="320"></a>
@@ -9,11 +9,20 @@
 
 ______________________________________________________________________
 
-- CI/CD:
+- QA:
   [![CI](https://github.com/fschuch/xarray-binfile/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/fschuch/xarray-binfile/actions/workflows/ci.yaml)
-  [![Docs](https://github.com/fschuch/xarray-binfile/actions/workflows/docs.yaml/badge.svg?branch=main)](https://docs.fschuch.com/xarray-binfile)
   [![CodeQL](https://github.com/fschuch/xarray-binfile/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/fschuch/xarray-binfile/actions/workflows/github-code-scanning/codeql)
+  [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/fschuch/xarray-binfile/main.svg)](https://results.pre-commit.ci/latest/github/fschuch/xarray-binfile/main)
   [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=fschuch_xarray-binfile&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=fschuch_xarray-binfile)
+  [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=fschuch_xarray-binfile&metric=coverage)](https://sonarcloud.io/summary/new_code?id=fschuch_xarray-binfile)
+  [![CodeFactor](https://www.codefactor.io/repository/github/fschuch/xarray-binfile/badge)](https://www.codefactor.io/repository/github/fschuch/xarray-binfile)
+
+<!-- - Docs:
+  [![Docs](https://github.com/fschuch/xarray-binfile/actions/workflows/docs.yaml/badge.svg?branch=main)](https://docs.fschuch.com/xarray-binfile) -->
+
+- Package:
+  [![PyPI - Version](https://img.shields.io/pypi/v/xarray-binfile.svg?logo=pypi&label=PyPI)](https://pypi.org/project/xarray-binfile/)
+  [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/xarray-binfile.svg?logo=python&label=Python)](https://pypi.org/project/xarray-binfile/)
 
 - Meta:
   [![Wizard Template](https://img.shields.io/badge/Wizard-Template-%23447CAA)](https://github.com/fschuch/wizard-template)
@@ -27,9 +36,7 @@ ______________________________________________________________________
 
 ## Overview
 
-This is a general-purpose template that aims to provide a magical start to any Python project. It includes the initial configuration of quality assurance tools, documentation, and automated actions to deploy a Python package.
-
-Check out the documentation for more details on how to use the template and its features: <https://docs.fschuch.com/xarray-binfile>.
+Xarray-binfile is a Python package designed to extend the capabilities of Xarray, a powerful library for working with labeled multi-dimensional arrays. This package provides a custom file engine specifically for reading and writing raw binary files, enabling users to leverage Xarray's data structures while working with binary data formats.
 
 ## Copyright and License
 
