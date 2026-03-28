@@ -94,6 +94,10 @@ Go deeper on xarray, Dask, NumPy binary I/O, and related simulation workflows.
 Raw binary files usually need external metadata such as shape, coordinate values, dtype, and filename conventions. Xarray-binfile does not try to infer that information magically. Instead, it asks you to provide it explicitly so the backend can remain predictable and interoperable.
 ```
 
+```{warning}
+Raw binary data is machine-specific unless you control the full convention explicitly. Byte order differences (little-endian vs big-endian), numeric representation, and layout assumptions may break portability across architectures. Validate dtype and endianness before using files generated on another machine.
+```
+
 ```{note}
 For portable archival or data exchange workflows, prefer standard xarray-supported formats such as NetCDF or Zarr. Raw binary output is most useful when you need to read or write an existing binary convention used by a simulation code or downstream tool.
 ```

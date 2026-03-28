@@ -41,6 +41,9 @@ The package was first designed around binary outputs from the Fortran framework 
 
 It is aimed at workflows where raw binary files are part of an existing convention, such as simulation outputs or NumPy `.tofile()` dumps. Once opened, the data can be indexed, reduced, plotted, and computed with the usual xarray and Dask APIs.
 
+> [!CAUTION]
+> Raw binary files are machine- and convention-dependent. Differences such as little-endian vs big-endian byte order, word size, record layout, and memory ordering can change how bytes should be interpreted. Always verify dtype and endianness when sharing files across machines or toolchains.
+
 See the documentation for end-to-end examples covering lazy loading, Dask-backed computations, task-graph visualization, and writing derived results back to `.bin` files.
 
 ## Copyright and License

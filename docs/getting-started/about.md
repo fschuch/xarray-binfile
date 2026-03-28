@@ -19,6 +19,8 @@ The package integrates with xarray in two directions:
 
 Raw binary files do not store dimension names, coordinate values, variable names, or units. Xarray-binfile therefore expects a callable compatible with `ReadSpecsGetterProtocol` that receives a path and returns the metadata needed to build a dataset.
 
+You should also treat raw binaries as machine-specific by default. In particular, verify endianness (little-endian vs big-endian) and numeric dtype whenever files move between compilers, platforms, or architectures.
+
 ```python
 import pathlib
 
