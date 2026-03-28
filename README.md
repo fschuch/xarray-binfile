@@ -37,6 +37,8 @@ ______________________________________________________________________
 
 Xarray-binfile is a Python package that integrates raw binary files with xarray. You provide the metadata that describes each binary file, and the package exposes those files through xarray datasets and data arrays with optional lazy chunking through Dask.
 
+The package was first designed around binary outputs from the Fortran framework [2DECOMP&FFT](https://github.com/2decomp-fft/2decomp-fft) and the CFD solver [Xcompact3d](https://github.com/xcompact3d/Incompact3d), which is built on top of it. It is not limited to those ecosystems and can be used with any raw binary convention once the corresponding metadata mapping is provided.
+
 It is aimed at workflows where raw binary files are part of an existing convention, such as simulation outputs or NumPy `.tofile()` dumps. Once opened, the data can be indexed, reduced, plotted, and computed with the usual xarray and Dask APIs.
 
 See the documentation for end-to-end examples covering lazy loading, Dask-backed computations, task-graph visualization, and writing derived results back to `.bin` files.

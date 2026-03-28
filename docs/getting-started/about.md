@@ -2,6 +2,8 @@
 
 Xarray-binfile is an xarray backend for raw binary files. It is designed for workflows where the bytes on disk are simple and efficient, but the metadata needed to interpret them lives outside the file itself.
 
+The first target use case was binary outputs produced in workflows around the Fortran framework [2DECOMP&FFT](https://github.com/2decomp-fft/2decomp-fft) and the CFD solver [Xcompact3d](https://github.com/xcompact3d/Incompact3d). Even so, the backend is not tied to those projects and can be adapted to any compatible raw binary naming and metadata convention.
+
 Typical examples include:
 
 - output from Fortran or C/C++ simulation codes
