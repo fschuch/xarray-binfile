@@ -42,6 +42,19 @@ def test_is_coord_sliced(size: int, slice_spec: slice, *, expected: bool):
     assert actual == expected
 
 
+def test_backend_array_dtype_is_normalized_to_numpy_dtype(tmp_path):
+    file_path = tmp_path / "test.bin"
+    metadata = file_read_specs_getter_factory(
+        coords={"x": range(2), "y": range(3)},
+        dtype=np.float32,
+    )(file_path)
+
+    array = BinaryEngineBackendArray(metadata)
+
+    assert array.dtype == np.dtype(np.float32)
+    assert array.dtype.itemsize == 4
+
+
 class TestArrayBenchmark:
     random_generator = np.random.Generator(np.random.PCG64(1234))
 

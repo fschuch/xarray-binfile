@@ -23,5 +23,12 @@
     },
     "cSpell.enabled": true,
     "cSpell.language": "en",
-    "python.envFile": "${workspaceFolder}/.venv/xarray-binfile"
+    "python.envFile": "${workspaceFolder}/.venv/xarray-binfile",
+    "python-envs.pythonProjects": [
+        {
+            "path": ".",
+            "envManager": "ms-python.python:venv",
+            "packageManager": "ms-python.python:pip"
+        }
+    ]
 }

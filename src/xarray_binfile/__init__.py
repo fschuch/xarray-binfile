@@ -1,3 +1,3 @@
-"""Blueprint for a quick start of a new Python project."""
+"""Read and write raw binary files through xarray."""
 
 from xarray_binfile._version import __version__, __version_tuple__

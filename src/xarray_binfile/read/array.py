@@ -48,7 +48,7 @@ class BinaryEngineBackendArray(BackendArray):
         self.metadata = metadata
 
         # Attributes required by BackendArray
-        self.dtype = self.metadata.dtype
+        self.dtype = np.dtype(self.metadata.dtype)
         self.shape = self.metadata.shape
 
     def __getitem__(self, key: indexing.ExplicitIndexer) -> np.typing.ArrayLike:

@@ -1,28 +1,35 @@
 # Further Reading
 
-This section provides curated resources and best practices for Python development, Git/GitHub workflows, project maintenance, and general software engineering. Use these references to deepen your knowledge and keep your projects robust and maintainable.
+This section points to the main libraries and references that complement xarray-binfile in real workflows. The package is intentionally small: it focuses on mapping raw binary files into xarray objects and writing data back to the same kind of layout. Most of the higher-level analysis, visualization, and scaling features come from the surrounding scientific Python ecosystem.
 
-## Python, Packaging, and Project Structure
+## Xarray
 
-- [The Hitchhiker’s Guide to Python](https://docs.python-guide.org/)
+- [Xarray documentation](https://docs.xarray.dev/)
+- [Xarray user guide](https://docs.xarray.dev/en/stable/user-guide/index.html)
+- [Xarray I/O guide](https://docs.xarray.dev/en/stable/user-guide/io.html)
+- [Xarray plotting guide](https://docs.xarray.dev/en/stable/user-guide/plotting.html)
+
+## Dask
+
+- [Dask documentation](https://docs.dask.org/)
+- [Dask array documentation](https://docs.dask.org/en/stable/array.html)
+- [Dask diagnostics and visualization](https://docs.dask.org/en/stable/diagnostics-local.html)
+- [Why Dask works well with xarray](https://docs.xarray.dev/en/stable/user-guide/dask.html)
+
+## NumPy and raw binary I/O
+
+- [`numpy.fromfile`](https://numpy.org/doc/stable/reference/generated/numpy.fromfile.html)
+- [`numpy.memmap`](https://numpy.org/doc/stable/reference/generated/numpy.memmap.html)
+- [`numpy.ndarray.tofile`](https://numpy.org/doc/stable/reference/generated/numpy.ndarray.tofile.html)
+
+## Storage formats and portability
+
+- [NetCDF support in xarray](https://docs.xarray.dev/en/stable/user-guide/io.html#netcdf)
+- [Zarr support in xarray](https://docs.xarray.dev/en/stable/user-guide/io.html#zarr)
+- [Zarr specification](https://zarr.readthedocs.io/)
+
+## Domain workflows
+
+- [Xcompact3d](https://xcompact3d.readthedocs.io/)
+- [2DECOMP&FFT](https://2decomp.org/)
 - [Python Packaging User Guide](https://packaging.python.org/)
-- [PEP 8 – Style Guide for Python Code](https://peps.python.org/pep-0008/)
-- [PEP 517/518 – Modern Python packaging standards](https://peps.python.org/pep-0517/)
-- [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html)
-- [Git Large File Storage (LFS)](https://git-lfs.github.com/)
-
-## Git and GitHub Best Practices
-
-- [Pro Git Book](https://git-scm.com/book/en/v2)
-- [GitHub Docs: Best Practices](https://docs.github.com/en/get-started/quickstart/github-flow)
-- [GitHub Actions Documentation](https://docs.github.com/en/actions)
-- [Branch Protection Rules](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/managing-a-branch-protection-rule)
-- [Configuring Issue Templates](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/configuring-issue-templates-for-your-repository#configuring-the-template-chooser)
-- [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
-
-## Security and Maintenance
-
-- [Dependabot Documentation](https://docs.github.com/en/code-security/dependabot)
-- [CodeQL Documentation](https://codeql.github.com/docs/codeql-overview/about-codeql/)
-- [NEP 29 – Python version support policy](https://numpy.org/neps/nep-0029-deprecation_policy.html)
-- [Python Developer's Guide: Supported Versions](https://devguide.python.org/versions/#status-of-python-versions)

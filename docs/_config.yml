@@ -1,10 +1,10 @@
 # Book settings
 # Learn more at https://jupyterbook.org/customize/config.html
 
-title: The Wizard Template for Python Projects
+title: Xarray-binfile
 author: Felipe N. Schuch
 copyright: "2025"
-description: A general-purpose template that aims to provide a magical start to any Python project
+description: Read and write raw binary files using the familiar interface from the Xarray library
 logo: logo.png
 
 # Force re-execution of notebooks on each build.
@@ -37,6 +37,7 @@ html:
   use_edit_page_button: true
   use_issues_button: true
   use_repository_button: true
+  announcement: This project is in beta. Please report issues if you find problems with a file layout or metadata convention.
 
 sphinx:
   extra_extensions:
@@ -52,6 +53,15 @@ sphinx:
       python:
         - "https://docs.python.org/3"
         - null
+      numpy:
+        - "https://numpy.org/doc/stable/"
+        - null
+      xarray:
+        - "https://docs.xarray.dev/en/stable/"
+        - null
+      dask:
+        - "https://docs.dask.org/en/stable/"
+        - null
 
     napoleon_include_special_with_doc: true
     napoleon_google_docstring: true
@@ -66,8 +76,4 @@ sphinx:
         - name: "Releases"
           url: "https://github.com/fschuch/xarray-binfile/releases"
           icon: "https://img.shields.io/github/v/release/fschuch/xarray-binfile?style=social"
-          type: "url"
-        - name: "Use this Template"
-          url: "https://github.com/new?template_name=xarray-binfile&template_owner=fschuch"
-          icon: "https://img.shields.io/badge/Use_this_Template-%23447CAA?style=social&logo=github"
           type: "url"

@@ -1,7 +1,7 @@
 # Xarray-binfile
 
 <p align="center">
-<a href="https://github.com/fschuch/xarray-binfile"><img src="https://raw.githubusercontent.com/fschuch/xarray-binfile/refs/heads/main/docs/logo.png" alt="Wizard template logo" width="320"></a>
+<a href="https://github.com/fschuch/xarray-binfile"><img src="https://raw.githubusercontent.com/fschuch/xarray-binfile/refs/heads/main/docs/logo.png" alt="Xarray-binfile logo" width="320"></a>
 </p>
 <p align="center">
     <em>Custom Xarray file engine to handle raw binary files</em>
@@ -25,7 +25,6 @@ ______________________________________________________________________
   [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/xarray-binfile.svg?logo=python&label=Python)](https://pypi.org/project/xarray-binfile/)
 
 - Meta:
-  [![Wizard Template](https://img.shields.io/badge/Wizard-Template-%23447CAA)](https://github.com/fschuch/wizard-template)
   [![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
   [![Hatch project](https://img.shields.io/badge/%F0%9F%A5%9A-Hatch-4051b5.svg)](https://github.com/pypa/hatch)
   [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
@@ -36,7 +35,11 @@ ______________________________________________________________________
 
 ## Overview
 
-Xarray-binfile is a Python package designed to extend the capabilities of Xarray, a powerful library for working with labeled multi-dimensional arrays. This package provides a custom file engine specifically for reading and writing raw binary files, enabling users to leverage Xarray's data structures while working with binary data formats.
+Xarray-binfile is a Python package that integrates raw binary files with xarray. You provide the metadata that describes each binary file, and the package exposes those files through xarray datasets and data arrays with optional lazy chunking through Dask.
+
+It is aimed at workflows where raw binary files are part of an existing convention, such as simulation outputs or NumPy `.tofile()` dumps. Once opened, the data can be indexed, reduced, plotted, and computed with the usual xarray and Dask APIs.
+
+See the documentation for end-to-end examples covering lazy loading, Dask-backed computations, task-graph visualization, and writing derived results back to `.bin` files.
 
 ## Copyright and License
 

@@ -77,4 +77,4 @@ class DatasetGenerator:
         """
         metadata = map(self.read_specs_getter, iter_filepath)
         datasets = map(self._get_dataset, metadata)
-        return xr.merge(datasets)
+        return xr.merge(datasets, join="outer", compat="no_conflicts")

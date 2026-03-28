@@ -44,7 +44,9 @@ tests-extra = [
 ]
 docs = [
     "docutils==0.21.2",
+    "graphviz>=0.20.3",
     "jupyter-book==1.0.4.post1",
+    "matplotlib>=3.9.0",
     "sphinx-autobuild==2024.10.3",
     "sphinx==7.4.7",
     "sphinx-github-changelog==1.7.1",
