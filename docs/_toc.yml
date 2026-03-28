@@ -10,6 +10,7 @@ parts:
       - file: getting-started/installation.md
   - caption: Usage
     chapters:
+      - file: usage/spec-getter-protocols.md
       - file: tutorials/read.ipynb
       - file: tutorials/write.ipynb
   - caption: References

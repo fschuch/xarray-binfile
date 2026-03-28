@@ -13,7 +13,17 @@ from xarray_binfile.typing import AttributesLike, CoordsLike, DTypeLike
 @dataclass(frozen=True)
 class ReadSpecs:
     """
-    Metadata for reading a binary file.
+    Immutable metadata contract for interpreting one binary file.
+
+    A raw binary file does not carry enough semantic information to be decoded
+    safely by itself. This object provides that missing context so the backend
+    can expose the data as a labeled xarray variable.
+
+    Notes:
+        - Dimension order is inferred from ``coords`` key order.
+        - ``shape`` is inferred from coordinate lengths.
+        - ``dtype`` should be explicit about byte order when portability matters
+          (for example ``"<f4"`` for little-endian float32).
 
     Attributes:
         filepath: Path to the binary file.
@@ -52,17 +62,25 @@ class ReadSpecs:
 
 class ReadSpecsGetterProtocol(Protocol):
     """
-    Protocol for generating read specifications for a binary file.
+    Structural protocol for read spec getter implementations.
+
+    Any callable matching ``(path: Path) -> ReadSpecs`` can be used as a read
+    specs getter. No inheritance is required.
+
+    Typical responsibilities:
+        - Parse filename conventions.
+        - Resolve variable identity (for example variable name, step index).
+        - Provide explicit dtype, coordinates, and optional attrs.
     """
 
     def __call__(self, path: Path) -> ReadSpecs:
         """
-        Generates read specifications for a binary file.
+        Generate read specifications for a binary file.
 
         Args:
             path: Path to the binary file.
 
         Returns:
-            Metadata for reading the binary file.
+            The metadata required by the binary backend to decode ``path``.
         """
         ...

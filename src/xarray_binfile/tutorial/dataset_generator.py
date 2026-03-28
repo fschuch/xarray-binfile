@@ -15,7 +15,10 @@ from xarray_binfile.read.file_metadata import ReadSpecs, ReadSpecsGetterProtocol
 @dataclass(frozen=True)
 class DatasetGenerator:
     """
-    Generates xarray Datasets with random data based on metadata.
+    Utility that generates synthetic datasets from read specs metadata.
+
+    This helper is intended for tutorials and tests where you want deterministic
+    mock data that follows the same metadata conventions expected by the backend.
 
     Attributes:
         read_specs_getter: A callable that generates read specifications for binary files.
@@ -27,7 +30,7 @@ class DatasetGenerator:
 
     def _get_numpy_array(self, metadata: ReadSpecs) -> np.ndarray:
         """
-        Generates a random NumPy array based on metadata.
+        Generate a random NumPy array matching ``metadata`` shape and dtype.
 
         Args:
             metadata: Metadata describing the array.
@@ -39,7 +42,7 @@ class DatasetGenerator:
 
     def _get_xarray_array(self, metadata: ReadSpecs) -> xr.DataArray:
         """
-        Generates a random xarray DataArray based on metadata.
+        Generate a random xarray DataArray matching ``metadata``.
 
         Args:
             metadata: Metadata describing the array.
@@ -55,7 +58,7 @@ class DatasetGenerator:
 
     def _get_dataset(self, metadata: ReadSpecs) -> xr.Dataset:
         """
-        Generates a random xarray Dataset based on metadata.
+        Wrap the generated DataArray into a single-variable Dataset.
 
         Args:
             metadata: Metadata describing the dataset.
@@ -67,7 +70,11 @@ class DatasetGenerator:
 
     def __call__(self, iter_filepath: Iterator[Path]) -> xr.Dataset:
         """
-        Generates a merged xarray Dataset from multiple file paths.
+        Generate and merge datasets for the provided file paths.
+
+        Each path is converted to ``ReadSpecs`` using ``read_specs_getter``.
+        A synthetic variable is generated for each metadata object, and all
+        variables are merged into one Dataset.
 
         Args:
             iter_filepath: An iterator over file paths.
