@@ -17,6 +17,51 @@ Raw binary files are not self-describing. They do not store enough metadata for 
 
 xarray-binfile solves this by asking you for callables that provide metadata for reads and file splitting rules for writes.
 
+## File-layout examples
+
+The protocol approach is useful because real projects organize files differently.
+
+### Time-series variables only
+
+```text
+caseA/
+	ux001.bin
+	ux002.bin
+	ux003.bin
+	uy001.bin
+	uy002.bin
+	uy003.bin
+```
+
+In this layout, the read specs getter usually parses:
+
+- variable name (`ux`, `uy`)
+- step index (`001`, `002`, `003`)
+
+and returns `coords` including a single-value `time` coordinate for each file.
+
+### Mixed time-series plus static fields
+
+```text
+caseB/
+	ux001.bin
+	ux002.bin
+	ux003.bin
+	uy001.bin
+	uy002.bin
+	uy003.bin
+	epsi.bin
+```
+
+Here, `ux*` and `uy*` are time-dependent while `epsi.bin` is static.
+
+A custom read specs getter can support this by using two filename rules:
+
+- time-series rule: parse variable + step, include `time=[step]`
+- static rule: parse static variable (for example `epsi`), return coords without `time`
+
+In xarray workflows, static variables without a `time` dimension can be naturally broadcast against time-dependent variables during computations.
+
 ## Read protocol
 
 The read protocol is `ReadSpecsGetterProtocol`.
@@ -72,6 +117,8 @@ It uses a common pattern:
 - filename convention like `{name}-{digits:04}.bin`
 - regex parsing for variable name and time index
 - base coordinates plus a `time` coordinate extracted from filename
+
+This shipped helper targets a single time-series naming convention. Mixed layouts (for example `ux001.bin` together with static `epsi.bin`) are typically handled by creating your own getter based on the same protocol contracts.
 
 A second shipped helper, `xarray_binfile.tutorial.DatasetGenerator`, consumes a read specs getter and generates synthetic datasets for tests/tutorials.
 

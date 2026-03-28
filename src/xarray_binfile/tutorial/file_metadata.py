@@ -24,6 +24,11 @@ class FileSpecsGetter:
     This helper is intended for tutorials, tests, and simple projects with a
     filename convention that encodes variable name and step index.
 
+    It is intentionally narrow: the default regex expects time-indexed files
+    (for example ``ux-0001.bin``). For mixed layouts that include static files
+    (for example ``epsi.bin``), implement a custom getter that still follows
+    the same read/write protocol contracts.
+
     It implements:
         - ``reader(path) -> ReadSpecs``
         - ``writer(data_array) -> Iterator[WriteSpecs]``
@@ -88,12 +93,8 @@ class FileSpecsGetter:
         """
         for time in data_array.coords["time"]:
             yield WriteSpecs(
-                filename=self.filename_template.format(
-                    name=data_array.name, digits=int(time)
-                ),
-                sub_array=data_array.sel(time=time).transpose(
-                    *self._base_dims, missing_dims="raise"
-                ),
+                filename=self.filename_template.format(name=data_array.name, digits=int(time)),
+                sub_array=data_array.sel(time=time).transpose(*self._base_dims, missing_dims="raise"),
             )
 
     @cached_property
