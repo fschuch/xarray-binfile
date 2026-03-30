@@ -132,9 +132,9 @@ These implementations are documented in the API section and should be considered
 Create a callable that follows `ReadSpecsGetterProtocol`. In practice:
 
 1. Parse your filename convention.
-2. Resolve variable identity (for example variable name and step index).
-3. Build explicit `coords` and `dtype`.
-4. Return a `ReadSpecs` object.
+1. Resolve variable identity (for example variable name and step index).
+1. Build explicit `coords` and `dtype`.
+1. Return a `ReadSpecs` object.
 
 Use `FileSpecsGetter.reader` as the reference behavior and adapt only what differs for your project.
 
@@ -143,9 +143,9 @@ Use `FileSpecsGetter.reader` as the reference behavior and adapt only what diffe
 Create a callable that follows `WriteSpecsGetterProtocol`. In practice:
 
 1. Decide how one in-memory array maps to one or more output files.
-2. Yield one `WriteSpecs` object per output file.
-3. Ensure each `sub_array` is transposed to the expected on-disk dimension order.
-4. Use deterministic filename rules that your read getter can parse back.
+1. Yield one `WriteSpecs` object per output file.
+1. Ensure each `sub_array` is transposed to the expected on-disk dimension order.
+1. Use deterministic filename rules that your read getter can parse back.
 
 Use `FileSpecsGetter.writer` as the reference behavior and adapt only what differs for your project.
 

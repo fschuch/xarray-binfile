@@ -25,6 +25,7 @@ ______________________________________________________________________
   [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/xarray-binfile.svg?logo=python&label=Python)](https://pypi.org/project/xarray-binfile/)
 
 - Meta:
+  [![Wizard Template](https://img.shields.io/badge/Wizard-Template-%23447CAA)](https://github.com/fschuch/wizard-template)
   [![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
   [![Hatch project](https://img.shields.io/badge/%F0%9F%A5%9A-Hatch-4051b5.svg)](https://github.com/pypa/hatch)
   [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
@@ -41,10 +42,10 @@ The package was first designed around binary outputs from the Fortran framework 
 
 It is aimed at workflows where raw binary files are part of an existing convention, such as simulation outputs or NumPy `.tofile()` dumps. Once opened, the data can be indexed, reduced, plotted, and computed with the usual xarray and Dask APIs.
 
+See the documentation for end-to-end examples covering lazy loading, Dask-backed computations, task-graph visualization, and writing derived results back to `.bin` files.
+
 > [!CAUTION]
 > Raw binary files are machine- and convention-dependent. Differences such as little-endian vs big-endian byte order, word size, record layout, and memory ordering can change how bytes should be interpreted. Always verify dtype and endianness when sharing files across machines or toolchains.
-
-See the documentation for end-to-end examples covering lazy loading, Dask-backed computations, task-graph visualization, and writing derived results back to `.bin` files.
 
 ## Copyright and License
 

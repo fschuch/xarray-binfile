@@ -3,14 +3,7 @@
 ```{centered} Read and write raw binary files using the familiar interface from the Xarray library.
 ```
 
-Xarray-binfile provides an xarray backend for raw binary files that are not self-describing on their own. You supply the metadata needed to interpret each file, and xarray-binfile handles lazy loading, chunked reads with Dask, and writing results back to raw binary when you need to interoperate with an existing file layout.
-
-The main user story is straightforward:
-
-- describe your file naming and coordinates with a callable compatible with `ReadSpecsGetterProtocol`
-- open one file with `xr.open_dataset(..., engine="binfile")` or a collection of files with `xr.open_mfdataset(..., engine="binfile")`
-- keep computations lazy with Dask until you call `.compute()` or `.load()`
-- optionally write derived arrays back to `.bin` files with `.binary_engine.to_file(...)`
+Xarray-binfile provides an xarray backend for raw binary files that are not self-describing on their own. You supply the metadata needed to interpret each file, and xarray-binfile handles lazy loading, chunked parallel computation with Dask, and writing results back to raw binary when you need to interoperate with an existing file layout.
 
 ::::{grid} 1 1 2 3
 :class-container: text-center
