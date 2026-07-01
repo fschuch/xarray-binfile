@@ -28,7 +28,7 @@ class RawBinaryEntrypoint(BackendEntrypoint):
         url: URL to the backend documentation.
     """
 
-    open_dataset_parameters = ("filename_or_obj", "drop_variables, read_specs_getter")
+    open_dataset_parameters = ("filename_or_obj", "read_specs_getter", "drop_variables")
     description = "Read and write raw binary files using the familiar interface from the Xarray library."
     url = "https://docs.fschuch.com/xarray-binfile/"
 
