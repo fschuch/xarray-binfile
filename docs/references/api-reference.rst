@@ -1,29 +1,13 @@
 API reference
 ==================
 
-
-Top-level package
------------------
-
-.. automodule:: xarray_binfile
-   :members:
-   :show-inheritance:
-
-
-Typing helpers
---------------
-
-.. automodule:: xarray_binfile.typing
-   :members:
-   :show-inheritance:
-
-
 Read backend
 ------------
 
 .. automodule:: xarray_binfile.read
    :members:
    :show-inheritance:
+   :imported-members:
 
 
 Write accessors
@@ -32,6 +16,7 @@ Write accessors
 .. automodule:: xarray_binfile.write
    :members:
    :show-inheritance:
+   :imported-members:
 
 
 Tutorial helpers
@@ -40,3 +25,4 @@ Tutorial helpers
 .. automodule:: xarray_binfile.tutorial
    :members:
    :show-inheritance:
+   :imported-members:

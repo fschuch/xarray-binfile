@@ -32,4 +32,3 @@ This section points to the main libraries and references that complement xarray-
 
 - [Xcompact3d](https://xcompact3d.readthedocs.io/)
 - [2DECOMP&FFT](https://2decomp.org/)
-- [Python Packaging User Guide](https://packaging.python.org/)
