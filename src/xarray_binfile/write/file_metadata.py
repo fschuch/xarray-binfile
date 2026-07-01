@@ -15,12 +15,9 @@ class WriteSpecs(NamedTuple):
     Each item defines both the output filename and the exact DataArray slice to
     serialize into that file.
 
-    Attributes
-    ----------
-    filename : str
-        The name of the binary file.
-    sub_array : xr.DataArray
-        The portion of the DataArray to be written.
+    Attributes:
+        filename: The name of the binary file.
+        sub_array: The portion of the DataArray to be written.
     """
 
     filename: str
@@ -45,14 +42,10 @@ class WriteSpecsGetterProtocol(Protocol):
         """
         Generate write instructions for a DataArray.
 
-        Parameters
-        ----------
-        data_array : xr.DataArray
-            The data array for which to generate write specifications.
+        Args:
+            data_array: The data array for which to generate write specifications.
 
-        Returns
-        -------
-        Iterator[WriteSpecs]
+        Returns:
             An iterator over per-file write instructions.
         """
         ...
