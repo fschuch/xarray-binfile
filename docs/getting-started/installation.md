@@ -8,11 +8,7 @@ You can use your preferred environment management tool, activate an existing env
 pip install xarray-binfile
 ```
 
-To pin a specific version, add the version specifier:
-
-```bash
-pip install "xarray-binfile==1.0.0"
-```
+The command above installs the latest release from PyPI. To reproduce an environment later, pin the exact version you need by adding a version specifier, for example `pip install "xarray-binfile==X.Y.Z"`.
 
 You can also use any dependency management tool that supports pip-style dependencies, such as Poetry, Hatch, uv, or Conda:
 
