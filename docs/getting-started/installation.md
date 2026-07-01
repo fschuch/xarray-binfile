@@ -11,7 +11,7 @@ pip install xarray-binfile
 To pin a specific version, add the version specifier:
 
 ```bash
-pip install "xarray-binfile==0.1.0"
+pip install "xarray-binfile==1.0.0"
 ```
 
 You can also use any dependency management tool that supports pip-style dependencies, such as Poetry, Hatch, uv, or Conda:

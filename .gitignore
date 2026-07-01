@@ -73,6 +73,9 @@ instance/
 docs/_build/
 docs/conf.py
 
+# Dask task-graph artifact written by .visualize() during notebook execution
+docs/tutorials/mydask.*
+
 # PyBuilder
 .pybuilder/
 target/

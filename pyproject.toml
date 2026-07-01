@@ -10,7 +10,7 @@ license = "MIT"
 requires-python = ">=3.10"
 authors = [{ name = "fschuch", email = "me@fschuch.com" }]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",

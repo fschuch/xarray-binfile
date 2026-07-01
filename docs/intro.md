@@ -58,6 +58,42 @@ Take a computed xarray result and write it back to raw binary files when you nee
 :::
 
 :::{grid-item-card}
+:link: tutorials/parallel-and-larger-than-memory
+:link-type: doc
+:class-header: bg-light
+
+Parallel And Out-Of-Core
+^^^
+
+Open files in parallel, pick a Dask scheduler, and process datasets larger than memory by streaming chunks.
+
+:::
+
+:::{grid-item-card}
+:link: tutorials/benchmarking
+:link-type: doc
+:class-header: bg-light
+
+Benchmark Your Data
+^^^
+
+Measure read and compute performance on your own files, and see how results shift with dtype, dimension size, and hardware.
+
+:::
+
+:::{grid-item-card}
+:link: tutorials/examples
+:link-type: doc
+:class-header: bg-light
+
+Practical Examples
+^^^
+
+Batch-convert dtypes across files, extract a probe time series to CSV, and draw quick matplotlib plots.
+
+:::
+
+:::{grid-item-card}
 :link: references/api-reference
 :link-type: doc
 :class-header: bg-light

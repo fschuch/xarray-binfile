@@ -37,7 +37,7 @@ html:
   use_edit_page_button: true
   use_issues_button: true
   use_repository_button: true
-  announcement: This project is in beta. Please report issues if you find problems with a file layout or metadata convention.
+  announcement: Found a problem with a file layout or metadata convention? Please report it on GitHub.
 
 sphinx:
   extra_extensions:
