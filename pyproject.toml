@@ -55,8 +55,8 @@ docs = [
 [project.urls]
 Source = "https://github.com/fschuch/xarray-binfile"
 Tracker = "https://github.com/fschuch/xarray-binfile/issues"
-Changelog = "https://fschuch.github.io/xarray-binfile/references/what-is-new.html"
-Documentation = "https://fschuch.github.io/xarray-binfile/"
+Changelog = "https://docs.fschuch.com/xarray-binfile/references/what-is-new.html"
+Documentation = "https://docs.fschuch.com/xarray-binfile/"
 
 [project.scripts]
 
