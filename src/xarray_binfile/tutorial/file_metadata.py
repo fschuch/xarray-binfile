@@ -83,7 +83,8 @@ class FileSpecsGetter:
 
         The default behavior writes one file per time coordinate value using
         ``filename_template`` and transposes each slice to ``base_coords``
-        dimension order before serialization.
+        dimension order before serialization. Each slice is cast to ``dtype``
+        on write, so files always round-trip with :meth:`reader`.
 
         Args:
             data_array: The data array to generate write specifications for.
@@ -99,6 +100,7 @@ class FileSpecsGetter:
                 sub_array=data_array.sel(time=time).transpose(
                     *self._base_dims, missing_dims="raise"
                 ),
+                dtype=self.dtype,
             )
 
     @cached_property

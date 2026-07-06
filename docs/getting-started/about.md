@@ -15,6 +15,8 @@ The package integrates with xarray in two directions:
 - reading through `xr.open_dataset(..., engine="binfile")` and `xr.open_mfdataset(..., engine="binfile")`
 - writing through the `.binary_engine.to_file(...)` accessor on `xarray.DataArray` and `xarray.Dataset`
 
+The read engine is registered automatically with xarray as a plugin entry point. The write accessors become available as soon as `xarray_binfile` (or any of its modules) is imported.
+
 Xarray-binfile focuses on translating between raw binary files and xarray objects. Once the data is open, standard xarray and Dask operations apply:
 
 - coordinate-based indexing with `.sel(...)`

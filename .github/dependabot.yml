@@ -8,11 +8,20 @@ updates:
       actions:
         patterns:
           - "*"
+    cooldown:
+      default-days: 7
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
       interval: "weekly"
+    ignore:
+      - dependency-name: "jupyter-book"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "sphinx"
+        update-types: ["version-update:semver-major"]
     groups:
       pip-dependencies:
         patterns:
           - "*"
+    cooldown:
+      default-days: 7

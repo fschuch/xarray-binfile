@@ -16,7 +16,12 @@ def make_reader(name="ux", dtype=np.float32, coords=None):
     return reader
 
 
+def write_file(path: pathlib.Path, shape=(2, 3), dtype=np.float32) -> None:
+    np.zeros(shape, dtype=dtype).tofile(path)
+
+
 def test_open_dataset_exposes_variable(tmp_path):
+    write_file(tmp_path / "ux.bin")
     dataset = RawBinaryEntrypoint().open_dataset(
         tmp_path / "ux.bin", read_specs_getter=make_reader()
     )
@@ -34,6 +39,7 @@ def test_open_dataset_drops_matching_variable(tmp_path, drop_variables):
 
 
 def test_open_dataset_keeps_non_matching_variable(tmp_path):
+    write_file(tmp_path / "ux.bin")
     dataset = RawBinaryEntrypoint().open_dataset(
         tmp_path / "ux.bin",
         read_specs_getter=make_reader(),

@@ -97,6 +97,11 @@ Contract:
 
 - `filename`: output file name
 - `sub_array`: array slice to write into that file
+- `dtype`: optional on-disk data type; when set, the sub-array is cast right before serialization (including byte order, for example `"<f4"`). When omitted, the in-memory dtype and native byte order are written as-is, so make sure they match what your read specs getter declares.
+
+```{warning}
+Writes are eager and whole-file only. Each `sub_array` is fully loaded into memory (a Dask compute for lazy data) and its file is written in a single pass — the backend never appends to, patches, or resumes a file. Files are staged in a unique temporary directory inside the destination and atomically moved into place with `os.replace` once complete, so an interrupted write never leaves a truncated file behind. That protects against partially-updated, corrupted files, but it means every `sub_array` you yield must fit in memory. Split large arrays into more, smaller files, and reach for xarray-supported formats such as NetCDF or Zarr when you need streaming or partial writes.
+```
 
 See the API reference for authoritative signatures and behavior:
 
@@ -145,6 +150,7 @@ Create a callable that follows `WriteSpecsGetterProtocol`. In practice:
 1. Decide how one in-memory array maps to one or more output files.
 1. Yield one `WriteSpecs` object per output file.
 1. Ensure each `sub_array` is transposed to the expected on-disk dimension order.
+1. Keep each `sub_array` small enough to fit in memory, since it is fully materialized before its file is written.
 1. Use deterministic filename rules that your read getter can parse back.
 
 Use `FileSpecsGetter.writer` as the reference behavior and adapt only what differs for your project.

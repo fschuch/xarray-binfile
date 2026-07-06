@@ -18,11 +18,13 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python",
 ]
 dynamic = ["version"]
-dependencies = ["dask>=2024.0.0", "xarray>=2024.1.0"]
+dependencies = ["dask>=2024.0.0", "numpy>=1.24", "xarray>=2024.1.0"]
 
 [project.entry-points."xarray.backends"]
 binfile = "xarray_binfile.read.entrypoint:RawBinaryEntrypoint"
@@ -57,8 +59,6 @@ Source = "https://github.com/fschuch/xarray-binfile"
 Tracker = "https://github.com/fschuch/xarray-binfile/issues"
 Changelog = "https://docs.fschuch.com/xarray-binfile/references/what-is-new.html"
 Documentation = "https://docs.fschuch.com/xarray-binfile/"
-
-[project.scripts]
 
 [tool.pytest.ini_options]
 addopts = [
@@ -131,7 +131,7 @@ features = ["tests", "tests-extra"]
 extended = "test -n auto --reruns 7 --reruns-delay 1 {args}"
 
 [[tool.hatch.envs.test.matrix]]
-python = ["3.10", "3.11", "3.12", "3.13"]
+python = ["3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]
 
 [tool.hatch.envs.docs]
 description = "Documentation environment"

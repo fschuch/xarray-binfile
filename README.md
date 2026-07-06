@@ -17,8 +17,8 @@ ______________________________________________________________________
   [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=fschuch_xarray-binfile&metric=coverage)](https://sonarcloud.io/summary/new_code?id=fschuch_xarray-binfile)
   [![CodeFactor](https://www.codefactor.io/repository/github/fschuch/xarray-binfile/badge)](https://www.codefactor.io/repository/github/fschuch/xarray-binfile)
 
-<!-- - Docs:
-  [![Docs](https://github.com/fschuch/xarray-binfile/actions/workflows/docs.yaml/badge.svg?branch=main)](https://docs.fschuch.com/xarray-binfile) -->
+- Docs:
+  [![Docs](https://github.com/fschuch/xarray-binfile/actions/workflows/docs.yaml/badge.svg?branch=main)](https://docs.fschuch.com/xarray-binfile)
 
 - Package:
   [![PyPI - Version](https://img.shields.io/pypi/v/xarray-binfile.svg?logo=pypi&label=PyPI)](https://pypi.org/project/xarray-binfile/)
@@ -49,5 +49,5 @@ See the documentation for end-to-end examples covering lazy loading, Dask-backed
 
 ## Copyright and License
 
-© 2025 [Felipe N. Schuch](https://github.com/fschuch).
+© 2025–2026 [Felipe N. Schuch](https://github.com/fschuch).
 All content is under [MIT License](https://github.com/fschuch/xarray-binfile/blob/main/LICENSE).

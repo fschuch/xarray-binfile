@@ -6,7 +6,6 @@ import pytest
 import xarray as xr
 
 from xarray_binfile.tutorial import DatasetGenerator, FileSpecsGetter
-from xarray_binfile.write import BinaryEngineDataset  # noqa F401
 
 
 class TestOpenDataset:
