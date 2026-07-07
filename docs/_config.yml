@@ -49,6 +49,10 @@ sphinx:
     #https://github.com/executablebooks/jupyter-book/issues/1950#issuecomment-1454801479
     suppress_warnings: ["mystnb.unknown_mime_type"]
 
+    # allow_errors: false only reports failed cells as warnings; this makes
+    # a notebook execution error abort the build with a non-zero exit code
+    nb_execution_raise_on_error: true
+
     intersphinx_mapping:
       python:
         - "https://docs.python.org/3"

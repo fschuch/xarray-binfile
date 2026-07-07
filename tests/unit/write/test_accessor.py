@@ -6,13 +6,16 @@ import xarray_binfile  # noqa: F401  (registers the accessors)
 from xarray_binfile.write import WriteSpecs
 
 
-@pytest.fixture
-def data_array() -> xr.DataArray:
-    return xr.DataArray(
+@pytest.fixture(params=["numpy", "dask"])
+def data_array(request) -> xr.DataArray:
+    array = xr.DataArray(
         np.arange(6, dtype=np.float64).reshape(2, 3),
         coords={"x": np.arange(2), "y": np.arange(3)},
         name="ux",
     )
+    if request.param == "dask":
+        array = array.chunk({"x": 1})
+    return array
 
 
 def whole_array_writer(data_array: xr.DataArray):

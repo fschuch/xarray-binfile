@@ -113,5 +113,5 @@ class BinaryEngineDataArray:
                     else details.sub_array.dtype
                 )
                 temporary_file = Path(temporary_directory) / details.filename
-                details.sub_array.data.astype(new_type).tofile(temporary_file)
+                details.sub_array.values.astype(new_type).tofile(temporary_file)
                 os.replace(temporary_file, _directory / details.filename)
