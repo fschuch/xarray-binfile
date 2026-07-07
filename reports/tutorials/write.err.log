@@ -1,0 +1,53 @@
+Traceback (most recent call last):
+  File "/home/runner/.local/share/hatch/env/virtual/xarray-binfile/1m06ec_K/docs/lib/python3.13/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+    ~~~~~~~~~^
+        nb,
+        ^^^
+    ...<4 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+  File "/home/runner/.local/share/hatch/env/virtual/xarray-binfile/1m06ec_K/docs/lib/python3.13/site-packages/nbclient/client.py", line 1323, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/runner/.local/share/hatch/env/virtual/xarray-binfile/1m06ec_K/docs/lib/python3.13/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+    return loop.run_until_complete(inner)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.14/x64/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/home/runner/.local/share/hatch/env/virtual/xarray-binfile/1m06ec_K/docs/lib/python3.13/site-packages/nbclient/client.py", line 709, in async_execute
+    await self.async_execute_cell(
+        cell, index, execution_count=self.code_cells_executed + 1
+    )
+  File "/home/runner/.local/share/hatch/env/virtual/xarray-binfile/1m06ec_K/docs/lib/python3.13/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/home/runner/.local/share/hatch/env/virtual/xarray-binfile/1m06ec_K/docs/lib/python3.13/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+speed.binary_engine.to_file(derived_write_specs_getter, output_directory)
+sorted(path.name for path in output_directory.glob("*.bin"))[:6]
+------------------
+
+
+[31m---------------------------------------------------------------------------[39m
+[31mAttributeError[39m                            Traceback (most recent call last)
+[36mCell[39m[36m [39m[32mIn[7][39m[32m, line 1[39m
+[32m----> [39m[32m1[39m speed.binary_engine.to_file(derived_write_specs_getter, output_directory)
+[32m      2[39m sorted(path.name [38;5;28;01mfor[39;00m path [38;5;28;01min[39;00m output_directory.glob([33m"*.bin"[39m))[:[32m6[39m]
+
+[36mFile [39m[32m~/work/xarray-binfile/xarray-binfile/src/xarray_binfile/write/accessor.py:116[39m, in [36mBinaryEngineDataArray.to_file[39m[34m(self, write_specs_getter, directory)[39m
+[32m    110[39m new_type = (
+[32m    111[39m     details.dtype
+[32m    112[39m     [38;5;28;01mif[39;00m details.dtype [38;5;129;01mis[39;00m [38;5;129;01mnot[39;00m [38;5;28;01mNone[39;00m
+[32m    113[39m     [38;5;28;01melse[39;00m details.sub_array.dtype
+[32m    114[39m )
+[32m    115[39m temporary_file = Path(temporary_directory) / details.filename
+[32m--> [39m[32m116[39m [30;43mdetails[39;49m[30;43m.[39;49m[30;43msub_array[39;49m[30;43m.[39;49m[30;43mdata[39;49m[30;43m.[39;49m[30;43mastype[39;49m[30;43m([39;49m[30;43mnew_type[39;49m[30;43m)[39;49m[30;43m.[39;49m[30;43mtofile[39;49m(temporary_file)
+[32m    117[39m os.replace(temporary_file, _directory / details.filename)
+
+[31mAttributeError[39m: 'Array' object has no attribute 'tofile'
+

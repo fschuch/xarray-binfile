@@ -1,0 +1,2833 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Write Derived Results Back To Raw Binary Files &#8212; Xarray-binfile</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'tutorials/write';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Parallel And Larger-Than-Memory Workflows" href="parallel-and-larger-than-memory.html" />
+    <link rel="prev" title="Read Binary Files Lazily With Xarray and Dask" href="read.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Xarray-binfile - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Xarray-binfile - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fschuch/xarray-binfile/releases" title="Releases" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="https://img.shields.io/github/v/release/fschuch/xarray-binfile?style=social" class="icon-link-image" alt="Releases"/></a>
+        </li>
+</ul></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/installation.html">Installation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Usage</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../usage/spec-getter-protocols.html">Spec Getter Protocols for Read and Write</a></li>
+<li class="toctree-l1"><a class="reference internal" href="read.html">Read Binary Files Lazily With Xarray and Dask</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Write Derived Results Back To Raw Binary Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parallel-and-larger-than-memory.html">Parallel And Larger-Than-Memory Workflows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmark On Your Own Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Practical Examples: Batch Conversion, Probes, and Plots</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">References</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../references/further-reading.html">Further Reading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references/api-reference.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references/how-to-contribute.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references/what-is-new.html">What’s New</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/tutorials/write.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Write Derived Results Back To Raw Binary Files</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-write-specifications">Custom write specifications</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="write-derived-results-back-to-raw-binary-files">
+<h1>Write Derived Results Back To Raw Binary Files<a class="headerlink" href="#write-derived-results-back-to-raw-binary-files" title="Link to this heading">#</a></h1>
+<p>This notebook focuses on the write side of xarray-binfile. The workflow is:</p>
+<ul class="simple">
+<li><p>open a binary dataset lazily with xarray and Dask</p></li>
+<li><p>build a derived result without immediately loading everything</p></li>
+<li><p>compute a small summary when you need an actual value</p></li>
+<li><p>write a derived array back to <code class="docutils literal notranslate"><span class="pre">.bin</span></code> files with <code class="docutils literal notranslate"><span class="pre">.binary_engine.to_file(...)</span></code></p></li>
+<li><p>read the result again to verify the round trip</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Raw binary output is useful when you must match an existing external convention. If you control the output format, prefer NetCDF or Zarr for portability, metadata preservation, and interoperability across tools.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xarray</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xr</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">xarray_binfile</span><span class="w"> </span><span class="kn">import</span> <span class="n">WriteSpecs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">xarray_binfile.tutorial</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetGenerator</span><span class="p">,</span> <span class="n">FileSpecsGetter</span>
+
+<span class="n">input_directory_holder</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span>
+<span class="n">output_directory_holder</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span>
+<span class="n">input_directory</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">input_directory_holder</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="n">output_directory</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">output_directory_holder</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="n">input_directory</span><span class="p">,</span> <span class="n">output_directory</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(PosixPath(&#39;/tmp/tmpkvzpj6in&#39;), PosixPath(&#39;/tmp/tmp7txhw_hw&#39;))
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">base_coords</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+    <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+    <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+<span class="p">}</span>
+
+<span class="n">input_specs_getter</span> <span class="o">=</span> <span class="n">FileSpecsGetter</span><span class="p">(</span>
+    <span class="n">base_coords</span><span class="o">=</span><span class="n">base_coords</span><span class="p">,</span>
+    <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+    <span class="n">filename_template</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{name}</span><span class="s2">-</span><span class="si">{digits:04}</span><span class="s2">.bin&quot;</span><span class="p">,</span>
+    <span class="n">filename_regex</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(?P&lt;name&gt;\w+)-(?P&lt;digits&gt;\d</span><span class="si">{4}</span><span class="s2">)\.bin&quot;</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="n">dataset_generator</span> <span class="o">=</span> <span class="n">DatasetGenerator</span><span class="p">(</span><span class="n">input_specs_getter</span><span class="o">.</span><span class="n">reader</span><span class="p">)</span>
+<span class="n">filenames</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">input_specs_getter</span><span class="o">.</span><span class="n">filename_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="n">step</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;ux&quot;</span><span class="p">,</span> <span class="s2">&quot;uy&quot;</span><span class="p">,</span> <span class="s2">&quot;uz&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">source_dataset</span> <span class="o">=</span> <span class="n">dataset_generator</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="n">filenames</span><span class="p">))</span>
+<span class="n">source_dataset</span><span class="o">.</span><span class="n">binary_engine</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">input_specs_getter</span><span class="o">.</span><span class="n">writer</span><span class="p">,</span> <span class="n">input_directory</span><span class="p">)</span>
+<span class="nb">sorted</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">input_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.bin&quot;</span><span class="p">))[:</span><span class="mi">6</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;ux-0000.bin&#39;,
+ &#39;ux-0001.bin&#39;,
+ &#39;ux-0002.bin&#39;,
+ &#39;ux-0003.bin&#39;,
+ &#39;ux-0004.bin&#39;,
+ &#39;ux-0005.bin&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lazy_dataset</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
+    <span class="nb">sorted</span><span class="p">(</span><span class="n">input_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.bin&quot;</span><span class="p">)),</span>
+    <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;binfile&quot;</span><span class="p">,</span>
+    <span class="n">read_specs_getter</span><span class="o">=</span><span class="n">input_specs_getter</span><span class="o">.</span><span class="n">reader</span><span class="p">,</span>
+    <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
+    <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">lazy_dataset</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div><svg style="position: absolute; width: 0; height: 0; overflow: hidden">
+<defs>
+<symbol id="icon-database" viewBox="0 0 32 32">
+<path d="M16 0c-8.837 0-16 2.239-16 5v4c0 2.761 7.163 5 16 5s16-2.239 16-5v-4c0-2.761-7.163-5-16-5z"></path>
+<path d="M16 17c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
+<path d="M16 26c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
+</symbol>
+<symbol id="icon-file-text2" viewBox="0 0 32 32">
+<path d="M28.681 7.159c-0.694-0.947-1.662-2.053-2.724-3.116s-2.169-2.030-3.116-2.724c-1.612-1.182-2.393-1.319-2.841-1.319h-15.5c-1.378 0-2.5 1.121-2.5 2.5v27c0 1.378 1.122 2.5 2.5 2.5h23c1.378 0 2.5-1.122 2.5-2.5v-19.5c0-0.448-0.137-1.23-1.319-2.841zM24.543 5.457c0.959 0.959 1.712 1.825 2.268 2.543h-4.811v-4.811c0.718 0.556 1.584 1.309 2.543 2.268zM28 29.5c0 0.271-0.229 0.5-0.5 0.5h-23c-0.271 0-0.5-0.229-0.5-0.5v-27c0-0.271 0.229-0.5 0.5-0.5 0 0 15.499-0 15.5 0v7c0 0.552 0.448 1 1 1h7v19.5z"></path>
+<path d="M23 26h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+<path d="M23 22h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+<path d="M23 18h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+</symbol>
+</defs>
+</svg>
+<style>/* CSS stylesheet for displaying xarray objects in notebooks */
+
+:root {
+  --xr-font-color0: var(
+    --jp-content-font-color0,
+    var(--pst-color-text-base rgba(0, 0, 0, 1))
+  );
+  --xr-font-color2: var(
+    --jp-content-font-color2,
+    var(--pst-color-text-base, rgba(0, 0, 0, 0.54))
+  );
+  --xr-font-color3: var(
+    --jp-content-font-color3,
+    var(--pst-color-text-base, rgba(0, 0, 0, 0.38))
+  );
+  --xr-border-color: var(
+    --jp-border-color2,
+    hsl(from var(--pst-color-on-background, white) h s calc(l - 10))
+  );
+  --xr-disabled-color: var(
+    --jp-layout-color3,
+    hsl(from var(--pst-color-on-background, white) h s calc(l - 40))
+  );
+  --xr-background-color: var(
+    --jp-layout-color0,
+    var(--pst-color-on-background, white)
+  );
+  --xr-background-color-row-even: var(
+    --jp-layout-color1,
+    hsl(from var(--pst-color-on-background, white) h s calc(l - 5))
+  );
+  --xr-background-color-row-odd: var(
+    --jp-layout-color2,
+    hsl(from var(--pst-color-on-background, white) h s calc(l - 15))
+  );
+}
+
+html[theme="dark"],
+html[data-theme="dark"],
+body[data-theme="dark"],
+body.vscode-dark {
+  --xr-font-color0: var(
+    --jp-content-font-color0,
+    var(--pst-color-text-base, rgba(255, 255, 255, 1))
+  );
+  --xr-font-color2: var(
+    --jp-content-font-color2,
+    var(--pst-color-text-base, rgba(255, 255, 255, 0.54))
+  );
+  --xr-font-color3: var(
+    --jp-content-font-color3,
+    var(--pst-color-text-base, rgba(255, 255, 255, 0.38))
+  );
+  --xr-border-color: var(
+    --jp-border-color2,
+    hsl(from var(--pst-color-on-background, #111111) h s calc(l + 10))
+  );
+  --xr-disabled-color: var(
+    --jp-layout-color3,
+    hsl(from var(--pst-color-on-background, #111111) h s calc(l + 40))
+  );
+  --xr-background-color: var(
+    --jp-layout-color0,
+    var(--pst-color-on-background, #111111)
+  );
+  --xr-background-color-row-even: var(
+    --jp-layout-color1,
+    hsl(from var(--pst-color-on-background, #111111) h s calc(l + 5))
+  );
+  --xr-background-color-row-odd: var(
+    --jp-layout-color2,
+    hsl(from var(--pst-color-on-background, #111111) h s calc(l + 15))
+  );
+}
+
+.xr-wrap {
+  display: block !important;
+  min-width: 300px;
+  max-width: 700px;
+  line-height: 1.6;
+  padding-bottom: 4px;
+}
+
+.xr-text-repr-fallback {
+  /* fallback to plain text repr when CSS is not injected (untrusted notebook) */
+  display: none;
+}
+
+.xr-header {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.xr-header {
+  border-bottom: solid 1px var(--xr-border-color);
+  margin-bottom: 4px;
+}
+
+.xr-header > div,
+.xr-header > ul {
+  display: inline;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.xr-obj-type,
+.xr-obj-name {
+  margin-left: 2px;
+  margin-right: 10px;
+}
+
+.xr-obj-type,
+.xr-group-box-contents > label {
+  color: var(--xr-font-color2);
+  display: block;
+}
+
+.xr-sections {
+  padding-left: 0 !important;
+  display: grid;
+  grid-template-columns: 150px auto auto 1fr 0 20px 0 20px;
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+
+.xr-section-item {
+  display: contents;
+}
+
+.xr-section-item > input,
+.xr-group-box-contents > input,
+.xr-array-wrap > input {
+  display: block;
+  opacity: 0;
+  height: 0;
+  margin: 0;
+}
+
+.xr-section-item > input + label,
+.xr-var-item > input + label {
+  color: var(--xr-disabled-color);
+}
+
+.xr-section-item > input:enabled + label,
+.xr-var-item > input:enabled + label,
+.xr-array-wrap > input:enabled + label,
+.xr-group-box-contents > input:enabled + label {
+  cursor: pointer;
+  color: var(--xr-font-color2);
+}
+
+.xr-section-item > input:focus-visible + label,
+.xr-var-item > input:focus-visible + label,
+.xr-array-wrap > input:focus-visible + label,
+.xr-group-box-contents > input:focus-visible + label {
+  outline: auto;
+}
+
+.xr-section-item > input:enabled + label:hover,
+.xr-var-item > input:enabled + label:hover,
+.xr-array-wrap > input:enabled + label:hover,
+.xr-group-box-contents > input:enabled + label:hover {
+  color: var(--xr-font-color0);
+}
+
+.xr-section-summary {
+  grid-column: 1;
+  color: var(--xr-font-color2);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.xr-section-summary > em {
+  font-weight: normal;
+}
+
+.xr-span-grid {
+  grid-column-end: -1;
+}
+
+.xr-section-summary > span {
+  display: inline-block;
+  padding-left: 0.3em;
+}
+
+.xr-group-box-contents > input:checked + label > span {
+  display: inline-block;
+  padding-left: 0.6em;
+}
+
+.xr-section-summary-in:disabled + label {
+  color: var(--xr-font-color2);
+}
+
+.xr-section-summary-in + label:before {
+  display: inline-block;
+  content: "►";
+  font-size: 11px;
+  width: 15px;
+  text-align: center;
+}
+
+.xr-section-summary-in:disabled + label:before {
+  color: var(--xr-disabled-color);
+}
+
+.xr-section-summary-in:checked + label:before {
+  content: "▼";
+}
+
+.xr-section-summary-in:checked + label > span {
+  display: none;
+}
+
+.xr-section-summary,
+.xr-section-inline-details,
+.xr-group-box-contents > label {
+  padding-top: 4px;
+}
+
+.xr-section-inline-details {
+  grid-column: 2 / -1;
+}
+
+.xr-section-details {
+  grid-column: 1 / -1;
+  margin-top: 4px;
+  margin-bottom: 5px;
+}
+
+.xr-section-summary-in ~ .xr-section-details {
+  display: none;
+}
+
+.xr-section-summary-in:checked ~ .xr-section-details {
+  display: contents;
+}
+
+.xr-children {
+  display: inline-grid;
+  grid-template-columns: 100%;
+  grid-column: 1 / -1;
+  padding-top: 4px;
+}
+
+.xr-group-box {
+  display: inline-grid;
+  grid-template-columns: 0px 30px auto;
+}
+
+.xr-group-box-vline {
+  grid-column-start: 1;
+  border-right: 0.2em solid;
+  border-color: var(--xr-border-color);
+  width: 0px;
+}
+
+.xr-group-box-hline {
+  grid-column-start: 2;
+  grid-row-start: 1;
+  height: 1em;
+  width: 26px;
+  border-bottom: 0.2em solid;
+  border-color: var(--xr-border-color);
+}
+
+.xr-group-box-contents {
+  grid-column-start: 3;
+  padding-bottom: 4px;
+}
+
+.xr-group-box-contents > label::before {
+  content: "📂";
+  padding-right: 0.3em;
+}
+
+.xr-group-box-contents > input:checked + label::before {
+  content: "📁";
+}
+
+.xr-group-box-contents > input:checked + label {
+  padding-bottom: 0px;
+}
+
+.xr-group-box-contents > input:checked ~ .xr-sections {
+  display: none;
+}
+
+.xr-group-box-contents > input + label > span {
+  display: none;
+}
+
+.xr-group-box-ellipsis {
+  font-size: 1.4em;
+  font-weight: 900;
+  color: var(--xr-font-color2);
+  letter-spacing: 0.15em;
+  cursor: default;
+}
+
+.xr-array-wrap {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 20px auto;
+}
+
+.xr-array-wrap > label {
+  grid-column: 1;
+  vertical-align: top;
+}
+
+.xr-preview {
+  color: var(--xr-font-color3);
+}
+
+.xr-array-preview,
+.xr-array-data {
+  padding: 0 5px !important;
+  grid-column: 2;
+}
+
+.xr-array-data,
+.xr-array-in:checked ~ .xr-array-preview {
+  display: none;
+}
+
+.xr-array-in:checked ~ .xr-array-data,
+.xr-array-preview {
+  display: inline-block;
+}
+
+.xr-dim-list {
+  display: inline-block !important;
+  list-style: none;
+  padding: 0 !important;
+  margin: 0;
+}
+
+.xr-dim-list li {
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+}
+
+.xr-dim-list:before {
+  content: "(";
+}
+
+.xr-dim-list:after {
+  content: ")";
+}
+
+.xr-dim-list li:not(:last-child):after {
+  content: ",";
+  padding-right: 5px;
+}
+
+.xr-has-index {
+  font-weight: bold;
+}
+
+.xr-var-list,
+.xr-var-item {
+  display: contents;
+}
+
+.xr-var-item > div,
+.xr-var-item label,
+.xr-var-item > .xr-var-name span {
+  background-color: var(--xr-background-color-row-even);
+  border-color: var(--xr-background-color-row-odd);
+  margin-bottom: 0;
+  padding-top: 2px;
+}
+
+.xr-var-item > .xr-var-name:hover span {
+  padding-right: 5px;
+}
+
+.xr-var-list > li:nth-child(odd) > div,
+.xr-var-list > li:nth-child(odd) > label,
+.xr-var-list > li:nth-child(odd) > .xr-var-name span {
+  background-color: var(--xr-background-color-row-odd);
+  border-color: var(--xr-background-color-row-even);
+}
+
+.xr-var-name {
+  grid-column: 1;
+}
+
+.xr-var-dims {
+  grid-column: 2;
+}
+
+.xr-var-dtype {
+  grid-column: 3;
+  text-align: right;
+  color: var(--xr-font-color2);
+}
+
+.xr-var-preview {
+  grid-column: 4;
+}
+
+.xr-index-preview {
+  grid-column: 2 / 5;
+  color: var(--xr-font-color2);
+}
+
+.xr-var-name,
+.xr-var-dims,
+.xr-var-dtype,
+.xr-preview,
+.xr-attrs dt {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 10px;
+}
+
+.xr-var-name:hover,
+.xr-var-dims:hover,
+.xr-var-dtype:hover,
+.xr-attrs dt:hover {
+  overflow: visible;
+  width: auto;
+  z-index: 1;
+}
+
+.xr-var-attrs,
+.xr-var-data,
+.xr-index-data {
+  display: none;
+  border-top: 2px dotted var(--xr-background-color);
+  padding-bottom: 20px !important;
+  padding-top: 10px !important;
+}
+
+.xr-var-attrs-in + label,
+.xr-var-data-in + label,
+.xr-index-data-in + label {
+  padding: 0 1px;
+}
+
+.xr-var-attrs-in:checked ~ .xr-var-attrs,
+.xr-var-data-in:checked ~ .xr-var-data,
+.xr-index-data-in:checked ~ .xr-index-data {
+  display: block;
+}
+
+.xr-var-data > table {
+  float: right;
+}
+
+.xr-var-data > pre,
+.xr-index-data > pre,
+.xr-var-data > table > tbody > tr {
+  background-color: transparent !important;
+}
+
+.xr-var-name span,
+.xr-var-data,
+.xr-index-name div,
+.xr-index-data,
+.xr-attrs {
+  padding-left: 25px !important;
+}
+
+.xr-attrs,
+.xr-var-attrs,
+.xr-var-data,
+.xr-index-data {
+  grid-column: 1 / -1;
+}
+
+dl.xr-attrs {
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 125px auto;
+}
+
+.xr-attrs dt,
+.xr-attrs dd {
+  padding: 0;
+  margin: 0;
+  float: left;
+  padding-right: 10px;
+  width: auto;
+}
+
+.xr-attrs dt {
+  font-weight: normal;
+  grid-column: 1;
+}
+
+.xr-attrs dt:hover span {
+  display: inline-block;
+  background: var(--xr-background-color);
+  padding-right: 10px;
+}
+
+.xr-attrs dd {
+  grid-column: 2;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.xr-icon-database,
+.xr-icon-file-text2,
+.xr-no-icon {
+  display: inline-block;
+  vertical-align: middle;
+  width: 1em;
+  height: 1.5em !important;
+  stroke-width: 0;
+  stroke: currentColor;
+  fill: currentColor;
+}
+
+.xr-var-attrs-in:checked + label > .xr-icon-file-text2,
+.xr-var-data-in:checked + label > .xr-icon-database,
+.xr-index-data-in:checked + label > .xr-icon-database {
+  color: var(--xr-font-color0);
+  filter: drop-shadow(1px 1px 5px var(--xr-font-color2));
+  stroke-width: 0.8px;
+}
+</style><pre class='xr-text-repr-fallback'>&lt;xarray.Dataset&gt; Size: 498kB
+Dimensions:  (x: 24, y: 18, z: 12, time: 8)
+Coordinates:
+  * x        (x) float32 96B 0.0 0.08696 0.1739 0.2609 ... 1.739 1.826 1.913 2.0
+  * y        (y) float32 72B -1.0 -0.8824 -0.7647 -0.6471 ... 0.7647 0.8824 1.0
+  * z        (z) float32 48B 0.0 0.1364 0.2727 0.4091 ... 1.091 1.227 1.364 1.5
+  * time     (time) int64 64B 0 1 2 3 4 5 6 7
+Data variables:
+    ux       (x, y, z, time) float32 166kB dask.array&lt;chunksize=(6, 6, 4, 1), meta=np.ndarray&gt;
+    uy       (x, y, z, time) float32 166kB dask.array&lt;chunksize=(6, 6, 4, 1), meta=np.ndarray&gt;
+    uz       (x, y, z, time) float32 166kB dask.array&lt;chunksize=(6, 6, 4, 1), meta=np.ndarray&gt;</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.Dataset</div></div><ul class='xr-sections'><li class='xr-section-item'><input id='section-7d7e0786-d454-4a64-b3c3-2fe7512700aa' class='xr-section-summary-in' type='checkbox' disabled /><label for='section-7d7e0786-d454-4a64-b3c3-2fe7512700aa' class='xr-section-summary'>Dimensions:</label><div class='xr-section-inline-details'><ul class='xr-dim-list'><li><span class='xr-has-index'>x</span>: 24</li><li><span class='xr-has-index'>y</span>: 18</li><li><span class='xr-has-index'>z</span>: 12</li><li><span class='xr-has-index'>time</span>: 8</li></ul></div></li><li class='xr-section-item'><input id='section-b627692f-d4ea-4d93-8502-b7bccef74743' class='xr-section-summary-in' type='checkbox' checked /><label for='section-b627692f-d4ea-4d93-8502-b7bccef74743' class='xr-section-summary' title='Expand/collapse section'>Coordinates: <span>(4)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>x</span></div><div class='xr-var-dims'>(x)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.0 0.08696 0.1739 ... 1.913 2.0</div><input id='attrs-29ec6c17-30e5-4392-b671-7e5e3e2d3e3b' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-29ec6c17-30e5-4392-b671-7e5e3e2d3e3b' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-a0f975b4-a4e6-406b-baaa-458da67fd64f' class='xr-var-data-in' type='checkbox'><label for='data-a0f975b4-a4e6-406b-baaa-458da67fd64f' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0.      , 0.086957, 0.173913, 0.26087 , 0.347826, 0.434783, 0.521739,
+       0.608696, 0.695652, 0.782609, 0.869565, 0.956522, 1.043478, 1.130435,
+       1.217391, 1.304348, 1.391304, 1.478261, 1.565217, 1.652174, 1.73913 ,
+       1.826087, 1.913043, 2.      ], dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>y</span></div><div class='xr-var-dims'>(y)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>-1.0 -0.8824 -0.7647 ... 0.8824 1.0</div><input id='attrs-96467b58-5bea-4b98-ad66-1e0a2c10fc87' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-96467b58-5bea-4b98-ad66-1e0a2c10fc87' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-c4bf2e6d-ec8d-40cc-a2d5-5bb1396ce272' class='xr-var-data-in' type='checkbox'><label for='data-c4bf2e6d-ec8d-40cc-a2d5-5bb1396ce272' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([-1.      , -0.882353, -0.764706, -0.647059, -0.529412, -0.411765,
+       -0.294118, -0.176471, -0.058824,  0.058824,  0.176471,  0.294118,
+        0.411765,  0.529412,  0.647059,  0.764706,  0.882353,  1.      ],
+      dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>z</span></div><div class='xr-var-dims'>(z)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.0 0.1364 0.2727 ... 1.364 1.5</div><input id='attrs-a588cffb-1f61-493a-9d67-473750a09235' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-a588cffb-1f61-493a-9d67-473750a09235' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-2eb5952f-9019-4e09-9df4-031c05924f5c' class='xr-var-data-in' type='checkbox'><label for='data-2eb5952f-9019-4e09-9df4-031c05924f5c' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0.      , 0.136364, 0.272727, 0.409091, 0.545455, 0.681818, 0.818182,
+       0.954545, 1.090909, 1.227273, 1.363636, 1.5     ], dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>time</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>int64</div><div class='xr-var-preview xr-preview'>0 1 2 3 4 5 6 7</div><input id='attrs-e82d8f03-7912-49f5-9fe2-a372d46ad08c' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-e82d8f03-7912-49f5-9fe2-a372d46ad08c' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-dbecf903-a41c-4753-99c1-162dc30fe538' class='xr-var-data-in' type='checkbox'><label for='data-dbecf903-a41c-4753-99c1-162dc30fe538' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0, 1, 2, 3, 4, 5, 6, 7])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-c563e5d3-5735-47a7-9704-8d2dd0c62b37' class='xr-section-summary-in' type='checkbox' checked /><label for='section-c563e5d3-5735-47a7-9704-8d2dd0c62b37' class='xr-section-summary' title='Expand/collapse section'>Data variables: <span>(3)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span>ux</span></div><div class='xr-var-dims'>(x, y, z, time)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(6, 6, 4, 1), meta=np.ndarray&gt;</div><input id='attrs-fc18cf6c-91a1-45d9-886a-6bfb4fa3a1ab' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-fc18cf6c-91a1-45d9-886a-6bfb4fa3a1ab' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-447e0f5b-6832-4e4a-8d56-e750aa55a1e6' class='xr-var-data-in' type='checkbox'><label for='data-447e0f5b-6832-4e4a-8d56-e750aa55a1e6' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><table>
+    <tr>
+        <td>
+            <table style="border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <td> </td>
+                        <th> Array </th>
+                        <th> Chunk </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <th> Bytes </th>
+                        <td> 162.00 kiB </td>
+                        <td> 576 B </td>
+                    </tr>
+                    
+                    <tr>
+                        <th> Shape </th>
+                        <td> (24, 18, 12, 8) </td>
+                        <td> (6, 6, 4, 1) </td>
+                    </tr>
+                    <tr>
+                        <th> Dask graph </th>
+                        <td colspan="2"> 288 chunks in 17 graph layers </td>
+                    </tr>
+                    <tr>
+                        <th> Data type </th>
+                        <td colspan="2"> float32 numpy.ndarray </td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+        <td>
+        <svg width="526" height="162" style="stroke:rgb(0,0,0);stroke-width:1" >
+
+  <!-- Horizontal lines -->
+  <line x1="0" y1="0" x2="120" y2="0" style="stroke-width:2" />
+  <line x1="0" y1="33" x2="120" y2="33" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="0" y1="0" x2="0" y2="33" style="stroke-width:2" />
+  <line x1="30" y1="0" x2="30" y2="33" />
+  <line x1="60" y1="0" x2="60" y2="33" />
+  <line x1="90" y1="0" x2="90" y2="33" />
+  <line x1="120" y1="0" x2="120" y2="33" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="0.0,0.0 120.0,0.0 120.0,33.38369844152673 0.0,33.38369844152673" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="60.0" y="53.38369844152673" font-size="1.0rem" font-weight="100" text-anchor="middle" >24</text>
+  <text x="140.0" y="16.691849220763366" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(0,140.0,16.691849220763366)">1</text>
+
+
+  <!-- Horizontal lines -->
+  <line x1="190" y1="0" x2="242" y2="52" style="stroke-width:2" />
+  <line x1="190" y1="20" x2="242" y2="72" />
+  <line x1="190" y1="40" x2="242" y2="92" />
+  <line x1="190" y1="60" x2="242" y2="112" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="190" y1="0" x2="190" y2="60" style="stroke-width:2" />
+  <line x1="207" y1="17" x2="207" y2="77" />
+  <line x1="225" y1="35" x2="225" y2="95" />
+  <line x1="242" y1="52" x2="242" y2="112" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="190.0,0.0 242.94117647058823,52.94117647058824 242.94117647058823,112.94117647058823 190.0,60.0" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Horizontal lines -->
+  <line x1="190" y1="0" x2="233" y2="0" style="stroke-width:2" />
+  <line x1="207" y1="17" x2="251" y2="17" />
+  <line x1="225" y1="35" x2="269" y2="35" />
+  <line x1="242" y1="52" x2="286" y2="52" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="190" y1="0" x2="242" y2="52" style="stroke-width:2" />
+  <line x1="195" y1="0" x2="248" y2="52" />
+  <line x1="200" y1="0" x2="253" y2="52" />
+  <line x1="206" y1="0" x2="259" y2="52" />
+  <line x1="211" y1="0" x2="264" y2="52" />
+  <line x1="217" y1="0" x2="270" y2="52" />
+  <line x1="222" y1="0" x2="275" y2="52" />
+  <line x1="228" y1="0" x2="281" y2="52" />
+  <line x1="233" y1="0" x2="286" y2="52" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="190.0,0.0 233.88583450710766,0.0 286.8270109776959,52.94117647058824 242.94117647058823,52.94117647058824" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Horizontal lines -->
+  <line x1="242" y1="52" x2="286" y2="52" style="stroke-width:2" />
+  <line x1="242" y1="72" x2="286" y2="72" />
+  <line x1="242" y1="92" x2="286" y2="92" />
+  <line x1="242" y1="112" x2="286" y2="112" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="242" y1="52" x2="242" y2="112" style="stroke-width:2" />
+  <line x1="248" y1="52" x2="248" y2="112" />
+  <line x1="253" y1="52" x2="253" y2="112" />
+  <line x1="259" y1="52" x2="259" y2="112" />
+  <line x1="264" y1="52" x2="264" y2="112" />
+  <line x1="270" y1="52" x2="270" y2="112" />
+  <line x1="275" y1="52" x2="275" y2="112" />
+  <line x1="281" y1="52" x2="281" y2="112" />
+  <line x1="286" y1="52" x2="286" y2="112" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="242.94117647058823,52.94117647058824 286.82701097769586,52.94117647058824 286.82701097769586,112.94117647058823 242.94117647058823,112.94117647058823" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="264.8840937241421" y="132.94117647058823" font-size="1.0rem" font-weight="100" text-anchor="middle" >8</text>
+  <text x="306.82701097769586" y="82.94117647058823" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(0,306.82701097769586,82.94117647058823)">12</text>
+  <text x="206.47058823529412" y="106.47058823529412" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(45,206.47058823529412,106.47058823529412)">18</text>
+</svg>
+        </td>
+    </tr>
+</table></div></li><li class='xr-var-item'><div class='xr-var-name'><span>uy</span></div><div class='xr-var-dims'>(x, y, z, time)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(6, 6, 4, 1), meta=np.ndarray&gt;</div><input id='attrs-924c4d03-6fc4-4e59-a449-a27a0e5e6bfa' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-924c4d03-6fc4-4e59-a449-a27a0e5e6bfa' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-0af0a571-802c-4977-a508-67b887a0c04d' class='xr-var-data-in' type='checkbox'><label for='data-0af0a571-802c-4977-a508-67b887a0c04d' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><table>
+    <tr>
+        <td>
+            <table style="border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <td> </td>
+                        <th> Array </th>
+                        <th> Chunk </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <th> Bytes </th>
+                        <td> 162.00 kiB </td>
+                        <td> 576 B </td>
+                    </tr>
+                    
+                    <tr>
+                        <th> Shape </th>
+                        <td> (24, 18, 12, 8) </td>
+                        <td> (6, 6, 4, 1) </td>
+                    </tr>
+                    <tr>
+                        <th> Dask graph </th>
+                        <td colspan="2"> 288 chunks in 17 graph layers </td>
+                    </tr>
+                    <tr>
+                        <th> Data type </th>
+                        <td colspan="2"> float32 numpy.ndarray </td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+        <td>
+        <svg width="526" height="162" style="stroke:rgb(0,0,0);stroke-width:1" >
+
+  <!-- Horizontal lines -->
+  <line x1="0" y1="0" x2="120" y2="0" style="stroke-width:2" />
+  <line x1="0" y1="33" x2="120" y2="33" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="0" y1="0" x2="0" y2="33" style="stroke-width:2" />
+  <line x1="30" y1="0" x2="30" y2="33" />
+  <line x1="60" y1="0" x2="60" y2="33" />
+  <line x1="90" y1="0" x2="90" y2="33" />
+  <line x1="120" y1="0" x2="120" y2="33" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="0.0,0.0 120.0,0.0 120.0,33.38369844152673 0.0,33.38369844152673" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="60.0" y="53.38369844152673" font-size="1.0rem" font-weight="100" text-anchor="middle" >24</text>
+  <text x="140.0" y="16.691849220763366" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(0,140.0,16.691849220763366)">1</text>
+
+
+  <!-- Horizontal lines -->
+  <line x1="190" y1="0" x2="242" y2="52" style="stroke-width:2" />
+  <line x1="190" y1="20" x2="242" y2="72" />
+  <line x1="190" y1="40" x2="242" y2="92" />
+  <line x1="190" y1="60" x2="242" y2="112" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="190" y1="0" x2="190" y2="60" style="stroke-width:2" />
+  <line x1="207" y1="17" x2="207" y2="77" />
+  <line x1="225" y1="35" x2="225" y2="95" />
+  <line x1="242" y1="52" x2="242" y2="112" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="190.0,0.0 242.94117647058823,52.94117647058824 242.94117647058823,112.94117647058823 190.0,60.0" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Horizontal lines -->
+  <line x1="190" y1="0" x2="233" y2="0" style="stroke-width:2" />
+  <line x1="207" y1="17" x2="251" y2="17" />
+  <line x1="225" y1="35" x2="269" y2="35" />
+  <line x1="242" y1="52" x2="286" y2="52" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="190" y1="0" x2="242" y2="52" style="stroke-width:2" />
+  <line x1="195" y1="0" x2="248" y2="52" />
+  <line x1="200" y1="0" x2="253" y2="52" />
+  <line x1="206" y1="0" x2="259" y2="52" />
+  <line x1="211" y1="0" x2="264" y2="52" />
+  <line x1="217" y1="0" x2="270" y2="52" />
+  <line x1="222" y1="0" x2="275" y2="52" />
+  <line x1="228" y1="0" x2="281" y2="52" />
+  <line x1="233" y1="0" x2="286" y2="52" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="190.0,0.0 233.88583450710766,0.0 286.8270109776959,52.94117647058824 242.94117647058823,52.94117647058824" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Horizontal lines -->
+  <line x1="242" y1="52" x2="286" y2="52" style="stroke-width:2" />
+  <line x1="242" y1="72" x2="286" y2="72" />
+  <line x1="242" y1="92" x2="286" y2="92" />
+  <line x1="242" y1="112" x2="286" y2="112" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="242" y1="52" x2="242" y2="112" style="stroke-width:2" />
+  <line x1="248" y1="52" x2="248" y2="112" />
+  <line x1="253" y1="52" x2="253" y2="112" />
+  <line x1="259" y1="52" x2="259" y2="112" />
+  <line x1="264" y1="52" x2="264" y2="112" />
+  <line x1="270" y1="52" x2="270" y2="112" />
+  <line x1="275" y1="52" x2="275" y2="112" />
+  <line x1="281" y1="52" x2="281" y2="112" />
+  <line x1="286" y1="52" x2="286" y2="112" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="242.94117647058823,52.94117647058824 286.82701097769586,52.94117647058824 286.82701097769586,112.94117647058823 242.94117647058823,112.94117647058823" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="264.8840937241421" y="132.94117647058823" font-size="1.0rem" font-weight="100" text-anchor="middle" >8</text>
+  <text x="306.82701097769586" y="82.94117647058823" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(0,306.82701097769586,82.94117647058823)">12</text>
+  <text x="206.47058823529412" y="106.47058823529412" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(45,206.47058823529412,106.47058823529412)">18</text>
+</svg>
+        </td>
+    </tr>
+</table></div></li><li class='xr-var-item'><div class='xr-var-name'><span>uz</span></div><div class='xr-var-dims'>(x, y, z, time)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(6, 6, 4, 1), meta=np.ndarray&gt;</div><input id='attrs-3b3c1930-b42e-436a-a785-3cc751283670' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-3b3c1930-b42e-436a-a785-3cc751283670' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-c0f64aa5-d014-4f8b-a146-4519108ec2b6' class='xr-var-data-in' type='checkbox'><label for='data-c0f64aa5-d014-4f8b-a146-4519108ec2b6' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><table>
+    <tr>
+        <td>
+            <table style="border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <td> </td>
+                        <th> Array </th>
+                        <th> Chunk </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <th> Bytes </th>
+                        <td> 162.00 kiB </td>
+                        <td> 576 B </td>
+                    </tr>
+                    
+                    <tr>
+                        <th> Shape </th>
+                        <td> (24, 18, 12, 8) </td>
+                        <td> (6, 6, 4, 1) </td>
+                    </tr>
+                    <tr>
+                        <th> Dask graph </th>
+                        <td colspan="2"> 288 chunks in 17 graph layers </td>
+                    </tr>
+                    <tr>
+                        <th> Data type </th>
+                        <td colspan="2"> float32 numpy.ndarray </td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+        <td>
+        <svg width="526" height="162" style="stroke:rgb(0,0,0);stroke-width:1" >
+
+  <!-- Horizontal lines -->
+  <line x1="0" y1="0" x2="120" y2="0" style="stroke-width:2" />
+  <line x1="0" y1="33" x2="120" y2="33" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="0" y1="0" x2="0" y2="33" style="stroke-width:2" />
+  <line x1="30" y1="0" x2="30" y2="33" />
+  <line x1="60" y1="0" x2="60" y2="33" />
+  <line x1="90" y1="0" x2="90" y2="33" />
+  <line x1="120" y1="0" x2="120" y2="33" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="0.0,0.0 120.0,0.0 120.0,33.38369844152673 0.0,33.38369844152673" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="60.0" y="53.38369844152673" font-size="1.0rem" font-weight="100" text-anchor="middle" >24</text>
+  <text x="140.0" y="16.691849220763366" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(0,140.0,16.691849220763366)">1</text>
+
+
+  <!-- Horizontal lines -->
+  <line x1="190" y1="0" x2="242" y2="52" style="stroke-width:2" />
+  <line x1="190" y1="20" x2="242" y2="72" />
+  <line x1="190" y1="40" x2="242" y2="92" />
+  <line x1="190" y1="60" x2="242" y2="112" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="190" y1="0" x2="190" y2="60" style="stroke-width:2" />
+  <line x1="207" y1="17" x2="207" y2="77" />
+  <line x1="225" y1="35" x2="225" y2="95" />
+  <line x1="242" y1="52" x2="242" y2="112" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="190.0,0.0 242.94117647058823,52.94117647058824 242.94117647058823,112.94117647058823 190.0,60.0" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Horizontal lines -->
+  <line x1="190" y1="0" x2="233" y2="0" style="stroke-width:2" />
+  <line x1="207" y1="17" x2="251" y2="17" />
+  <line x1="225" y1="35" x2="269" y2="35" />
+  <line x1="242" y1="52" x2="286" y2="52" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="190" y1="0" x2="242" y2="52" style="stroke-width:2" />
+  <line x1="195" y1="0" x2="248" y2="52" />
+  <line x1="200" y1="0" x2="253" y2="52" />
+  <line x1="206" y1="0" x2="259" y2="52" />
+  <line x1="211" y1="0" x2="264" y2="52" />
+  <line x1="217" y1="0" x2="270" y2="52" />
+  <line x1="222" y1="0" x2="275" y2="52" />
+  <line x1="228" y1="0" x2="281" y2="52" />
+  <line x1="233" y1="0" x2="286" y2="52" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="190.0,0.0 233.88583450710766,0.0 286.8270109776959,52.94117647058824 242.94117647058823,52.94117647058824" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Horizontal lines -->
+  <line x1="242" y1="52" x2="286" y2="52" style="stroke-width:2" />
+  <line x1="242" y1="72" x2="286" y2="72" />
+  <line x1="242" y1="92" x2="286" y2="92" />
+  <line x1="242" y1="112" x2="286" y2="112" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="242" y1="52" x2="242" y2="112" style="stroke-width:2" />
+  <line x1="248" y1="52" x2="248" y2="112" />
+  <line x1="253" y1="52" x2="253" y2="112" />
+  <line x1="259" y1="52" x2="259" y2="112" />
+  <line x1="264" y1="52" x2="264" y2="112" />
+  <line x1="270" y1="52" x2="270" y2="112" />
+  <line x1="275" y1="52" x2="275" y2="112" />
+  <line x1="281" y1="52" x2="281" y2="112" />
+  <line x1="286" y1="52" x2="286" y2="112" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="242.94117647058823,52.94117647058824 286.82701097769586,52.94117647058824 286.82701097769586,112.94117647058823 242.94117647058823,112.94117647058823" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="264.8840937241421" y="132.94117647058823" font-size="1.0rem" font-weight="100" text-anchor="middle" >8</text>
+  <text x="306.82701097769586" y="82.94117647058823" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(0,306.82701097769586,82.94117647058823)">12</text>
+  <text x="206.47058823529412" y="106.47058823529412" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(45,206.47058823529412,106.47058823529412)">18</text>
+</svg>
+        </td>
+    </tr>
+</table></div></li></ul></div></li></ul></div></div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">speed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+    <span class="n">lazy_dataset</span><span class="p">[</span><span class="s2">&quot;ux&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">lazy_dataset</span><span class="p">[</span><span class="s2">&quot;uy&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">lazy_dataset</span><span class="p">[</span><span class="s2">&quot;uz&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
+<span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">&quot;speed&quot;</span><span class="p">)</span>
+<span class="n">speed</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div><svg style="position: absolute; width: 0; height: 0; overflow: hidden">
+<defs>
+<symbol id="icon-database" viewBox="0 0 32 32">
+<path d="M16 0c-8.837 0-16 2.239-16 5v4c0 2.761 7.163 5 16 5s16-2.239 16-5v-4c0-2.761-7.163-5-16-5z"></path>
+<path d="M16 17c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
+<path d="M16 26c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
+</symbol>
+<symbol id="icon-file-text2" viewBox="0 0 32 32">
+<path d="M28.681 7.159c-0.694-0.947-1.662-2.053-2.724-3.116s-2.169-2.030-3.116-2.724c-1.612-1.182-2.393-1.319-2.841-1.319h-15.5c-1.378 0-2.5 1.121-2.5 2.5v27c0 1.378 1.122 2.5 2.5 2.5h23c1.378 0 2.5-1.122 2.5-2.5v-19.5c0-0.448-0.137-1.23-1.319-2.841zM24.543 5.457c0.959 0.959 1.712 1.825 2.268 2.543h-4.811v-4.811c0.718 0.556 1.584 1.309 2.543 2.268zM28 29.5c0 0.271-0.229 0.5-0.5 0.5h-23c-0.271 0-0.5-0.229-0.5-0.5v-27c0-0.271 0.229-0.5 0.5-0.5 0 0 15.499-0 15.5 0v7c0 0.552 0.448 1 1 1h7v19.5z"></path>
+<path d="M23 26h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+<path d="M23 22h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+<path d="M23 18h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+</symbol>
+</defs>
+</svg>
+<style>/* CSS stylesheet for displaying xarray objects in notebooks */
+
+:root {
+  --xr-font-color0: var(
+    --jp-content-font-color0,
+    var(--pst-color-text-base rgba(0, 0, 0, 1))
+  );
+  --xr-font-color2: var(
+    --jp-content-font-color2,
+    var(--pst-color-text-base, rgba(0, 0, 0, 0.54))
+  );
+  --xr-font-color3: var(
+    --jp-content-font-color3,
+    var(--pst-color-text-base, rgba(0, 0, 0, 0.38))
+  );
+  --xr-border-color: var(
+    --jp-border-color2,
+    hsl(from var(--pst-color-on-background, white) h s calc(l - 10))
+  );
+  --xr-disabled-color: var(
+    --jp-layout-color3,
+    hsl(from var(--pst-color-on-background, white) h s calc(l - 40))
+  );
+  --xr-background-color: var(
+    --jp-layout-color0,
+    var(--pst-color-on-background, white)
+  );
+  --xr-background-color-row-even: var(
+    --jp-layout-color1,
+    hsl(from var(--pst-color-on-background, white) h s calc(l - 5))
+  );
+  --xr-background-color-row-odd: var(
+    --jp-layout-color2,
+    hsl(from var(--pst-color-on-background, white) h s calc(l - 15))
+  );
+}
+
+html[theme="dark"],
+html[data-theme="dark"],
+body[data-theme="dark"],
+body.vscode-dark {
+  --xr-font-color0: var(
+    --jp-content-font-color0,
+    var(--pst-color-text-base, rgba(255, 255, 255, 1))
+  );
+  --xr-font-color2: var(
+    --jp-content-font-color2,
+    var(--pst-color-text-base, rgba(255, 255, 255, 0.54))
+  );
+  --xr-font-color3: var(
+    --jp-content-font-color3,
+    var(--pst-color-text-base, rgba(255, 255, 255, 0.38))
+  );
+  --xr-border-color: var(
+    --jp-border-color2,
+    hsl(from var(--pst-color-on-background, #111111) h s calc(l + 10))
+  );
+  --xr-disabled-color: var(
+    --jp-layout-color3,
+    hsl(from var(--pst-color-on-background, #111111) h s calc(l + 40))
+  );
+  --xr-background-color: var(
+    --jp-layout-color0,
+    var(--pst-color-on-background, #111111)
+  );
+  --xr-background-color-row-even: var(
+    --jp-layout-color1,
+    hsl(from var(--pst-color-on-background, #111111) h s calc(l + 5))
+  );
+  --xr-background-color-row-odd: var(
+    --jp-layout-color2,
+    hsl(from var(--pst-color-on-background, #111111) h s calc(l + 15))
+  );
+}
+
+.xr-wrap {
+  display: block !important;
+  min-width: 300px;
+  max-width: 700px;
+  line-height: 1.6;
+  padding-bottom: 4px;
+}
+
+.xr-text-repr-fallback {
+  /* fallback to plain text repr when CSS is not injected (untrusted notebook) */
+  display: none;
+}
+
+.xr-header {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.xr-header {
+  border-bottom: solid 1px var(--xr-border-color);
+  margin-bottom: 4px;
+}
+
+.xr-header > div,
+.xr-header > ul {
+  display: inline;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.xr-obj-type,
+.xr-obj-name {
+  margin-left: 2px;
+  margin-right: 10px;
+}
+
+.xr-obj-type,
+.xr-group-box-contents > label {
+  color: var(--xr-font-color2);
+  display: block;
+}
+
+.xr-sections {
+  padding-left: 0 !important;
+  display: grid;
+  grid-template-columns: 150px auto auto 1fr 0 20px 0 20px;
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+
+.xr-section-item {
+  display: contents;
+}
+
+.xr-section-item > input,
+.xr-group-box-contents > input,
+.xr-array-wrap > input {
+  display: block;
+  opacity: 0;
+  height: 0;
+  margin: 0;
+}
+
+.xr-section-item > input + label,
+.xr-var-item > input + label {
+  color: var(--xr-disabled-color);
+}
+
+.xr-section-item > input:enabled + label,
+.xr-var-item > input:enabled + label,
+.xr-array-wrap > input:enabled + label,
+.xr-group-box-contents > input:enabled + label {
+  cursor: pointer;
+  color: var(--xr-font-color2);
+}
+
+.xr-section-item > input:focus-visible + label,
+.xr-var-item > input:focus-visible + label,
+.xr-array-wrap > input:focus-visible + label,
+.xr-group-box-contents > input:focus-visible + label {
+  outline: auto;
+}
+
+.xr-section-item > input:enabled + label:hover,
+.xr-var-item > input:enabled + label:hover,
+.xr-array-wrap > input:enabled + label:hover,
+.xr-group-box-contents > input:enabled + label:hover {
+  color: var(--xr-font-color0);
+}
+
+.xr-section-summary {
+  grid-column: 1;
+  color: var(--xr-font-color2);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.xr-section-summary > em {
+  font-weight: normal;
+}
+
+.xr-span-grid {
+  grid-column-end: -1;
+}
+
+.xr-section-summary > span {
+  display: inline-block;
+  padding-left: 0.3em;
+}
+
+.xr-group-box-contents > input:checked + label > span {
+  display: inline-block;
+  padding-left: 0.6em;
+}
+
+.xr-section-summary-in:disabled + label {
+  color: var(--xr-font-color2);
+}
+
+.xr-section-summary-in + label:before {
+  display: inline-block;
+  content: "►";
+  font-size: 11px;
+  width: 15px;
+  text-align: center;
+}
+
+.xr-section-summary-in:disabled + label:before {
+  color: var(--xr-disabled-color);
+}
+
+.xr-section-summary-in:checked + label:before {
+  content: "▼";
+}
+
+.xr-section-summary-in:checked + label > span {
+  display: none;
+}
+
+.xr-section-summary,
+.xr-section-inline-details,
+.xr-group-box-contents > label {
+  padding-top: 4px;
+}
+
+.xr-section-inline-details {
+  grid-column: 2 / -1;
+}
+
+.xr-section-details {
+  grid-column: 1 / -1;
+  margin-top: 4px;
+  margin-bottom: 5px;
+}
+
+.xr-section-summary-in ~ .xr-section-details {
+  display: none;
+}
+
+.xr-section-summary-in:checked ~ .xr-section-details {
+  display: contents;
+}
+
+.xr-children {
+  display: inline-grid;
+  grid-template-columns: 100%;
+  grid-column: 1 / -1;
+  padding-top: 4px;
+}
+
+.xr-group-box {
+  display: inline-grid;
+  grid-template-columns: 0px 30px auto;
+}
+
+.xr-group-box-vline {
+  grid-column-start: 1;
+  border-right: 0.2em solid;
+  border-color: var(--xr-border-color);
+  width: 0px;
+}
+
+.xr-group-box-hline {
+  grid-column-start: 2;
+  grid-row-start: 1;
+  height: 1em;
+  width: 26px;
+  border-bottom: 0.2em solid;
+  border-color: var(--xr-border-color);
+}
+
+.xr-group-box-contents {
+  grid-column-start: 3;
+  padding-bottom: 4px;
+}
+
+.xr-group-box-contents > label::before {
+  content: "📂";
+  padding-right: 0.3em;
+}
+
+.xr-group-box-contents > input:checked + label::before {
+  content: "📁";
+}
+
+.xr-group-box-contents > input:checked + label {
+  padding-bottom: 0px;
+}
+
+.xr-group-box-contents > input:checked ~ .xr-sections {
+  display: none;
+}
+
+.xr-group-box-contents > input + label > span {
+  display: none;
+}
+
+.xr-group-box-ellipsis {
+  font-size: 1.4em;
+  font-weight: 900;
+  color: var(--xr-font-color2);
+  letter-spacing: 0.15em;
+  cursor: default;
+}
+
+.xr-array-wrap {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 20px auto;
+}
+
+.xr-array-wrap > label {
+  grid-column: 1;
+  vertical-align: top;
+}
+
+.xr-preview {
+  color: var(--xr-font-color3);
+}
+
+.xr-array-preview,
+.xr-array-data {
+  padding: 0 5px !important;
+  grid-column: 2;
+}
+
+.xr-array-data,
+.xr-array-in:checked ~ .xr-array-preview {
+  display: none;
+}
+
+.xr-array-in:checked ~ .xr-array-data,
+.xr-array-preview {
+  display: inline-block;
+}
+
+.xr-dim-list {
+  display: inline-block !important;
+  list-style: none;
+  padding: 0 !important;
+  margin: 0;
+}
+
+.xr-dim-list li {
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+}
+
+.xr-dim-list:before {
+  content: "(";
+}
+
+.xr-dim-list:after {
+  content: ")";
+}
+
+.xr-dim-list li:not(:last-child):after {
+  content: ",";
+  padding-right: 5px;
+}
+
+.xr-has-index {
+  font-weight: bold;
+}
+
+.xr-var-list,
+.xr-var-item {
+  display: contents;
+}
+
+.xr-var-item > div,
+.xr-var-item label,
+.xr-var-item > .xr-var-name span {
+  background-color: var(--xr-background-color-row-even);
+  border-color: var(--xr-background-color-row-odd);
+  margin-bottom: 0;
+  padding-top: 2px;
+}
+
+.xr-var-item > .xr-var-name:hover span {
+  padding-right: 5px;
+}
+
+.xr-var-list > li:nth-child(odd) > div,
+.xr-var-list > li:nth-child(odd) > label,
+.xr-var-list > li:nth-child(odd) > .xr-var-name span {
+  background-color: var(--xr-background-color-row-odd);
+  border-color: var(--xr-background-color-row-even);
+}
+
+.xr-var-name {
+  grid-column: 1;
+}
+
+.xr-var-dims {
+  grid-column: 2;
+}
+
+.xr-var-dtype {
+  grid-column: 3;
+  text-align: right;
+  color: var(--xr-font-color2);
+}
+
+.xr-var-preview {
+  grid-column: 4;
+}
+
+.xr-index-preview {
+  grid-column: 2 / 5;
+  color: var(--xr-font-color2);
+}
+
+.xr-var-name,
+.xr-var-dims,
+.xr-var-dtype,
+.xr-preview,
+.xr-attrs dt {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 10px;
+}
+
+.xr-var-name:hover,
+.xr-var-dims:hover,
+.xr-var-dtype:hover,
+.xr-attrs dt:hover {
+  overflow: visible;
+  width: auto;
+  z-index: 1;
+}
+
+.xr-var-attrs,
+.xr-var-data,
+.xr-index-data {
+  display: none;
+  border-top: 2px dotted var(--xr-background-color);
+  padding-bottom: 20px !important;
+  padding-top: 10px !important;
+}
+
+.xr-var-attrs-in + label,
+.xr-var-data-in + label,
+.xr-index-data-in + label {
+  padding: 0 1px;
+}
+
+.xr-var-attrs-in:checked ~ .xr-var-attrs,
+.xr-var-data-in:checked ~ .xr-var-data,
+.xr-index-data-in:checked ~ .xr-index-data {
+  display: block;
+}
+
+.xr-var-data > table {
+  float: right;
+}
+
+.xr-var-data > pre,
+.xr-index-data > pre,
+.xr-var-data > table > tbody > tr {
+  background-color: transparent !important;
+}
+
+.xr-var-name span,
+.xr-var-data,
+.xr-index-name div,
+.xr-index-data,
+.xr-attrs {
+  padding-left: 25px !important;
+}
+
+.xr-attrs,
+.xr-var-attrs,
+.xr-var-data,
+.xr-index-data {
+  grid-column: 1 / -1;
+}
+
+dl.xr-attrs {
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 125px auto;
+}
+
+.xr-attrs dt,
+.xr-attrs dd {
+  padding: 0;
+  margin: 0;
+  float: left;
+  padding-right: 10px;
+  width: auto;
+}
+
+.xr-attrs dt {
+  font-weight: normal;
+  grid-column: 1;
+}
+
+.xr-attrs dt:hover span {
+  display: inline-block;
+  background: var(--xr-background-color);
+  padding-right: 10px;
+}
+
+.xr-attrs dd {
+  grid-column: 2;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.xr-icon-database,
+.xr-icon-file-text2,
+.xr-no-icon {
+  display: inline-block;
+  vertical-align: middle;
+  width: 1em;
+  height: 1.5em !important;
+  stroke-width: 0;
+  stroke: currentColor;
+  fill: currentColor;
+}
+
+.xr-var-attrs-in:checked + label > .xr-icon-file-text2,
+.xr-var-data-in:checked + label > .xr-icon-database,
+.xr-index-data-in:checked + label > .xr-icon-database {
+  color: var(--xr-font-color0);
+  filter: drop-shadow(1px 1px 5px var(--xr-font-color2));
+  stroke-width: 0.8px;
+}
+</style><pre class='xr-text-repr-fallback'>&lt;xarray.DataArray &#x27;speed&#x27; (x: 24, y: 18, z: 12, time: 8)&gt; Size: 166kB
+dask.array&lt;sqrt, shape=(24, 18, 12, 8), dtype=float32, chunksize=(6, 6, 4, 1), chunktype=numpy.ndarray&gt;
+Coordinates:
+  * x        (x) float32 96B 0.0 0.08696 0.1739 0.2609 ... 1.739 1.826 1.913 2.0
+  * y        (y) float32 72B -1.0 -0.8824 -0.7647 -0.6471 ... 0.7647 0.8824 1.0
+  * z        (z) float32 48B 0.0 0.1364 0.2727 0.4091 ... 1.091 1.227 1.364 1.5
+  * time     (time) int64 64B 0 1 2 3 4 5 6 7</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.DataArray</div><div class='xr-obj-name'>&#x27;speed&#x27;</div><ul class='xr-dim-list'><li><span class='xr-has-index'>x</span>: 24</li><li><span class='xr-has-index'>y</span>: 18</li><li><span class='xr-has-index'>z</span>: 12</li><li><span class='xr-has-index'>time</span>: 8</li></ul></div><ul class='xr-sections'><li class='xr-section-item'><div class='xr-array-wrap'><input id='section-1b72d984-25d0-4748-864c-c406c2bdb1ac' class='xr-array-in' type='checkbox' checked><label for='section-1b72d984-25d0-4748-864c-c406c2bdb1ac' title='Show/hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-array-preview xr-preview'><span>dask.array&lt;chunksize=(6, 6, 4, 1), meta=np.ndarray&gt;</span></div><div class='xr-array-data'><table>
+    <tr>
+        <td>
+            <table style="border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <td> </td>
+                        <th> Array </th>
+                        <th> Chunk </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <th> Bytes </th>
+                        <td> 162.00 kiB </td>
+                        <td> 576 B </td>
+                    </tr>
+                    
+                    <tr>
+                        <th> Shape </th>
+                        <td> (24, 18, 12, 8) </td>
+                        <td> (6, 6, 4, 1) </td>
+                    </tr>
+                    <tr>
+                        <th> Dask graph </th>
+                        <td colspan="2"> 288 chunks in 57 graph layers </td>
+                    </tr>
+                    <tr>
+                        <th> Data type </th>
+                        <td colspan="2"> float32 numpy.ndarray </td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+        <td>
+        <svg width="526" height="162" style="stroke:rgb(0,0,0);stroke-width:1" >
+
+  <!-- Horizontal lines -->
+  <line x1="0" y1="0" x2="120" y2="0" style="stroke-width:2" />
+  <line x1="0" y1="33" x2="120" y2="33" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="0" y1="0" x2="0" y2="33" style="stroke-width:2" />
+  <line x1="30" y1="0" x2="30" y2="33" />
+  <line x1="60" y1="0" x2="60" y2="33" />
+  <line x1="90" y1="0" x2="90" y2="33" />
+  <line x1="120" y1="0" x2="120" y2="33" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="0.0,0.0 120.0,0.0 120.0,33.38369844152673 0.0,33.38369844152673" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="60.0" y="53.38369844152673" font-size="1.0rem" font-weight="100" text-anchor="middle" >24</text>
+  <text x="140.0" y="16.691849220763366" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(0,140.0,16.691849220763366)">1</text>
+
+
+  <!-- Horizontal lines -->
+  <line x1="190" y1="0" x2="242" y2="52" style="stroke-width:2" />
+  <line x1="190" y1="20" x2="242" y2="72" />
+  <line x1="190" y1="40" x2="242" y2="92" />
+  <line x1="190" y1="60" x2="242" y2="112" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="190" y1="0" x2="190" y2="60" style="stroke-width:2" />
+  <line x1="207" y1="17" x2="207" y2="77" />
+  <line x1="225" y1="35" x2="225" y2="95" />
+  <line x1="242" y1="52" x2="242" y2="112" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="190.0,0.0 242.94117647058823,52.94117647058824 242.94117647058823,112.94117647058823 190.0,60.0" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Horizontal lines -->
+  <line x1="190" y1="0" x2="233" y2="0" style="stroke-width:2" />
+  <line x1="207" y1="17" x2="251" y2="17" />
+  <line x1="225" y1="35" x2="269" y2="35" />
+  <line x1="242" y1="52" x2="286" y2="52" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="190" y1="0" x2="242" y2="52" style="stroke-width:2" />
+  <line x1="195" y1="0" x2="248" y2="52" />
+  <line x1="200" y1="0" x2="253" y2="52" />
+  <line x1="206" y1="0" x2="259" y2="52" />
+  <line x1="211" y1="0" x2="264" y2="52" />
+  <line x1="217" y1="0" x2="270" y2="52" />
+  <line x1="222" y1="0" x2="275" y2="52" />
+  <line x1="228" y1="0" x2="281" y2="52" />
+  <line x1="233" y1="0" x2="286" y2="52" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="190.0,0.0 233.88583450710766,0.0 286.8270109776959,52.94117647058824 242.94117647058823,52.94117647058824" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Horizontal lines -->
+  <line x1="242" y1="52" x2="286" y2="52" style="stroke-width:2" />
+  <line x1="242" y1="72" x2="286" y2="72" />
+  <line x1="242" y1="92" x2="286" y2="92" />
+  <line x1="242" y1="112" x2="286" y2="112" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="242" y1="52" x2="242" y2="112" style="stroke-width:2" />
+  <line x1="248" y1="52" x2="248" y2="112" />
+  <line x1="253" y1="52" x2="253" y2="112" />
+  <line x1="259" y1="52" x2="259" y2="112" />
+  <line x1="264" y1="52" x2="264" y2="112" />
+  <line x1="270" y1="52" x2="270" y2="112" />
+  <line x1="275" y1="52" x2="275" y2="112" />
+  <line x1="281" y1="52" x2="281" y2="112" />
+  <line x1="286" y1="52" x2="286" y2="112" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="242.94117647058823,52.94117647058824 286.82701097769586,52.94117647058824 286.82701097769586,112.94117647058823 242.94117647058823,112.94117647058823" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="264.8840937241421" y="132.94117647058823" font-size="1.0rem" font-weight="100" text-anchor="middle" >8</text>
+  <text x="306.82701097769586" y="82.94117647058823" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(0,306.82701097769586,82.94117647058823)">12</text>
+  <text x="206.47058823529412" y="106.47058823529412" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(45,206.47058823529412,106.47058823529412)">18</text>
+</svg>
+        </td>
+    </tr>
+</table></div></div></li><li class='xr-section-item'><input id='section-d592e1bd-345a-4903-921f-232c65eae3c8' class='xr-section-summary-in' type='checkbox' checked /><label for='section-d592e1bd-345a-4903-921f-232c65eae3c8' class='xr-section-summary' title='Expand/collapse section'>Coordinates: <span>(4)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>x</span></div><div class='xr-var-dims'>(x)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.0 0.08696 0.1739 ... 1.913 2.0</div><input id='attrs-930187e4-795a-498c-85d7-c266d674ed90' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-930187e4-795a-498c-85d7-c266d674ed90' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-5e815946-6273-466a-a187-9588df9f34ca' class='xr-var-data-in' type='checkbox'><label for='data-5e815946-6273-466a-a187-9588df9f34ca' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0.      , 0.086957, 0.173913, 0.26087 , 0.347826, 0.434783, 0.521739,
+       0.608696, 0.695652, 0.782609, 0.869565, 0.956522, 1.043478, 1.130435,
+       1.217391, 1.304348, 1.391304, 1.478261, 1.565217, 1.652174, 1.73913 ,
+       1.826087, 1.913043, 2.      ], dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>y</span></div><div class='xr-var-dims'>(y)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>-1.0 -0.8824 -0.7647 ... 0.8824 1.0</div><input id='attrs-1c9bc1ee-cd8b-484f-94da-fbbb63acb917' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-1c9bc1ee-cd8b-484f-94da-fbbb63acb917' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-4df2fffc-6af0-463f-beb2-89c20b1493f2' class='xr-var-data-in' type='checkbox'><label for='data-4df2fffc-6af0-463f-beb2-89c20b1493f2' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([-1.      , -0.882353, -0.764706, -0.647059, -0.529412, -0.411765,
+       -0.294118, -0.176471, -0.058824,  0.058824,  0.176471,  0.294118,
+        0.411765,  0.529412,  0.647059,  0.764706,  0.882353,  1.      ],
+      dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>z</span></div><div class='xr-var-dims'>(z)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.0 0.1364 0.2727 ... 1.364 1.5</div><input id='attrs-4ea2bd92-fb0b-42bb-ad46-d62c16244d37' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-4ea2bd92-fb0b-42bb-ad46-d62c16244d37' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-1f90cb44-56c1-4872-a0b9-04662d47faa6' class='xr-var-data-in' type='checkbox'><label for='data-1f90cb44-56c1-4872-a0b9-04662d47faa6' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0.      , 0.136364, 0.272727, 0.409091, 0.545455, 0.681818, 0.818182,
+       0.954545, 1.090909, 1.227273, 1.363636, 1.5     ], dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>time</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>int64</div><div class='xr-var-preview xr-preview'>0 1 2 3 4 5 6 7</div><input id='attrs-dba1c930-8265-467c-b739-23890d3884a5' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-dba1c930-8265-467c-b739-23890d3884a5' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-8438bcb3-8d6c-4c9f-9a40-e2216053e0e9' class='xr-var-data-in' type='checkbox'><label for='data-8438bcb3-8d6c-4c9f-9a40-e2216053e0e9' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0, 1, 2, 3, 4, 5, 6, 7])</pre></div></li></ul></div></li></ul></div></div></div></div>
+</div>
+<p>The derived <code class="docutils literal notranslate"><span class="pre">speed</span></code> array is still lazy. You can compute a lightweight summary first, then decide whether to persist a full result.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">speed_time_series</span> <span class="o">=</span> <span class="n">speed</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="n">speed_time_series</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div><svg style="position: absolute; width: 0; height: 0; overflow: hidden">
+<defs>
+<symbol id="icon-database" viewBox="0 0 32 32">
+<path d="M16 0c-8.837 0-16 2.239-16 5v4c0 2.761 7.163 5 16 5s16-2.239 16-5v-4c0-2.761-7.163-5-16-5z"></path>
+<path d="M16 17c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
+<path d="M16 26c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
+</symbol>
+<symbol id="icon-file-text2" viewBox="0 0 32 32">
+<path d="M28.681 7.159c-0.694-0.947-1.662-2.053-2.724-3.116s-2.169-2.030-3.116-2.724c-1.612-1.182-2.393-1.319-2.841-1.319h-15.5c-1.378 0-2.5 1.121-2.5 2.5v27c0 1.378 1.122 2.5 2.5 2.5h23c1.378 0 2.5-1.122 2.5-2.5v-19.5c0-0.448-0.137-1.23-1.319-2.841zM24.543 5.457c0.959 0.959 1.712 1.825 2.268 2.543h-4.811v-4.811c0.718 0.556 1.584 1.309 2.543 2.268zM28 29.5c0 0.271-0.229 0.5-0.5 0.5h-23c-0.271 0-0.5-0.229-0.5-0.5v-27c0-0.271 0.229-0.5 0.5-0.5 0 0 15.499-0 15.5 0v7c0 0.552 0.448 1 1 1h7v19.5z"></path>
+<path d="M23 26h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+<path d="M23 22h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+<path d="M23 18h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+</symbol>
+</defs>
+</svg>
+<style>/* CSS stylesheet for displaying xarray objects in notebooks */
+
+:root {
+  --xr-font-color0: var(
+    --jp-content-font-color0,
+    var(--pst-color-text-base rgba(0, 0, 0, 1))
+  );
+  --xr-font-color2: var(
+    --jp-content-font-color2,
+    var(--pst-color-text-base, rgba(0, 0, 0, 0.54))
+  );
+  --xr-font-color3: var(
+    --jp-content-font-color3,
+    var(--pst-color-text-base, rgba(0, 0, 0, 0.38))
+  );
+  --xr-border-color: var(
+    --jp-border-color2,
+    hsl(from var(--pst-color-on-background, white) h s calc(l - 10))
+  );
+  --xr-disabled-color: var(
+    --jp-layout-color3,
+    hsl(from var(--pst-color-on-background, white) h s calc(l - 40))
+  );
+  --xr-background-color: var(
+    --jp-layout-color0,
+    var(--pst-color-on-background, white)
+  );
+  --xr-background-color-row-even: var(
+    --jp-layout-color1,
+    hsl(from var(--pst-color-on-background, white) h s calc(l - 5))
+  );
+  --xr-background-color-row-odd: var(
+    --jp-layout-color2,
+    hsl(from var(--pst-color-on-background, white) h s calc(l - 15))
+  );
+}
+
+html[theme="dark"],
+html[data-theme="dark"],
+body[data-theme="dark"],
+body.vscode-dark {
+  --xr-font-color0: var(
+    --jp-content-font-color0,
+    var(--pst-color-text-base, rgba(255, 255, 255, 1))
+  );
+  --xr-font-color2: var(
+    --jp-content-font-color2,
+    var(--pst-color-text-base, rgba(255, 255, 255, 0.54))
+  );
+  --xr-font-color3: var(
+    --jp-content-font-color3,
+    var(--pst-color-text-base, rgba(255, 255, 255, 0.38))
+  );
+  --xr-border-color: var(
+    --jp-border-color2,
+    hsl(from var(--pst-color-on-background, #111111) h s calc(l + 10))
+  );
+  --xr-disabled-color: var(
+    --jp-layout-color3,
+    hsl(from var(--pst-color-on-background, #111111) h s calc(l + 40))
+  );
+  --xr-background-color: var(
+    --jp-layout-color0,
+    var(--pst-color-on-background, #111111)
+  );
+  --xr-background-color-row-even: var(
+    --jp-layout-color1,
+    hsl(from var(--pst-color-on-background, #111111) h s calc(l + 5))
+  );
+  --xr-background-color-row-odd: var(
+    --jp-layout-color2,
+    hsl(from var(--pst-color-on-background, #111111) h s calc(l + 15))
+  );
+}
+
+.xr-wrap {
+  display: block !important;
+  min-width: 300px;
+  max-width: 700px;
+  line-height: 1.6;
+  padding-bottom: 4px;
+}
+
+.xr-text-repr-fallback {
+  /* fallback to plain text repr when CSS is not injected (untrusted notebook) */
+  display: none;
+}
+
+.xr-header {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.xr-header {
+  border-bottom: solid 1px var(--xr-border-color);
+  margin-bottom: 4px;
+}
+
+.xr-header > div,
+.xr-header > ul {
+  display: inline;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.xr-obj-type,
+.xr-obj-name {
+  margin-left: 2px;
+  margin-right: 10px;
+}
+
+.xr-obj-type,
+.xr-group-box-contents > label {
+  color: var(--xr-font-color2);
+  display: block;
+}
+
+.xr-sections {
+  padding-left: 0 !important;
+  display: grid;
+  grid-template-columns: 150px auto auto 1fr 0 20px 0 20px;
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+
+.xr-section-item {
+  display: contents;
+}
+
+.xr-section-item > input,
+.xr-group-box-contents > input,
+.xr-array-wrap > input {
+  display: block;
+  opacity: 0;
+  height: 0;
+  margin: 0;
+}
+
+.xr-section-item > input + label,
+.xr-var-item > input + label {
+  color: var(--xr-disabled-color);
+}
+
+.xr-section-item > input:enabled + label,
+.xr-var-item > input:enabled + label,
+.xr-array-wrap > input:enabled + label,
+.xr-group-box-contents > input:enabled + label {
+  cursor: pointer;
+  color: var(--xr-font-color2);
+}
+
+.xr-section-item > input:focus-visible + label,
+.xr-var-item > input:focus-visible + label,
+.xr-array-wrap > input:focus-visible + label,
+.xr-group-box-contents > input:focus-visible + label {
+  outline: auto;
+}
+
+.xr-section-item > input:enabled + label:hover,
+.xr-var-item > input:enabled + label:hover,
+.xr-array-wrap > input:enabled + label:hover,
+.xr-group-box-contents > input:enabled + label:hover {
+  color: var(--xr-font-color0);
+}
+
+.xr-section-summary {
+  grid-column: 1;
+  color: var(--xr-font-color2);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.xr-section-summary > em {
+  font-weight: normal;
+}
+
+.xr-span-grid {
+  grid-column-end: -1;
+}
+
+.xr-section-summary > span {
+  display: inline-block;
+  padding-left: 0.3em;
+}
+
+.xr-group-box-contents > input:checked + label > span {
+  display: inline-block;
+  padding-left: 0.6em;
+}
+
+.xr-section-summary-in:disabled + label {
+  color: var(--xr-font-color2);
+}
+
+.xr-section-summary-in + label:before {
+  display: inline-block;
+  content: "►";
+  font-size: 11px;
+  width: 15px;
+  text-align: center;
+}
+
+.xr-section-summary-in:disabled + label:before {
+  color: var(--xr-disabled-color);
+}
+
+.xr-section-summary-in:checked + label:before {
+  content: "▼";
+}
+
+.xr-section-summary-in:checked + label > span {
+  display: none;
+}
+
+.xr-section-summary,
+.xr-section-inline-details,
+.xr-group-box-contents > label {
+  padding-top: 4px;
+}
+
+.xr-section-inline-details {
+  grid-column: 2 / -1;
+}
+
+.xr-section-details {
+  grid-column: 1 / -1;
+  margin-top: 4px;
+  margin-bottom: 5px;
+}
+
+.xr-section-summary-in ~ .xr-section-details {
+  display: none;
+}
+
+.xr-section-summary-in:checked ~ .xr-section-details {
+  display: contents;
+}
+
+.xr-children {
+  display: inline-grid;
+  grid-template-columns: 100%;
+  grid-column: 1 / -1;
+  padding-top: 4px;
+}
+
+.xr-group-box {
+  display: inline-grid;
+  grid-template-columns: 0px 30px auto;
+}
+
+.xr-group-box-vline {
+  grid-column-start: 1;
+  border-right: 0.2em solid;
+  border-color: var(--xr-border-color);
+  width: 0px;
+}
+
+.xr-group-box-hline {
+  grid-column-start: 2;
+  grid-row-start: 1;
+  height: 1em;
+  width: 26px;
+  border-bottom: 0.2em solid;
+  border-color: var(--xr-border-color);
+}
+
+.xr-group-box-contents {
+  grid-column-start: 3;
+  padding-bottom: 4px;
+}
+
+.xr-group-box-contents > label::before {
+  content: "📂";
+  padding-right: 0.3em;
+}
+
+.xr-group-box-contents > input:checked + label::before {
+  content: "📁";
+}
+
+.xr-group-box-contents > input:checked + label {
+  padding-bottom: 0px;
+}
+
+.xr-group-box-contents > input:checked ~ .xr-sections {
+  display: none;
+}
+
+.xr-group-box-contents > input + label > span {
+  display: none;
+}
+
+.xr-group-box-ellipsis {
+  font-size: 1.4em;
+  font-weight: 900;
+  color: var(--xr-font-color2);
+  letter-spacing: 0.15em;
+  cursor: default;
+}
+
+.xr-array-wrap {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 20px auto;
+}
+
+.xr-array-wrap > label {
+  grid-column: 1;
+  vertical-align: top;
+}
+
+.xr-preview {
+  color: var(--xr-font-color3);
+}
+
+.xr-array-preview,
+.xr-array-data {
+  padding: 0 5px !important;
+  grid-column: 2;
+}
+
+.xr-array-data,
+.xr-array-in:checked ~ .xr-array-preview {
+  display: none;
+}
+
+.xr-array-in:checked ~ .xr-array-data,
+.xr-array-preview {
+  display: inline-block;
+}
+
+.xr-dim-list {
+  display: inline-block !important;
+  list-style: none;
+  padding: 0 !important;
+  margin: 0;
+}
+
+.xr-dim-list li {
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+}
+
+.xr-dim-list:before {
+  content: "(";
+}
+
+.xr-dim-list:after {
+  content: ")";
+}
+
+.xr-dim-list li:not(:last-child):after {
+  content: ",";
+  padding-right: 5px;
+}
+
+.xr-has-index {
+  font-weight: bold;
+}
+
+.xr-var-list,
+.xr-var-item {
+  display: contents;
+}
+
+.xr-var-item > div,
+.xr-var-item label,
+.xr-var-item > .xr-var-name span {
+  background-color: var(--xr-background-color-row-even);
+  border-color: var(--xr-background-color-row-odd);
+  margin-bottom: 0;
+  padding-top: 2px;
+}
+
+.xr-var-item > .xr-var-name:hover span {
+  padding-right: 5px;
+}
+
+.xr-var-list > li:nth-child(odd) > div,
+.xr-var-list > li:nth-child(odd) > label,
+.xr-var-list > li:nth-child(odd) > .xr-var-name span {
+  background-color: var(--xr-background-color-row-odd);
+  border-color: var(--xr-background-color-row-even);
+}
+
+.xr-var-name {
+  grid-column: 1;
+}
+
+.xr-var-dims {
+  grid-column: 2;
+}
+
+.xr-var-dtype {
+  grid-column: 3;
+  text-align: right;
+  color: var(--xr-font-color2);
+}
+
+.xr-var-preview {
+  grid-column: 4;
+}
+
+.xr-index-preview {
+  grid-column: 2 / 5;
+  color: var(--xr-font-color2);
+}
+
+.xr-var-name,
+.xr-var-dims,
+.xr-var-dtype,
+.xr-preview,
+.xr-attrs dt {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 10px;
+}
+
+.xr-var-name:hover,
+.xr-var-dims:hover,
+.xr-var-dtype:hover,
+.xr-attrs dt:hover {
+  overflow: visible;
+  width: auto;
+  z-index: 1;
+}
+
+.xr-var-attrs,
+.xr-var-data,
+.xr-index-data {
+  display: none;
+  border-top: 2px dotted var(--xr-background-color);
+  padding-bottom: 20px !important;
+  padding-top: 10px !important;
+}
+
+.xr-var-attrs-in + label,
+.xr-var-data-in + label,
+.xr-index-data-in + label {
+  padding: 0 1px;
+}
+
+.xr-var-attrs-in:checked ~ .xr-var-attrs,
+.xr-var-data-in:checked ~ .xr-var-data,
+.xr-index-data-in:checked ~ .xr-index-data {
+  display: block;
+}
+
+.xr-var-data > table {
+  float: right;
+}
+
+.xr-var-data > pre,
+.xr-index-data > pre,
+.xr-var-data > table > tbody > tr {
+  background-color: transparent !important;
+}
+
+.xr-var-name span,
+.xr-var-data,
+.xr-index-name div,
+.xr-index-data,
+.xr-attrs {
+  padding-left: 25px !important;
+}
+
+.xr-attrs,
+.xr-var-attrs,
+.xr-var-data,
+.xr-index-data {
+  grid-column: 1 / -1;
+}
+
+dl.xr-attrs {
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 125px auto;
+}
+
+.xr-attrs dt,
+.xr-attrs dd {
+  padding: 0;
+  margin: 0;
+  float: left;
+  padding-right: 10px;
+  width: auto;
+}
+
+.xr-attrs dt {
+  font-weight: normal;
+  grid-column: 1;
+}
+
+.xr-attrs dt:hover span {
+  display: inline-block;
+  background: var(--xr-background-color);
+  padding-right: 10px;
+}
+
+.xr-attrs dd {
+  grid-column: 2;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.xr-icon-database,
+.xr-icon-file-text2,
+.xr-no-icon {
+  display: inline-block;
+  vertical-align: middle;
+  width: 1em;
+  height: 1.5em !important;
+  stroke-width: 0;
+  stroke: currentColor;
+  fill: currentColor;
+}
+
+.xr-var-attrs-in:checked + label > .xr-icon-file-text2,
+.xr-var-data-in:checked + label > .xr-icon-database,
+.xr-index-data-in:checked + label > .xr-icon-database {
+  color: var(--xr-font-color0);
+  filter: drop-shadow(1px 1px 5px var(--xr-font-color2));
+  stroke-width: 0.8px;
+}
+</style><pre class='xr-text-repr-fallback'>&lt;xarray.DataArray &#x27;speed&#x27; (time: 8)&gt; Size: 32B
+array([0.9637632 , 0.9667021 , 0.9645986 , 0.95585877, 0.9610805 ,
+       0.95524615, 0.9609951 , 0.95937735], dtype=float32)
+Coordinates:
+  * time     (time) int64 64B 0 1 2 3 4 5 6 7</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.DataArray</div><div class='xr-obj-name'>&#x27;speed&#x27;</div><ul class='xr-dim-list'><li><span class='xr-has-index'>time</span>: 8</li></ul></div><ul class='xr-sections'><li class='xr-section-item'><div class='xr-array-wrap'><input id='section-7c697908-08df-44e9-98b9-a9065d360de6' class='xr-array-in' type='checkbox' checked><label for='section-7c697908-08df-44e9-98b9-a9065d360de6' title='Show/hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-array-preview xr-preview'><span>0.9638 0.9667 0.9646 0.9559 0.9611 0.9552 0.961 0.9594</span></div><div class='xr-array-data'><pre>array([0.9637632 , 0.9667021 , 0.9645986 , 0.95585877, 0.9610805 ,
+       0.95524615, 0.9609951 , 0.95937735], dtype=float32)</pre></div></div></li><li class='xr-section-item'><input id='section-73c9d950-e843-43aa-8b45-9ebfc1e9b0b1' class='xr-section-summary-in' type='checkbox' checked /><label for='section-73c9d950-e843-43aa-8b45-9ebfc1e9b0b1' class='xr-section-summary' title='Expand/collapse section'>Coordinates: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>time</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>int64</div><div class='xr-var-preview xr-preview'>0 1 2 3 4 5 6 7</div><input id='attrs-baaa4002-0319-4e32-a46c-30fdf21a1a3e' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-baaa4002-0319-4e32-a46c-30fdf21a1a3e' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-0dc787b5-07b2-4e00-af84-3fe2aefff301' class='xr-var-data-in' type='checkbox'><label for='data-0dc787b5-07b2-4e00-af84-3fe2aefff301' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0, 1, 2, 3, 4, 5, 6, 7])</pre></div></li></ul></div></li></ul></div></div></div></div>
+</div>
+<section id="custom-write-specifications">
+<h2>Custom write specifications<a class="headerlink" href="#custom-write-specifications" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">FileSpecsGetter.writer</span></code> is useful when your output convention matches the tutorial helper. If you need a different layout, implement a callable compatible with <code class="docutils literal notranslate"><span class="pre">WriteSpecsGetterProtocol</span></code>.</p>
+<p>Setting <code class="docutils literal notranslate"><span class="pre">dtype</span></code> on each <code class="docutils literal notranslate"><span class="pre">WriteSpecs</span></code> pins the on-disk data type (including byte order): the values are cast right before serialization, so the files always match what the corresponding read getter declares. When <code class="docutils literal notranslate"><span class="pre">dtype</span></code> is omitted, the in-memory dtype and native byte order are written as-is.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DerivedWriteSpecsGetter</span><span class="p">:</span>
+    <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;derived&quot;</span>
+    <span class="n">base_dims</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">)</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_array</span><span class="p">:</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">time_value</span> <span class="ow">in</span> <span class="n">data_array</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+            <span class="n">timestep</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time_value</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">WriteSpecs</span><span class="p">(</span>
+                <span class="n">filename</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">data_array</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">timestep</span><span class="si">:</span><span class="s2">04</span><span class="si">}</span><span class="s2">.bin&quot;</span><span class="p">,</span>
+                <span class="n">sub_array</span><span class="o">=</span><span class="n">data_array</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">timestep</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span>
+                    <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">base_dims</span><span class="p">,</span> <span class="n">missing_dims</span><span class="o">=</span><span class="s2">&quot;raise&quot;</span>
+                <span class="p">),</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+            <span class="p">)</span>
+
+
+<span class="n">derived_write_specs_getter</span> <span class="o">=</span> <span class="n">DerivedWriteSpecsGetter</span><span class="p">()</span>
+<span class="n">derived_write_specs_getter</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>DerivedWriteSpecsGetter(prefix=&#39;derived&#39;, base_dims=(&#39;x&#39;, &#39;y&#39;, &#39;z&#39;), dtype=&lt;class &#39;numpy.float32&#39;&gt;)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">speed</span><span class="o">.</span><span class="n">binary_engine</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">derived_write_specs_getter</span><span class="p">,</span> <span class="n">output_directory</span><span class="p">)</span>
+<span class="nb">sorted</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">output_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.bin&quot;</span><span class="p">))[:</span><span class="mi">6</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">AttributeError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">speed</span><span class="o">.</span><span class="n">binary_engine</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">derived_write_specs_getter</span><span class="p">,</span> <span class="n">output_directory</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">output_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.bin&quot;</span><span class="p">))[:</span><span class="mi">6</span><span class="p">]</span>
+
+<span class="nn">File ~/work/xarray-binfile/xarray-binfile/src/xarray_binfile/write/accessor.py:116,</span> in <span class="ni">BinaryEngineDataArray.to_file</span><span class="nt">(self, write_specs_getter, directory)</span>
+<span class="g g-Whitespace">    </span><span class="mi">110</span> <span class="n">new_type</span> <span class="o">=</span> <span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">111</span>     <span class="n">details</span><span class="o">.</span><span class="n">dtype</span>
+<span class="g g-Whitespace">    </span><span class="mi">112</span>     <span class="k">if</span> <span class="n">details</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+<span class="g g-Whitespace">    </span><span class="mi">113</span>     <span class="k">else</span> <span class="n">details</span><span class="o">.</span><span class="n">sub_array</span><span class="o">.</span><span class="n">dtype</span>
+<span class="g g-Whitespace">    </span><span class="mi">114</span> <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">115</span> <span class="n">temporary_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">temporary_directory</span><span class="p">)</span> <span class="o">/</span> <span class="n">details</span><span class="o">.</span><span class="n">filename</span>
+<span class="ne">--&gt; </span><span class="mi">116</span> <span class="n">details</span><span class="o">.</span><span class="n">sub_array</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">new_type</span><span class="p">)</span><span class="o">.</span><span class="n">tofile</span><span class="p">(</span><span class="n">temporary_file</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">117</span> <span class="n">os</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">temporary_file</span><span class="p">,</span> <span class="n">_directory</span> <span class="o">/</span> <span class="n">details</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+
+<span class="ne">AttributeError</span>: &#39;Array&#39; object has no attribute &#39;tofile&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<p>Writing triggers the actual per-file materialization of each selected slice. That is often exactly what you want when handing data back to an external solver or post-processing pipeline.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><code class="docutils literal notranslate"><span class="pre">.binary_engine.to_file(...)</span></code> never writes a file partially. Each <code class="docutils literal notranslate"><span class="pre">sub_array</span></code> is fully loaded into memory (a Dask compute for lazy data) and the whole file is written in a single pass — there is no appending, patching, or resuming. Each file is also written atomically: the bytes go to a unique temporary directory inside the destination and are moved into place with <code class="docutils literal notranslate"><span class="pre">os.replace</span></code> only when complete, so an interrupted write never leaves a truncated file behind. This keeps the on-disk files consistent instead of risking partially-updated, corrupted content, but it means every individual output file must fit in memory. Plan your chunks and the number of output files accordingly, for example one file per time step. If you need streaming or partial writes, use one of the other xarray-supported formats such as NetCDF or Zarr.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">output_specs_getter</span> <span class="o">=</span> <span class="n">FileSpecsGetter</span><span class="p">(</span>
+    <span class="n">base_coords</span><span class="o">=</span><span class="n">base_coords</span><span class="p">,</span>
+    <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+    <span class="n">filename_template</span><span class="o">=</span><span class="s2">&quot;derived-</span><span class="si">{name}</span><span class="s2">-</span><span class="si">{digits:04}</span><span class="s2">.bin&quot;</span><span class="p">,</span>
+    <span class="n">filename_regex</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;derived-(?P&lt;name&gt;\w+)-(?P&lt;digits&gt;\d</span><span class="si">{4}</span><span class="s2">)\.bin&quot;</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="n">roundtrip_dataset</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
+    <span class="nb">sorted</span><span class="p">(</span><span class="n">output_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;derived-*.bin&quot;</span><span class="p">)),</span>
+    <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;binfile&quot;</span><span class="p">,</span>
+    <span class="n">read_specs_getter</span><span class="o">=</span><span class="n">output_specs_getter</span><span class="o">.</span><span class="n">reader</span><span class="p">,</span>
+    <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
+    <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">roundtrip_dataset</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">computed_speed</span> <span class="o">=</span> <span class="n">speed</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span><span class="o">.</span><span class="n">to_dataset</span><span class="p">()</span>
+<span class="n">xr</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">roundtrip_dataset</span><span class="o">.</span><span class="n">compute</span><span class="p">(),</span> <span class="n">computed_speed</span><span class="p">)</span>
+<span class="n">computed_speed</span><span class="p">[</span><span class="s2">&quot;speed&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;magma&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>For general exchange and long-term storage, use xarray’s standard formats when possible: <code class="docutils literal notranslate"><span class="pre">Dataset.to_netcdf(...)</span></code> and <code class="docutils literal notranslate"><span class="pre">Dataset.to_zarr(...)</span></code> preserve metadata and make collaboration easier. Use raw binary output when you need strict compatibility with an external file convention.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./tutorials"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="read.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Read Binary Files Lazily With Xarray and Dask</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="parallel-and-larger-than-memory.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Parallel And Larger-Than-Memory Workflows</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-write-specifications">Custom write specifications</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Felipe N. Schuch
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

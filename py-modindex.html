@@ -6,9 +6,8 @@
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <title>Xarray-binfile &#8212; Xarray-binfile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Python Module Index &#8212; Xarray-binfile</title>
   
   
   
@@ -60,13 +59,15 @@
     <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'intro';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'py-modindex';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="About" href="getting-started/about.html" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
+
+
   </head>
   
   
@@ -136,7 +137,7 @@
     
   
 
-<a class="navbar-brand logo" href="#">
+<a class="navbar-brand logo" href="intro.html">
   
   
   
@@ -244,54 +245,6 @@
 
 
 
-
-
-<div class="dropdown dropdown-download-buttons">
-  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
-    <i class="fas fa-download"></i>
-  </button>
-  <ul class="dropdown-menu">
-      
-      
-      
-      <li><a href="_sources/intro.md" target="_blank"
-   class="btn btn-sm btn-download-source-button dropdown-item"
-   title="Download source file"
-   data-bs-placement="left" data-bs-toggle="tooltip"
->
-  
-
-<span class="btn__icon-container">
-  <i class="fas fa-file"></i>
-  </span>
-<span class="btn__text-container">.md</span>
-</a>
-</li>
-      
-      
-      
-      
-      <li>
-<button onclick="window.print()"
-  class="btn btn-sm btn-download-pdf-button dropdown-item"
-  title="Print to PDF"
-  data-bs-placement="left" data-bs-toggle="tooltip"
->
-  
-
-<span class="btn__icon-container">
-  <i class="fas fa-file-pdf"></i>
-  </span>
-<span class="btn__text-container">.pdf</span>
-</button>
-</li>
-      
-  </ul>
-</div>
-
-
-
-
 <button onclick="toggleFullScreen()"
   class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
   title="Fullscreen mode"
@@ -328,7 +281,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Xarray-binfile</h1>
+    <h1></h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -342,143 +295,40 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="xarray-binfile">
-<h1>Xarray-binfile<a class="headerlink" href="#xarray-binfile" title="Link to this heading">#</a></h1>
-<p class="centered">
-<strong>Read and write raw binary files using the familiar interface from the Xarray library.</strong></p><p>Xarray-binfile provides an xarray backend for raw binary files that are not self-describing on their own. You supply the metadata needed to interpret each file, and xarray-binfile handles lazy loading, chunked parallel computation with Dask, and writing results back to raw binary when you need to interoperate with an existing file layout.</p>
-<div class="sd-container-fluid sd-sphinx-override sd-mb-4 text-center docutils">
-<div class="sd-row sd-row-cols-1 sd-row-cols-xs-1 sd-row-cols-sm-1 sd-row-cols-md-2 sd-row-cols-lg-3 sd-g-3 sd-g-xs-3 sd-g-sm-3 sd-g-md-3 sd-g-lg-3 docutils">
-<div class="sd-col sd-d-flex-row docutils">
-<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
-<div class="sd-card-header bg-light docutils">
-<p class="sd-card-text">About The Backend</p>
-</div>
-<div class="sd-card-body docutils">
-<p class="sd-card-text">Learn how xarray-binfile maps raw binary files into labeled xarray datasets and data arrays.</p>
-</div>
-<a class="sd-stretched-link sd-hide-link-text reference internal" href="getting-started/about.html"><span class="doc">About</span></a></div>
-</div>
-<div class="sd-col sd-d-flex-row docutils">
-<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
-<div class="sd-card-header bg-light docutils">
-<p class="sd-card-text">Install And Configure</p>
-</div>
-<div class="sd-card-body docutils">
-<p class="sd-card-text">Install the package, understand the runtime dependencies, and get ready to open binary datasets lazily.</p>
-</div>
-<a class="sd-stretched-link sd-hide-link-text reference internal" href="getting-started/installation.html"><span class="doc">Installation</span></a></div>
-</div>
-<div class="sd-col sd-d-flex-row docutils">
-<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
-<div class="sd-card-header bg-light docutils">
-<p class="sd-card-text">Read Lazily With Dask</p>
-</div>
-<div class="sd-card-body docutils">
-<p class="sd-card-text">Open binary files with chunking, inspect the Dask graph, and compute only the results you need.</p>
-</div>
-<a class="sd-stretched-link sd-hide-link-text reference internal" href="tutorials/read.html"><span class="doc">Read Binary Files Lazily With Xarray and Dask</span></a></div>
-</div>
-<div class="sd-col sd-d-flex-row docutils">
-<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
-<div class="sd-card-header bg-light docutils">
-<p class="sd-card-text">Write Derived Results</p>
-</div>
-<div class="sd-card-body docutils">
-<p class="sd-card-text">Take a computed xarray result and write it back to raw binary files when you need to match an external format.</p>
-</div>
-<a class="sd-stretched-link sd-hide-link-text reference internal" href="tutorials/write.html"><span class="doc">Write Derived Results Back To Raw Binary Files</span></a></div>
-</div>
-<div class="sd-col sd-d-flex-row docutils">
-<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
-<div class="sd-card-header bg-light docutils">
-<p class="sd-card-text">Parallel And Out-Of-Core</p>
-</div>
-<div class="sd-card-body docutils">
-<p class="sd-card-text">Open files in parallel, pick a Dask scheduler, and process datasets larger than memory by streaming chunks.</p>
-</div>
-<a class="sd-stretched-link sd-hide-link-text reference internal" href="tutorials/parallel-and-larger-than-memory.html"><span class="doc">Parallel And Larger-Than-Memory Workflows</span></a></div>
-</div>
-<div class="sd-col sd-d-flex-row docutils">
-<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
-<div class="sd-card-header bg-light docutils">
-<p class="sd-card-text">Benchmark Your Data</p>
-</div>
-<div class="sd-card-body docutils">
-<p class="sd-card-text">Measure read and compute performance on your own files, and see how results shift with dtype, dimension size, and hardware.</p>
-</div>
-<a class="sd-stretched-link sd-hide-link-text reference internal" href="tutorials/benchmarking.html"><span class="doc">Benchmark On Your Own Data</span></a></div>
-</div>
-<div class="sd-col sd-d-flex-row docutils">
-<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
-<div class="sd-card-header bg-light docutils">
-<p class="sd-card-text">Practical Examples</p>
-</div>
-<div class="sd-card-body docutils">
-<p class="sd-card-text">Batch-convert dtypes across files, extract a probe time series to CSV, and draw quick matplotlib plots.</p>
-</div>
-<a class="sd-stretched-link sd-hide-link-text reference internal" href="tutorials/examples.html"><span class="doc">Practical Examples: Batch Conversion, Probes, and Plots</span></a></div>
-</div>
-<div class="sd-col sd-d-flex-row docutils">
-<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
-<div class="sd-card-header bg-light docutils">
-<p class="sd-card-text">API Reference</p>
-</div>
-<div class="sd-card-body docutils">
-<p class="sd-card-text">See the public modules, metadata protocols, backend entrypoint, and tutorial helpers.</p>
-</div>
-<a class="sd-stretched-link sd-hide-link-text reference internal" href="references/api-reference.html"><span class="doc">API reference</span></a></div>
-</div>
-<div class="sd-col sd-d-flex-row docutils">
-<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
-<div class="sd-card-header bg-light docutils">
-<p class="sd-card-text">Further Reading</p>
-</div>
-<div class="sd-card-body docutils">
-<p class="sd-card-text">Go deeper on xarray, Dask, NumPy binary I/O, and related simulation workflows.</p>
-</div>
-<a class="sd-stretched-link sd-hide-link-text reference internal" href="references/further-reading.html"><span class="doc">Further Reading</span></a></div>
-</div>
-</div>
-</div>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>Raw binary files usually need external metadata such as shape, coordinate values, dtype, and filename conventions. Xarray-binfile does not try to infer that information magically. Instead, it asks you to provide it explicitly so the backend can remain predictable and interoperable.</p>
-</div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Raw binary data is machine-specific unless you control the full convention explicitly. Byte order differences (little-endian vs big-endian), numeric representation, and layout assumptions may break portability across architectures. Validate dtype and endianness before using files generated on another machine.</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>For portable archival or data exchange workflows, prefer standard xarray-supported formats such as NetCDF or Zarr. Raw binary output is most useful when you need to read or write an existing binary convention used by a simulation code or downstream tool.</p>
-</div>
-<div class="toctree-wrapper compound">
-</div>
-<div class="toctree-wrapper compound">
-</div>
-<div class="toctree-wrapper compound">
-</div>
-</section>
 
-    <script type="text/x-thebe-config">
-    {
-        requestKernel: true,
-        binderOptions: {
-            repo: "binder-examples/jupyter-stacks-datascience",
-            ref: "master",
-        },
-        codeMirrorConfig: {
-            theme: "abcdef",
-            mode: "python"
-        },
-        kernelOptions: {
-            name: "python3",
-            path: "./."
-        },
-        predefinedOutput: true
-    }
-    </script>
-    <script>kernelName = 'python3'</script>
+   <h1>Python Module Index</h1>
+
+   <div class="modindex-jumpbox">
+   <a href="#cap-x"><strong>x</strong></a>
+   </div>
+
+   <table class="indextable modindextable">
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-x"><td></td><td>
+       <strong>x</strong></td><td></td></tr>
+     <tr>
+       <td><img src="_static/minus.png" class="toggler"
+              id="toggle-1" style="display: none" alt="-" /></td>
+       <td>
+       <code class="xref">xarray_binfile</code></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="references/api-reference.html#module-xarray_binfile.read"><code class="xref">xarray_binfile.read</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="references/api-reference.html#module-xarray_binfile.tutorial"><code class="xref">xarray_binfile.tutorial</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="references/api-reference.html#module-xarray_binfile.write"><code class="xref">xarray_binfile.write</code></a></td><td>
+       <em></em></td></tr>
+   </table>
+
 
                 </article>
               
@@ -490,15 +340,6 @@
                 <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
-    <a class="right-next"
-       href="getting-started/about.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">About</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
-    </a>
 </div>
                 </footer>
               
