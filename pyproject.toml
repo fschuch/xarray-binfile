@@ -41,18 +41,18 @@ benchmarks = [
     "pytest-memray>=1.7.0; sys_platform != 'win32'",
 ]
 tests-extra = [
-    "pytest-randomly==3.16.0",
-    "pytest-rerunfailures==15.1",
+    "pytest-randomly==4.1.0",
+    "pytest-rerunfailures==16.3",
     "pytest-xdist==3.8.0",
 ]
 docs = [
-    "docutils==0.21.2",
+    "docutils==0.23",
     "graphviz>=0.20.3",
     "jupyter-book==1.0.4.post1",
     "matplotlib>=3.9.0",
     "sphinx-autobuild==2024.10.3",
     "sphinx==7.4.7",
-    "sphinx-github-changelog==1.7.1",
+    "sphinx-github-changelog==1.7.2",
 ]
 
 [project.urls]
