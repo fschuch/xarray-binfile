@@ -46,7 +46,6 @@ tests-extra = [
     "pytest-xdist==3.8.0",
 ]
 docs = [
-    "docutils==0.23",
     "graphviz>=0.20.3",
     "jupyter-book==1.0.4.post1",
     "matplotlib>=3.9.0",
