@@ -78,7 +78,7 @@ omit = ["src/xarray_binfile/_version.py"]
 [tool.coverage.report]
 precision = 2
 show_missing = true
-exclude_lines = ["no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]
+exclude_lines = ["no cov", "\\.\\.\\.", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]
 
 [tool.ruff]
 extend-exclude = ["./docs/conf.py"]
