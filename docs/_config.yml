@@ -3,7 +3,7 @@
 
 title: Xarray-binfile
 author: Felipe N. Schuch
-copyright: "2025-2026"
+copyright: "2025"
 description: Read and write raw binary files using the familiar interface from the Xarray library
 logo: logo.png
 

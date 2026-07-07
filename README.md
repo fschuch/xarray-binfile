@@ -49,5 +49,5 @@ See the documentation for end-to-end examples covering lazy loading, Dask-backed
 
 ## Copyright and License
 
-© 2025–2026 [Felipe N. Schuch](https://github.com/fschuch).
+© 2025 [Felipe N. Schuch](https://github.com/fschuch).
 All content is under [MIT License](https://github.com/fschuch/xarray-binfile/blob/main/LICENSE).
