@@ -103,13 +103,9 @@ class BinaryEngineDataArray:
             directory: The directory where the binary files will be written. Defaults to the current working directory.
         """
         _directory = directory or Path.cwd()
-        with tempfile.TemporaryDirectory(
-            dir=_directory, prefix=".binary_engine-"
-        ) as temporary_directory:
+        with tempfile.TemporaryDirectory(dir=_directory, prefix=".binary_engine-") as temporary_directory:
             for details in write_specs_getter(self._data_array):
-                values = details.sub_array.to_numpy()
-                if details.dtype is not None:
-                    values = values.astype(details.dtype, copy=False)
+                new_type = details.dtype if details.dtype is not None else details.sub_array.dtype
                 temporary_file = Path(temporary_directory) / details.filename
-                values.tofile(temporary_file)
+                details.sub_array.data.astype(new_type).tofile(temporary_file)
                 os.replace(temporary_file, _directory / details.filename)
