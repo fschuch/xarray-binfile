@@ -48,6 +48,7 @@ coverage.xml
 *.cover
 *.py,cover
 .hypothesis/
+.benchmarks/
 .pytest_cache/
 cover/
 
@@ -71,6 +72,9 @@ instance/
 # Sphinx documentation
 docs/_build/
 docs/conf.py
+
+# Dask task-graph artifact written by .visualize() during notebook execution
+docs/tutorials/mydask.*
 
 # PyBuilder
 .pybuilder/

@@ -1,4 +1,4 @@
-"""Module for type hints used in the binary_engine_xarray package."""
+"""Type hints shared across the xarray_binfile package."""
 
 import typing
 

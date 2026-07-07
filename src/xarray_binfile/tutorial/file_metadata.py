@@ -19,7 +19,19 @@ from xarray_binfile.write.file_metadata import WriteSpecs
 @dataclass(frozen=True)
 class FileSpecsGetter:
     """
-    Generates file metadata for reading and writing binary files.
+    Reference implementation of both read and write spec getter protocols.
+
+    This helper is intended for tutorials, tests, and simple projects with a
+    filename convention that encodes variable name and step index.
+
+    It is intentionally narrow: the default regex expects time-indexed files
+    (for example ``ux-0001.bin``). For mixed layouts that include static files
+    (for example ``epsi.bin``), implement a custom getter that still follows
+    the same read/write protocol contracts.
+
+    It implements:
+        - ``reader(path) -> ReadSpecs``
+        - ``writer(data_array) -> Iterator[WriteSpecs]``
 
     Attributes:
         base_coords: Base coordinates for the data.
@@ -35,7 +47,11 @@ class FileSpecsGetter:
 
     def reader(self, path: Path) -> ReadSpecs:
         """
-        Generate read specifications for a binary file.
+        Build ``ReadSpecs`` from a file path.
+
+        The implementation parses ``path.name`` using ``filename_regex`` and
+        appends a single-value ``time`` coordinate based on the extracted step
+        number.
 
         Args:
             path: Path to the binary file.
@@ -63,7 +79,12 @@ class FileSpecsGetter:
 
     def writer(self, data_array: DataArray) -> Iterator[WriteSpecs]:
         """
-        Generate write specifications for a DataArray.
+        Yield ``WriteSpecs`` for one DataArray.
+
+        The default behavior writes one file per time coordinate value using
+        ``filename_template`` and transposes each slice to ``base_coords``
+        dimension order before serialization. Each slice is cast to ``dtype``
+        on write, so files always round-trip with :meth:`reader`.
 
         Args:
             data_array: The data array to generate write specifications for.
@@ -79,12 +100,13 @@ class FileSpecsGetter:
                 sub_array=data_array.sel(time=time).transpose(
                     *self._base_dims, missing_dims="raise"
                 ),
+                dtype=self.dtype,
             )
 
     @cached_property
     def _base_dims(self) -> tuple[str, ...]:
         """
-        Get the base dimensions from the coordinates.
+        Return the canonical base dimension order.
 
         Returns:
             A tuple of base dimension names.
