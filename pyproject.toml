@@ -42,7 +42,7 @@ benchmarks = [
 ]
 tests-extra = [
     "pytest-randomly==4.1.0",
-    "pytest-rerunfailures==16.5",
+    "pytest-rerunfailures==16.6",
     "pytest-xdist==3.8.0",
 ]
 docs = [
