@@ -41,8 +41,8 @@ benchmarks = [
     "pytest-memray>=1.7.0; sys_platform != 'win32'",
 ]
 tests-extra = [
-    "pytest-randomly==4.1.0",
-    "pytest-rerunfailures==16.6",
+    "pytest-randomly==5.0.0",
+    "pytest-rerunfailures==16.6.1",
     "pytest-xdist==3.8.0",
 ]
 docs = [
