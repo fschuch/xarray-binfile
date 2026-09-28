@@ -161,7 +161,7 @@ class TestArrayBenchmark:
     def test_read_array__numpy_fromfile(self, file_path, array, write_array, benchmark):
         def helper():
             with open(file_path, "rb") as file:
-                return array._wrap_numpy_fromfile(file)  # noqa: SLF001
+                return array._wrap_numpy_fromfile(file)
 
         result = benchmark(helper)
         assert np.array_equal(result, write_array)
@@ -172,7 +172,7 @@ class TestArrayBenchmark:
 
         def helper():
             with open(file_path, "rb") as file:
-                return array._wrap_numpy_memmap(file, key=keys)  # noqa: SLF001
+                return array._wrap_numpy_memmap(file, key=keys)
 
         result = benchmark(helper)
         assert np.array_equal(result, write_array)
