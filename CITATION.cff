@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: If you use this software, please cite it using the metadata from this file.
+type: software
+title: Xarray-binfile
+abstract: >-
+  Custom Xarray file engine to read and write raw binary files, with optional
+  lazy chunking through Dask.
+authors:
+  - family-names: Schuch
+    given-names: Felipe N.
+    email: me@fschuch.com
+    orcid: https://orcid.org/0000-0002-6140-0273
+license: MIT
+repository-code: https://github.com/fschuch/xarray-binfile
+url: https://docs.fschuch.com/xarray-binfile/
+keywords:
+  - xarray
+  - dask
+  - binary files
+  - xcompact3d
+  - 2decomp
