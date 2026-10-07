@@ -18,7 +18,11 @@ class WriteSpecs(NamedTuple):
     serialize into that file.
 
     Attributes:
-        filename: The name of the binary file.
+        filename: Path of the binary file. A relative path is resolved
+            against the (existing) output directory passed to ``to_file`` and
+            may include sub-folders, which are created on demand (for example
+            ``"3d/ux-0001.bin"``); it must not escape that directory. An
+            absolute path is written as is.
         sub_array: The portion of the DataArray to be written.
         dtype: Optional on-disk data type. When set, the sub-array is cast to
             this dtype (including byte order, for example ``"<f4"``) right
