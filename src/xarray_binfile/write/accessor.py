@@ -2,10 +2,12 @@
 Provides accessors for writing xarray Dataset and DataArray objects to binary files.
 """
 
+import contextlib
 import os
 import tempfile
 from pathlib import Path
 
+import numpy as np
 import xarray as xr
 
 from xarray_binfile.write.file_metadata import WriteSpecsGetterProtocol
@@ -29,7 +31,7 @@ class BinaryEngineDataset:
     def to_file(
         self,
         write_specs_getter: WriteSpecsGetterProtocol,
-        directory: Path | None = None,
+        directory: str | os.PathLike[str] | None = None,
     ) -> None:
         """
         Writes the dataset to binary files.
@@ -68,7 +70,7 @@ class BinaryEngineDataArray:
     def to_file(
         self,
         write_specs_getter: WriteSpecsGetterProtocol,
-        directory: Path | None = None,
+        directory: str | os.PathLike[str] | None = None,
     ) -> None:
         """
         Writes the data array to binary files.
@@ -82,11 +84,11 @@ class BinaryEngineDataArray:
         partially-updated, corrupted state.
 
         Writes are also atomic per file: the bytes are first serialized into
-        a unique temporary directory created inside the destination directory
-        (so the final move stays on the same filesystem), and each file is
-        moved to its final path with :func:`os.replace` only once it is
-        complete. An interrupted write never leaves a truncated file at the
-        destination, and the temporary directory is removed automatically.
+        a temporary file created next to the destination (so the final move
+        stays on the same filesystem), and each file is moved to its final
+        path with :func:`os.replace` only once it is complete. An interrupted
+        write never leaves a truncated file at the destination, and the
+        temporary file is removed automatically.
 
         Plan the write specifications so that every individual output file
         fits comfortably in memory, for example by splitting the array into
@@ -98,20 +100,73 @@ class BinaryEngineDataArray:
         unless the write specification sets ``dtype``, in which case the
         values are cast right before serialization.
 
+        A relative ``WriteSpecs.filename`` is resolved against ``directory``
+        and may contain sub-folders (for example ``"3d/ux-0001.bin"``), which
+        are created on demand, but it must stay inside ``directory``: paths
+        escaping it through ``..`` are rejected. An absolute filename is used
+        as is, which lets one call target several locations.
+
         Args:
             write_specs_getter: A callable that generates write specifications for the data array.
-            directory: The directory where the binary files will be written. Defaults to the current working directory.
+            directory: The base directory for relative filenames. Defaults to the current working directory.
+
+        Raises:
+            ValueError: If a relative filename escapes ``directory``.
         """
-        _directory = directory or Path.cwd()
-        with tempfile.TemporaryDirectory(
-            dir=_directory, prefix=".binary_engine-"
-        ) as temporary_directory:
-            for details in write_specs_getter(self._data_array):
-                new_type = (
-                    details.dtype
-                    if details.dtype is not None
-                    else details.sub_array.dtype
-                )
-                temporary_file = Path(temporary_directory) / details.filename
-                details.sub_array.values.astype(new_type).tofile(temporary_file)
-                os.replace(temporary_file, _directory / details.filename)
+        _directory = Path(directory) if directory is not None else Path.cwd()
+        for details in write_specs_getter(self._data_array):
+            final_file = _resolve_destination(_directory, details.filename)
+            new_type = (
+                details.dtype if details.dtype is not None else details.sub_array.dtype
+            )
+            final_file.parent.mkdir(parents=True, exist_ok=True)
+            _write_atomically(final_file, details.sub_array.values.astype(new_type))
+
+
+def _resolve_destination(directory: Path, filename: str | os.PathLike[str]) -> Path:
+    """
+    Resolve a write spec filename to its final destination.
+
+    Args:
+        directory: Base directory for relative filenames.
+        filename: Absolute path, or path relative to ``directory``.
+
+    Returns:
+        The absolute destination path.
+
+    Raises:
+        ValueError: If a relative ``filename`` escapes ``directory``.
+    """
+    path = Path(filename)
+    if path.is_absolute():
+        return path
+    base = directory.resolve()
+    destination = (base / path).resolve()
+    if not destination.is_relative_to(base):
+        error_message = (
+            f"WriteSpecs.filename {str(filename)!r} escapes the output directory "
+            f"{str(directory)!r}. Use an absolute path to write elsewhere."
+        )
+        raise ValueError(error_message)
+    return destination
+
+
+def _write_atomically(final_file: Path, values: np.ndarray) -> None:
+    """
+    Serialize ``values`` to a temporary sibling file and move it into place.
+
+    Args:
+        final_file: Destination path; its parent directory must exist.
+        values: Array to serialize with :meth:`numpy.ndarray.tofile`.
+    """
+    handle, temporary_name = tempfile.mkstemp(
+        dir=final_file.parent, prefix=f".{final_file.name}.", suffix=".binary_engine"
+    )
+    os.close(handle)
+    try:
+        values.tofile(temporary_name)
+        os.replace(temporary_name, final_file)
+    except BaseException:
+        with contextlib.suppress(FileNotFoundError):
+            os.unlink(temporary_name)
+        raise

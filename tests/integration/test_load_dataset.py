@@ -5,19 +5,20 @@ import numpy as np
 import pytest
 import xarray as xr
 
-from xarray_binfile.tutorial import DatasetGenerator, FileSpecsGetter
+from xarray_binfile.conventions import Layout, StepIndexedFiles
+from xarray_binfile.tutorial import DatasetGenerator
 
 
 class TestOpenDataset:
-    file_specs_getter = FileSpecsGetter(
-        base_coords={"x": np.arange(5), "y": np.arange(10), "z": np.arange(15)}
+    file_specs_getter = StepIndexedFiles(
+        Layout({"x": np.arange(5), "y": np.arange(10), "z": np.arange(15)})
     )
     dataset_generator = DatasetGenerator(file_specs_getter.reader)
 
     @cached_property
     def dataset(self) -> xr.Dataset:
         filenames = (
-            self.file_specs_getter.filename_template.format(name=n, digits=t)
+            self.file_specs_getter.pattern.format(name=n, step=t)
             for n in ("ux", "uy")
             for t in range(5)
         )

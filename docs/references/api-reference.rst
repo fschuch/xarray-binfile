@@ -19,6 +19,15 @@ Write accessors
    :imported-members:
 
 
+Conventions
+-----------
+
+.. automodule:: xarray_binfile.conventions
+   :members:
+   :show-inheritance:
+   :imported-members:
+
+
 Tutorial helpers
 ----------------
 

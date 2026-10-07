@@ -3,6 +3,7 @@ Defines utilities for generating file metadata for reading and writing binary fi
 """
 
 import re
+import warnings
 from collections.abc import Iterator
 from dataclasses import dataclass
 from functools import cached_property
@@ -20,6 +21,14 @@ from xarray_binfile.write.file_metadata import WriteSpecs
 class FileSpecsGetter:
     """
     Reference implementation of both read and write spec getter protocols.
+
+    .. deprecated::
+        Use :class:`xarray_binfile.conventions.StepIndexedFiles` instead. It
+        derives the filename regex from the template (so the two cannot drift
+        apart), anchors matching to the whole filename, supports an interval
+        between snapshots through ``time_step``, and refuses coordinate values
+        that would collide on disk. This class is kept unchanged for backward
+        compatibility and will be removed in a future release.
 
     This helper is intended for tutorials, tests, and simple projects with a
     filename convention that encodes variable name and step index.
@@ -44,6 +53,15 @@ class FileSpecsGetter:
     dtype: DTypeLike = np.float64
     filename_template: str = "{name}-{digits:04}.bin"
     filename_regex: re.Pattern = re.compile(r"(?P<name>\w+)-(?P<digits>\d{4})\.bin")
+
+    def __post_init__(self) -> None:
+        """Warn that this class is superseded by ``StepIndexedFiles``."""
+        warnings.warn(
+            "FileSpecsGetter is deprecated; use "
+            "xarray_binfile.conventions.StepIndexedFiles instead.",
+            DeprecationWarning,
+            stacklevel=3,  # dataclass __init__ -> __post_init__ -> here
+        )
 
     def reader(self, path: Path) -> ReadSpecs:
         """
