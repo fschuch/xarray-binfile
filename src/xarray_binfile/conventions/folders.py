@@ -5,7 +5,7 @@ Compose several conventions by the folder their files live in.
 from collections.abc import Iterator, Mapping
 from dataclasses import dataclass
 from itertools import chain
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 import xarray as xr
 
@@ -80,7 +80,7 @@ class FolderConventions:
 
         Yields:
             The accepting convention's write specs, with filenames prefixed by
-            its folder.
+            its folder (always using ``/`` as separator).
 
         Raises:
             LayoutMismatchError: If no convention or more than one convention
@@ -112,4 +112,10 @@ class FolderConventions:
             raise LayoutMismatchError(error_message)
         folder, specs = accepted[0]
         for spec in specs:
-            yield spec._replace(filename=str(Path(folder) / spec.filename))
+            # POSIX separators on every platform keep filenames deterministic;
+            # Windows accepts them when the accessor turns them into paths.
+            yield spec._replace(
+                filename=PurePosixPath(
+                    *Path(folder).parts, *Path(spec.filename).parts
+                ).as_posix()
+            )

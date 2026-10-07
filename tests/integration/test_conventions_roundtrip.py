@@ -87,7 +87,9 @@ def test_folder_conventions_roundtrip(tmp_path: pathlib.Path):
     for dataset in (planes, volumes, static):
         dataset.binary_engine.to_file(conventions.writer, tmp_path)
 
-    assert sorted(str(p.relative_to(tmp_path)) for p in tmp_path.rglob("*.bin")) == [
+    assert sorted(
+        p.relative_to(tmp_path).as_posix() for p in tmp_path.rglob("*.bin")
+    ) == [
         "3d/vx-0000.bin",
         "3d/vx-0001.bin",
         "3d/vy-0000.bin",
