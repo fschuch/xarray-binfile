@@ -95,8 +95,10 @@ def test_step_roundtrip_without_separator(name, step):
     ],
 )
 def test_format_rejects_values_that_do_not_parse_back(template, fields):
+    pattern = FilenamePattern(template)
+
     with pytest.raises(ValueError, match="cannot be parsed back"):
-        FilenamePattern(template).format(**fields)
+        pattern.format(**fields)
 
 
 @pytest.mark.parametrize("precision", [0, 1, 3])

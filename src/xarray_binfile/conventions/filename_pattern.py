@@ -21,6 +21,46 @@ _FLOAT_SPEC = re.compile(
 _SIGN = r"[-+]?"
 
 
+def _int_regex(width: int) -> str:
+    """
+    Regex fragment for an integer written with a zero-fill ``width``.
+
+    Zero-fill is a *minimum* width for ``str.format``: wider numbers are
+    written in full, so the fragment accepts them as well. The sign counts
+    towards the width, so signed values carry one digit less.
+
+    Args:
+        width: Minimum width declared in the format specification, 0 if none.
+
+    Returns:
+        The regex fragment.
+    """
+    if not width:
+        return rf"{_SIGN}\d+"
+    return rf"(?:\d{{{width},}}|[-+]\d{{{max(width - 1, 1)},}})"
+
+
+def _float_regex(kind: str, precision: str | None) -> str:
+    """
+    Regex fragment for a float written with the ``f``, ``e`` or ``g`` kinds.
+
+    Args:
+        kind: Lower-case presentation type.
+        precision: Digits after the decimal point, or ``None`` when omitted.
+
+    Returns:
+        The regex fragment.
+    """
+    if kind == "f":
+        if precision == "0":
+            return rf"{_SIGN}\d+"  # ``.0f`` writes no decimal point
+        decimals = rf"\d{{{precision}}}" if precision else r"\d{6}"
+        return rf"{_SIGN}\d+\.{decimals}"
+    if kind == "e":
+        return rf"{_SIGN}\d(?:\.\d+)?[eE][-+]\d+"
+    return rf"{_SIGN}(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?"
+
+
 def _field_regex(spec: str) -> tuple[str, type]:
     """
     Translate one format specification into a regex fragment and a Python type.
@@ -37,28 +77,11 @@ def _field_regex(spec: str) -> tuple[str, type]:
     """
     if spec in ("", "s"):
         return _STRING_FIELD, str
-
     if int_match := _INT_SPEC.match(spec):
-        width = int(int_match.group("width") or 0)
-        # Zero-fill is a *minimum* width for ``str.format``: wider numbers are
-        # written in full, so the regex must accept them as well. The sign
-        # counts towards the width, so signed values have one digit less.
-        if width:
-            return rf"(?:\d{{{width},}}|[-+]\d{{{max(width - 1, 1)},}})", int
-        return rf"{_SIGN}\d+", int
-
+        return _int_regex(int(int_match.group("width") or 0)), int
     if float_match := _FLOAT_SPEC.match(spec):
         kind = float_match.group("kind").lower()
-        precision = float_match.group("precision")
-        if kind == "f":
-            if precision == "0":
-                return rf"{_SIGN}\d+", float  # ``.0f`` writes no decimal point
-            decimals = rf"\d{{{precision}}}" if precision else r"\d{6}"
-            return rf"{_SIGN}\d+\.{decimals}", float
-        if kind == "e":
-            return rf"{_SIGN}\d(?:\.\d+)?[eE][-+]\d+", float
-        return rf"{_SIGN}(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?", float
-
+        return _float_regex(kind, float_match.group("precision")), float
     error_message = (
         f"Unsupported format specification {spec!r}. Supported specifications are "
         "plain strings (``{name}``), integers with optional zero-fill "

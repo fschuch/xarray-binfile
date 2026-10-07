@@ -62,9 +62,10 @@ def test_writer_picks_the_single_matching_convention_and_prefixes_folder():
 
 def test_writer_rejects_when_nothing_matches():
     array = xr.DataArray(np.zeros(3), coords={"x": X}, name="ux")
+    specs = CONVENTIONS.writer(array)
 
     with pytest.raises(LayoutMismatchError, match="No convention accepts"):
-        next(CONVENTIONS.writer(array))
+        next(specs)
 
 
 def test_writer_rejects_ambiguity():
@@ -75,9 +76,10 @@ def test_writer_rejects_ambiguity():
         }
     )
     array = xr.DataArray(np.zeros((1, 3)), coords={"time": [0], "x": X}, name="ux")
+    specs = ambiguous.writer(array)
 
     with pytest.raises(LayoutMismatchError, match="Several conventions accept"):
-        next(ambiguous.writer(array))
+        next(specs)
 
 
 def test_writer_accepts_convention_that_yields_nothing():

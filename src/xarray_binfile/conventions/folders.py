@@ -15,6 +15,21 @@ from xarray_binfile.read.file_metadata import ReadSpecs
 from xarray_binfile.write.file_metadata import WriteSpecs
 
 
+def _is_inside(parent_parts: tuple[str, ...], folder: Path) -> bool:
+    """
+    Check whether a parent path ends with ``folder``.
+
+    Args:
+        parent_parts: Parts of the file's parent directory.
+        folder: Registered folder, possibly nested.
+
+    Returns:
+        True if the last components of ``parent_parts`` equal ``folder``.
+    """
+    folder_parts = folder.parts
+    return bool(folder_parts) and parent_parts[-len(folder_parts) :] == folder_parts
+
+
 @dataclass(frozen=True)
 class FolderConventions:
     """
@@ -38,18 +53,11 @@ class FolderConventions:
         parts = path.parent.parts
         # Most specific (longest) folder wins, so "snapshots/3d" is preferred
         # over "3d" regardless of the order the conventions were registered in.
-        matches = sorted(
-            (
-                folder
-                for folder in self.conventions
-                if (folder_parts := Path(folder).parts)
-                and parts[-len(folder_parts) :] == folder_parts
-            ),
-            key=lambda folder: len(Path(folder).parts),
-            reverse=True,
-        )
+        matches = [
+            folder for folder in self.conventions if _is_inside(parts, Path(folder))
+        ]
         if matches:
-            return matches[0]
+            return max(matches, key=lambda folder: len(Path(folder).parts))
         error_message = (
             f"No convention registered for the folder of {path}. Known folders: "
             f"{sorted(self.conventions)}."

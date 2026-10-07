@@ -51,8 +51,10 @@ class TestStepIndexedFiles:
         ]
 
     def test_reader_rejects_other_files(self):
+        convention = StepIndexedFiles(LAYOUT)
+
         with pytest.raises(ValueError, match="does not match the pattern"):
-            StepIndexedFiles(LAYOUT).reader(pathlib.Path("ux-0007.bin.bak"))
+            convention.reader(pathlib.Path("ux-0007.bin.bak"))
 
     def test_pattern_must_declare_step(self):
         with pytest.raises(ValueError, match=r"must declare the field\(s\) \['step'\]"):
@@ -89,20 +91,28 @@ class TestStepIndexedFiles:
         ]
 
     def test_writer_rejects_non_integer_steps_instead_of_truncating(self):
+        specs = StepIndexedFiles(LAYOUT).writer(_array([0.25, 0.75]))
+
         with pytest.raises(ValueError, match="does not correspond to an integer step"):
-            list(StepIndexedFiles(LAYOUT).writer(_array([0.25, 0.75])))
+            next(specs)
 
     def test_writer_rejects_wrong_time_step(self):
+        specs = StepIndexedFiles(LAYOUT, time_step=0.3).writer(_array([0.25]))
+
         with pytest.raises(ValueError, match="time_step=0.3"):
-            list(StepIndexedFiles(LAYOUT, time_step=0.3).writer(_array([0.25])))
+            next(specs)
 
     def test_writer_rejects_duplicated_steps_before_yielding(self):
+        specs = StepIndexedFiles(LAYOUT).writer(_array([1, 1]))
+
         with pytest.raises(ValueError, match="same file"):
-            next(StepIndexedFiles(LAYOUT).writer(_array([1, 1])))
+            next(specs)
 
     def test_writer_rejects_name_the_reader_cannot_parse(self):
+        specs = StepIndexedFiles(LAYOUT).writer(_array([0]).rename("u.x"))
+
         with pytest.raises(ValueError, match="cannot be parsed back"):
-            next(StepIndexedFiles(LAYOUT).writer(_array([0]).rename("u.x")))
+            next(specs)
 
     def test_private_class_attributes_are_not_constructor_arguments(self):
         import inspect
@@ -117,20 +127,23 @@ class TestStepIndexedFiles:
         assert specs.coords["time"].dtype == np.int64
 
     def test_writer_rejects_unnamed_array(self):
+        specs = StepIndexedFiles(LAYOUT).writer(_array([0]).rename(None))
+
         with pytest.raises(ValueError, match="has no name"):
-            next(StepIndexedFiles(LAYOUT).writer(_array([0]).rename(None)))
+            next(specs)
 
     def test_writer_rejects_layout_mismatch(self):
-        array = _array([0]).isel(y=0, drop=True)
+        specs = StepIndexedFiles(LAYOUT).writer(_array([0]).isel(y=0, drop=True))
 
         with pytest.raises(LayoutMismatchError):
-            next(StepIndexedFiles(LAYOUT).writer(array))
+            next(specs)
 
     def test_writer_can_skip_coordinate_values_check(self):
         array = _array([0]).assign_coords(x=np.arange(3) + 100)
+        specs = StepIndexedFiles(LAYOUT).writer(array)
 
         with pytest.raises(LayoutMismatchError, match="Coordinate mismatch"):
-            next(StepIndexedFiles(LAYOUT).writer(array))
+            next(specs)
         assert (
             len(list(StepIndexedFiles(LAYOUT, check_coords=False).writer(array))) == 1
         )
@@ -160,12 +173,11 @@ class TestTimeStampedFiles:
         ]
 
     def test_writer_rejects_collisions_at_pattern_precision(self):
+        convention = TimeStampedFiles(LAYOUT, pattern="{name}-{time:.1f}.bin")
+        specs = convention.writer(_array([0.21, 0.24]))
+
         with pytest.raises(ValueError, match="same file"):
-            next(
-                TimeStampedFiles(LAYOUT, pattern="{name}-{time:.1f}.bin").writer(
-                    _array([0.21, 0.24])
-                )
-            )
+            next(specs)
 
     def test_pattern_must_declare_time(self):
         with pytest.raises(ValueError, match=r"must declare the field\(s\) \['time'\]"):
@@ -188,5 +200,7 @@ class TestStaticFiles:
         assert specs[0].sub_array.dims == ("x", "y")
 
     def test_writer_rejects_time_dependent_array(self):
+        specs = StaticFiles(LAYOUT).writer(_array([0, 1]))
+
         with pytest.raises(LayoutMismatchError, match="Dimension mismatch"):
-            next(StaticFiles(LAYOUT).writer(_array([0, 1])))
+            next(specs)
