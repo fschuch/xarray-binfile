@@ -100,17 +100,20 @@ class BinaryEngineDataArray:
         unless the write specification sets ``dtype``, in which case the
         values are cast right before serialization.
 
-        A relative ``WriteSpecs.filename`` is resolved against ``directory``
-        and may contain sub-folders (for example ``"3d/ux-0001.bin"``), which
-        are created on demand, but it must stay inside ``directory``: paths
-        escaping it through ``..`` are rejected. An absolute filename is used
-        as is, which lets one call target several locations.
+        A relative ``WriteSpecs.filename`` is resolved against ``directory``,
+        which must already exist, and may contain sub-folders (for example
+        ``"3d/ux-0001.bin"``), which are created on demand. It must stay
+        inside ``directory``: paths escaping it through ``..`` are rejected
+        (symbolic links inside ``directory`` are not followed for this check,
+        so a linked sub-folder is fine). An absolute filename is used as is,
+        which lets one call target several locations.
 
         Args:
             write_specs_getter: A callable that generates write specifications for the data array.
             directory: The base directory for relative filenames. Defaults to the current working directory.
 
         Raises:
+            FileNotFoundError: If a relative filename is used and ``directory`` does not exist.
             ValueError: If a relative filename escapes ``directory``.
         """
         _directory = Path(directory) if directory is not None else Path.cwd()
@@ -120,7 +123,8 @@ class BinaryEngineDataArray:
                 details.dtype if details.dtype is not None else details.sub_array.dtype
             )
             final_file.parent.mkdir(parents=True, exist_ok=True)
-            _write_atomically(final_file, details.sub_array.values.astype(new_type))
+            values = details.sub_array.values.astype(new_type, copy=False)
+            _write_atomically(final_file, values)
 
 
 def _resolve_destination(directory: Path, filename: str | os.PathLike[str]) -> Path:
@@ -135,20 +139,26 @@ def _resolve_destination(directory: Path, filename: str | os.PathLike[str]) -> P
         The absolute destination path.
 
     Raises:
+        FileNotFoundError: If ``filename`` is relative and ``directory`` does not exist.
         ValueError: If a relative ``filename`` escapes ``directory``.
     """
     path = Path(filename)
     if path.is_absolute():
         return path
-    base = directory.resolve()
-    destination = (base / path).resolve()
-    if not destination.is_relative_to(base):
+    # Lexical normalisation only: ``..`` segments are collapsed without
+    # following symbolic links, so a linked sub-folder inside ``directory``
+    # is accepted while anything climbing above ``directory`` is rejected.
+    normalized = Path(os.path.normpath(path))
+    if normalized.parts[:1] == ("..",):
         error_message = (
             f"WriteSpecs.filename {str(filename)!r} escapes the output directory "
             f"{str(directory)!r}. Use an absolute path to write elsewhere."
         )
         raise ValueError(error_message)
-    return destination
+    if not directory.is_dir():
+        error_message = f"Output directory does not exist: {str(directory)!r}"
+        raise FileNotFoundError(error_message)
+    return directory / normalized
 
 
 def _write_atomically(final_file: Path, values: np.ndarray) -> None:

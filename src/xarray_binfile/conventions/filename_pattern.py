@@ -39,16 +39,20 @@ def _field_regex(spec: str) -> tuple[str, type]:
         return _STRING_FIELD, str
 
     if int_match := _INT_SPEC.match(spec):
-        width = int_match.group("width")
+        width = int(int_match.group("width") or 0)
         # Zero-fill is a *minimum* width for ``str.format``: wider numbers are
-        # written in full, so the regex must accept them as well.
-        quantifier = f"{{{width},}}" if width else "+"
-        return rf"{_SIGN}\d{quantifier}", int
+        # written in full, so the regex must accept them as well. The sign
+        # counts towards the width, so signed values have one digit less.
+        if width:
+            return rf"(?:\d{{{width},}}|[-+]\d{{{max(width - 1, 1)},}})", int
+        return rf"{_SIGN}\d+", int
 
     if float_match := _FLOAT_SPEC.match(spec):
         kind = float_match.group("kind").lower()
         precision = float_match.group("precision")
         if kind == "f":
+            if precision == "0":
+                return rf"{_SIGN}\d+", float  # ``.0f`` writes no decimal point
             decimals = rf"\d{{{precision}}}" if precision else r"\d{6}"
             return rf"{_SIGN}\d+\.{decimals}", float
         if kind == "e":
@@ -117,9 +121,7 @@ class FilenamePattern:
         parts: list[str] = []
         fields: list[str] = []
         types: dict[str, type] = {}
-        for literal, name, spec, conversion in string.Formatter().parse(
-            self.template
-        ):
+        for literal, name, spec, conversion in string.Formatter().parse(self.template):
             parts.append(re.escape(literal))
             if name is None:
                 continue
@@ -149,13 +151,27 @@ class FilenamePattern:
         """
         Build a filename from field values.
 
+        The result is checked against the derived regular expression, so a
+        filename that :meth:`parse` could not read back (for example a name
+        containing ``.`` or ``-``) is rejected here, at write time.
+
         Args:
             **fields: One value per field declared in the template.
 
         Returns:
             The formatted filename.
+
+        Raises:
+            ValueError: If the formatted filename does not match the pattern.
         """
-        return self.template.format(**fields)
+        filename = self.template.format(**fields)
+        if not self.matches(filename):
+            error_message = (
+                f"Formatted filename {filename!r} cannot be parsed back by the "
+                f"pattern {self.template!r}; check the field values {fields!r}."
+            )
+            raise ValueError(error_message)
+        return filename
 
     def matches(self, filename: str) -> bool:
         """

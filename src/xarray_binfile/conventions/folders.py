@@ -23,7 +23,7 @@ class FolderConventions:
     Projects often keep arrays of different shapes in different folders, for
     example ``xy_planes/ux-0001.bin`` next to ``3d/ux-0001.bin``. Reading
     picks the convention whose folder matches the end of the file's parent
-    path. Writing offers the array to every convention and requires exactly
+    path, preferring the most specific (longest) folder when several match. Writing offers the array to every convention and requires exactly
     one of them to accept it, then prefixes the resulting filenames with that
     folder; a mismatch raises instead of guessing.
 
@@ -36,10 +36,20 @@ class FolderConventions:
 
     def _folder_of(self, path: Path) -> str:
         parts = path.parent.parts
-        for folder in self.conventions:
-            folder_parts = Path(folder).parts
-            if folder_parts and parts[-len(folder_parts) :] == folder_parts:
-                return folder
+        # Most specific (longest) folder wins, so "snapshots/3d" is preferred
+        # over "3d" regardless of the order the conventions were registered in.
+        matches = sorted(
+            (
+                folder
+                for folder in self.conventions
+                if (folder_parts := Path(folder).parts)
+                and parts[-len(folder_parts) :] == folder_parts
+            ),
+            key=lambda folder: len(Path(folder).parts),
+            reverse=True,
+        )
+        if matches:
+            return matches[0]
         error_message = (
             f"No convention registered for the folder of {path}. Known folders: "
             f"{sorted(self.conventions)}."
@@ -89,7 +99,11 @@ class FolderConventions:
             else:
                 accepted.append((folder, chain([first], specs)))
         if len(accepted) != 1:
-            status = "No convention accepts" if not accepted else "Several conventions accept"
+            status = (
+                "No convention accepts"
+                if not accepted
+                else "Several conventions accept"
+            )
             error_message = (
                 f"{status} the array {data_array.name!r} with dims "
                 f"{tuple(data_array.dims)}. Accepted by: "

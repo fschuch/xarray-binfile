@@ -12,7 +12,7 @@ from collections import Counter
 from collections.abc import Iterator, Mapping
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 import xarray as xr
@@ -83,7 +83,7 @@ class _ConventionBase:
     pattern: FilenamePattern | str
     check_coords: bool = True
 
-    _required_fields: frozenset[str] = frozenset({"name"})
+    _required_fields: ClassVar[frozenset[str]] = frozenset({"name"})
 
     def __post_init__(self) -> None:
         """
@@ -243,8 +243,9 @@ class _SplitAlongDimension(_ConventionBase):
 
         Raises:
             LayoutMismatchError: If the array does not fit ``layout``.
-            ValueError: If the array has no name, if a coordinate value cannot
-                be encoded in the filename, or if two values map to one file.
+            ValueError: If the array has no name, if a coordinate value or the
+                name cannot be encoded in a filename the reader can parse, or
+                if two values map to one file.
         """
         name = _require_name(data_array)
         self.layout.validate(
@@ -309,10 +310,10 @@ class StepIndexedFiles(_SplitAlongDimension):
     pattern: FilenamePattern | str = "{name}-{step:04d}.bin"
     time_step: float | None = None
 
-    _required_fields: frozenset[str] = frozenset({"name", "step"})
+    _required_fields: ClassVar[frozenset[str]] = frozenset({"name", "step"})
 
     def _time_from_fields(self, fields: Mapping[str, Any]) -> Any:
-        step = int(fields["step"])
+        step = np.int64(fields["step"])  # explicit width, stable across platforms
         if self.time_step is None:
             return step
         return step * self.time_step
@@ -365,7 +366,7 @@ class TimeStampedFiles(_SplitAlongDimension):
 
     pattern: FilenamePattern | str = "{name}-{time:.3f}.bin"
 
-    _required_fields: frozenset[str] = frozenset({"name", "time"})
+    _required_fields: ClassVar[frozenset[str]] = frozenset({"name", "time"})
 
     def _time_from_fields(self, fields: Mapping[str, Any]) -> Any:
         return float(fields["time"])

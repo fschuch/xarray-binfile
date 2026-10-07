@@ -1,4 +1,5 @@
 import pathlib
+import warnings
 
 import numpy as np
 import pytest
@@ -12,6 +13,7 @@ from xarray_binfile.conventions import (
     StepIndexedFiles,
     TimeStampedFiles,
 )
+from xarray_binfile.tutorial import FileSpecsGetter
 
 X = np.linspace(0.0, 1.0, 4, dtype=np.float32)
 Y = np.linspace(-1.0, 1.0, 3, dtype=np.float32)
@@ -19,11 +21,20 @@ Z = np.linspace(0.0, 2.0, 5, dtype=np.float32)
 RNG = np.random.default_rng(0)
 
 
+def _deprecated_getter():
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", DeprecationWarning)
+        return FileSpecsGetter(base_coords={"x": X, "y": Y, "z": Z}, dtype="<f4")
+
+
 def _dataset(time, dims_coords):
     coords = dict(dims_coords) | ({"time": time} if time is not None else {})
     shape = tuple(len(v) for v in coords.values())
     return xr.Dataset(
-        {name: (tuple(coords), RNG.random(shape, dtype=np.float32)) for name in ("ux", "uy")},
+        {
+            name: (tuple(coords), RNG.random(shape, dtype=np.float32))
+            for name in ("ux", "uy")
+        },
         coords=coords,
     )
 
@@ -33,7 +44,9 @@ def _dataset(time, dims_coords):
     [
         (StepIndexedFiles(Layout({"x": X, "y": Y, "z": Z}, dtype="<f4")), [0, 1, 2]),
         (
-            StepIndexedFiles(Layout({"x": X, "y": Y, "z": Z}, dtype="<f4"), time_step=0.5),
+            StepIndexedFiles(
+                Layout({"x": X, "y": Y, "z": Z}, dtype="<f4"), time_step=0.5
+            ),
             [0.0, 0.5, 1.0],
         ),
         (
@@ -41,8 +54,9 @@ def _dataset(time, dims_coords):
             [0.125, 0.25, 1.5],
         ),
         (StaticFiles(Layout({"x": X, "y": Y, "z": Z}, dtype="<f4")), None),
+        (_deprecated_getter(), [0, 1, 2]),
     ],
-    ids=["step", "step-with-time_step", "time-stamped", "static"],
+    ids=["step", "step-with-time_step", "time-stamped", "static", "deprecated"],
 )
 def test_roundtrip(tmp_path: pathlib.Path, convention, time):
     # Dims deliberately out of on-disk order to exercise the transpose.
@@ -50,12 +64,12 @@ def test_roundtrip(tmp_path: pathlib.Path, convention, time):
 
     dataset.binary_engine.to_file(convention.writer, tmp_path)
     roundtrip = xr.open_mfdataset(
-        sorted(tmp_path.glob("*.bin")), engine="binfile", read_specs_getter=convention.reader
+        sorted(tmp_path.glob("*.bin")),
+        engine="binfile",
+        read_specs_getter=convention.reader,
     ).load()
 
-    xr.testing.assert_identical(
-        roundtrip, dataset.transpose(*roundtrip["ux"].dims)
-    )
+    xr.testing.assert_identical(roundtrip, dataset.transpose(*roundtrip["ux"].dims))
 
 
 def test_folder_conventions_roundtrip(tmp_path: pathlib.Path):
@@ -86,6 +100,8 @@ def test_folder_conventions_roundtrip(tmp_path: pathlib.Path):
         "xy_planes/uy-0001.bin",
     ]
     roundtrip = xr.open_mfdataset(
-        sorted(tmp_path.rglob("*.bin")), engine="binfile", read_specs_getter=conventions.reader
+        sorted(tmp_path.rglob("*.bin")),
+        engine="binfile",
+        read_specs_getter=conventions.reader,
     ).load()
     xr.testing.assert_identical(roundtrip, xr.merge([planes, volumes, static]))

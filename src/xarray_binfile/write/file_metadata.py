@@ -19,8 +19,8 @@ class WriteSpecs(NamedTuple):
 
     Attributes:
         filename: Path of the binary file. A relative path is resolved
-            against the output directory passed to ``to_file`` and may include
-            sub-folders, which are created on demand (for example
+            against the (existing) output directory passed to ``to_file`` and
+            may include sub-folders, which are created on demand (for example
             ``"3d/ux-0001.bin"``); it must not escape that directory. An
             absolute path is written as is.
         sub_array: The portion of the DataArray to be written.

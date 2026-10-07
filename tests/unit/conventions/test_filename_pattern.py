@@ -5,7 +5,7 @@ from hypothesis import strategies as st
 from xarray_binfile.conventions import FilenamePattern
 
 NAMES = st.from_regex(r"\A[A-Za-z_][A-Za-z0-9_]{0,7}\Z")
-STEPS = st.integers(min_value=0, max_value=10**9)
+STEPS = st.integers(min_value=-(10**9), max_value=10**9)
 TIMES = st.floats(min_value=0.0, max_value=1e6, allow_nan=False, allow_infinity=False)
 
 
@@ -19,6 +19,9 @@ TIMES = st.floats(min_value=0.0, max_value=1e6, allow_nan=False, allow_infinity=
         ("{name}-{time:.3f}.bin", "ux-0.250.bin", {"name": "ux", "time": 0.25}),
         ("{name}-{time:e}.bin", "ux-2.500000e-01.bin", {"name": "ux", "time": 0.25}),
         ("{name}-{time:g}.bin", "ux-1e+06.bin", {"name": "ux", "time": 1e6}),
+        ("{name}-{time:.0f}.bin", "ux-1.bin", {"name": "ux", "time": 1.0}),
+        ("{name}-{step:04d}.bin", "ux--005.bin", {"name": "ux", "step": -5}),
+        ("{name}-{step:04d}.bin", "ux--12345.bin", {"name": "ux", "step": -12345}),
         ("{name}.bin", "epsi.bin", {"name": "epsi"}),
     ],
 )
@@ -28,7 +31,14 @@ def test_parse(template, filename, expected):
 
 @pytest.mark.parametrize(
     "filename",
-    ["ux-0001.bin.bak", "ux-001.bin", "ux_0001.bin", "ux-0001.dat", "prefix/ux-0001.bin"],
+    [
+        "ux-0001.bin.bak",
+        "ux-001.bin",
+        "ux--01.bin",
+        "ux_0001.bin",
+        "ux-0001.dat",
+        "prefix/ux-0001.bin",
+    ],
 )
 def test_parse_rejects_non_matching(filename):
     pattern = FilenamePattern("{name}-{step:04d}.bin")
@@ -40,7 +50,13 @@ def test_parse_rejects_non_matching(filename):
 
 @pytest.mark.parametrize(
     "template",
-    ["no-fields.bin", "{}-{step:04d}.bin", "{name!r}.bin", "{name}-{name}.bin", "{step:x}"],
+    [
+        "no-fields.bin",
+        "{}-{step:04d}.bin",
+        "{name!r}.bin",
+        "{name}-{name}.bin",
+        "{step:x}",
+    ],
 )
 def test_invalid_templates_are_rejected(template):
     with pytest.raises(ValueError):
@@ -67,6 +83,31 @@ def test_step_roundtrip_without_separator(name, step):
         "name": name,
         "step": step,
     }
+
+
+@pytest.mark.parametrize(
+    ("template", "fields"),
+    [
+        ("{name}-{step:04d}.bin", {"name": "u.x", "step": 1}),
+        ("{name}-{step:04d}.bin", {"name": "u-x", "step": 1}),
+        ("{name}-{step:04d}.bin", {"name": "", "step": 1}),
+        ("{name}-{time:.3f}.bin", {"name": "ux", "time": float("nan")}),
+    ],
+)
+def test_format_rejects_values_that_do_not_parse_back(template, fields):
+    with pytest.raises(ValueError, match="cannot be parsed back"):
+        FilenamePattern(template).format(**fields)
+
+
+@pytest.mark.parametrize("precision", [0, 1, 3])
+@given(name=NAMES, time=TIMES)
+def test_fixed_precision_roundtrip(precision, name, time):
+    pattern = FilenamePattern(f"{{name}}-{{time:.{precision}f}}.bin")
+
+    parsed = pattern.parse(pattern.format(name=name, time=time))
+
+    assert parsed["name"] == name
+    assert parsed["time"] == pytest.approx(time, abs=0.5 * 10**-precision)
 
 
 @given(name=NAMES, time=TIMES)

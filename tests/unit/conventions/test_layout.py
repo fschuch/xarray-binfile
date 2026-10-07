@@ -57,7 +57,9 @@ def test_validate_rejects_coordinate_values_by_default(layout):
         np.zeros((3, 4)), coords={"x": np.arange(3) + 10, "y": np.linspace(0, 1, 4)}
     )
 
-    with pytest.raises(LayoutMismatchError, match="Coordinate mismatch on dimension 'x'"):
+    with pytest.raises(
+        LayoutMismatchError, match="Coordinate mismatch on dimension 'x'"
+    ):
         layout.validate(array)
     layout.validate(array, check_coords=False)
 

@@ -30,6 +30,20 @@ def test_reader_dispatches_on_parent_folder():
     assert volume.dims == ("x", "y", "z", "time")
 
 
+def test_reader_prefers_most_specific_folder_regardless_of_order():
+    conventions = FolderConventions(
+        {
+            "3d": StepIndexedFiles(Layout({"x": X})),
+            "snapshots/3d": StepIndexedFiles(Layout({"x": X, "y": Y, "z": Z})),
+        }
+    )
+
+    specs = conventions.reader(pathlib.Path("case/snapshots/3d/ux-0001.bin"))
+
+    assert specs.dims == ("x", "y", "z", "time")
+    assert conventions.reader(pathlib.Path("case/3d/ux-0001.bin")).dims == ("x", "time")
+
+
 def test_reader_rejects_unknown_folder():
     with pytest.raises(ValueError, match="No convention registered"):
         CONVENTIONS.reader(pathlib.Path("case/3d/ux-0001.bin"))

@@ -47,7 +47,7 @@ Contract:
 
 `WriteSpecs` fields:
 
-- `filename`: output path. A relative path is resolved against the directory passed to `to_file` and may include sub-folders, which are created on demand, but it must stay inside that directory (`..` escaping it is rejected). An absolute path is used as is, so one call can target several locations
+- `filename`: output path. A relative path is resolved against the directory passed to `to_file`, which must exist, and may include sub-folders, which are created on demand, but it must stay inside that directory (`..` escaping it is rejected; symbolic links are not followed for this check). An absolute path is used as is, so one call can target several locations
 - `sub_array`: array slice to write into that file, already transposed to on-disk order
 - `dtype`: optional on-disk data type; when set, the sub-array is cast right before serialization (including byte order, for example `"<f4"`). When omitted, the in-memory dtype and native byte order are written as-is, so make sure they match what your read specs getter declares.
 
@@ -132,7 +132,7 @@ caseC/
 		epsi.bin
 ```
 
-`FolderConventions` dispatches to one convention per folder. Reading picks the convention whose folder matches the file's parent path. Writing offers the array to every convention and requires exactly one to accept it, based on the array dimensions and coordinates, then writes into that folder. If no convention or more than one accepts the array, a `LayoutMismatchError` is raised: the backend never guesses.
+`FolderConventions` dispatches to one convention per folder. Reading picks the convention whose folder matches the end of the file's parent path, preferring the most specific folder when several match (`snapshots/3d` over `3d`). Writing offers the array to every convention and requires exactly one to accept it, based on the array dimensions and coordinates, then writes into that folder. If no convention or more than one accepts the array, a `LayoutMismatchError` is raised: the backend never guesses.
 
 ```python
 from xarray_binfile.conventions import FolderConventions
@@ -160,7 +160,7 @@ Every shipped writer checks the array against its `Layout` before yielding anyth
 - sizes along each dimension must match
 - coordinate values must be equal to the layout coordinates, unless `check_coords=False`
 
-It also requires the array to be named and refuses to proceed when two slices would map to the same filename. Mismatches raise `LayoutMismatchError` (a `ValueError`) with the offending dimension in the message.
+It also requires the array to be named, refuses names or values that would produce a filename the paired reader cannot parse back (for example a variable called `u.x` with the default pattern), and refuses to proceed when two slices would map to the same filename. Mismatches raise `LayoutMismatchError` (a `ValueError`) with the offending dimension in the message.
 
 ```{note}
 `xarray_binfile.tutorial.FileSpecsGetter` is the previous reference implementation. It is deprecated in favor of `StepIndexedFiles` and kept unchanged for backward compatibility. Replace `FileSpecsGetter(base_coords=coords, dtype=dtype)` with `StepIndexedFiles(Layout(coords, dtype=dtype))`; the default pattern `"{name}-{step:04d}.bin"` produces the same filenames.
