@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
     <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
@@ -61,6 +61,7 @@
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'tutorials/benchmarking';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Practical Examples: Batch Conversion, Probes, and Plots" href="examples.html" />
@@ -68,20 +69,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -107,7 +114,51 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
     </header>
   
 
@@ -338,7 +389,7 @@
                 <h2> Contents </h2>
             </div>
             <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#record-your-environment">Record your environment</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-tiny-benchmarking-harness">A tiny benchmarking harness</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sweep-data-type-and-dimension-size">Sweep data type and dimension size</a></li>
@@ -377,7 +428,8 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">xarray</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xr</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">xarray_binfile</span>  <span class="c1"># noqa: F401  (registers the .binary_engine accessors)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">xarray_binfile.tutorial</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetGenerator</span><span class="p">,</span> <span class="n">FileSpecsGetter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">xarray_binfile.conventions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Layout</span><span class="p">,</span> <span class="n">StepIndexedFiles</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">xarray_binfile.tutorial</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetGenerator</span>
 
 <span class="n">workdir_holder</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span>
 <span class="n">workdir</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">workdir_holder</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
@@ -386,7 +438,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>PosixPath(&#39;/tmp/tmpsea3en4g&#39;)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>PosixPath('/tmp/tmps_pl1m_k')
 </pre></div>
 </div>
 </div>
@@ -396,15 +448,15 @@
 <p>A benchmark is only meaningful next to the machine that produced it. Capture the basics so results stay comparable when you change hardware or revisit them later.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;platform:&quot;</span><span class="p">,</span> <span class="n">platform</span><span class="o">.</span><span class="n">platform</span><span class="p">())</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;python:&quot;</span><span class="p">,</span> <span class="n">platform</span><span class="o">.</span><span class="n">python_version</span><span class="p">())</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;logical CPU cores:&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">())</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"platform:"</span><span class="p">,</span> <span class="n">platform</span><span class="o">.</span><span class="n">platform</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"python:"</span><span class="p">,</span> <span class="n">platform</span><span class="o">.</span><span class="n">python_version</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"logical CPU cores:"</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>platform: Linux-6.17.0-1018-azure-x86_64-with-glibc2.39
-python: 3.13.14
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>platform: Linux-6.17.0-1022-azure-x86_64-with-glibc2.39
+python: 3.13.15
 logical CPU cores: 4
 </pre></div>
 </div>
@@ -418,18 +470,18 @@ logical CPU cores: 4
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">make_dataset</span><span class="p">(</span>
-    <span class="n">directory</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">num_points</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">num_steps</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;ux&quot;</span><span class="p">,</span> <span class="s2">&quot;uy&quot;</span><span class="p">,</span> <span class="s2">&quot;uz&quot;</span><span class="p">)</span>
+    <span class="n">directory</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">num_points</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">num_steps</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="p">(</span><span class="s2">"ux"</span><span class="p">,</span> <span class="s2">"uy"</span><span class="p">,</span> <span class="s2">"uz"</span><span class="p">)</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write ``len(variables) * num_steps`` files of ``num_points**3`` points each.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Write ``len(variables) * num_steps`` files of ``num_points**3`` points each."""</span>
     <span class="n">directory</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">coords</span> <span class="o">=</span> <span class="p">{</span>
         <span class="n">axis</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">num_points</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">,</span> <span class="s2">"z"</span><span class="p">)</span>
     <span class="p">}</span>
-    <span class="n">getter</span> <span class="o">=</span> <span class="n">FileSpecsGetter</span><span class="p">(</span><span class="n">base_coords</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="n">getter</span> <span class="o">=</span> <span class="n">StepIndexedFiles</span><span class="p">(</span><span class="n">Layout</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">))</span>
     <span class="n">generator</span> <span class="o">=</span> <span class="n">DatasetGenerator</span><span class="p">(</span><span class="n">getter</span><span class="o">.</span><span class="n">reader</span><span class="p">)</span>
     <span class="n">filenames</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">getter</span><span class="o">.</span><span class="n">filename_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="n">step</span><span class="p">)</span>
+        <span class="n">getter</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">variables</span>
         <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_steps</span><span class="p">)</span>
     <span class="p">)</span>
@@ -439,7 +491,7 @@ logical CPU cores: 4
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">benchmark</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">repeats</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">warmup</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Time ``operation`` and return the best and median seconds over ``repeats`` runs.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Time ``operation`` and return the best and median seconds over ``repeats`` runs."""</span>
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">warmup</span><span class="p">):</span>
         <span class="n">operation</span><span class="p">()</span>
     <span class="n">samples</span> <span class="o">=</span> <span class="p">[]</span>
@@ -461,8 +513,8 @@ logical CPU cores: 4
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">open_reduce_operation</span><span class="p">(</span><span class="n">getter</span><span class="p">,</span> <span class="n">directory</span><span class="p">,</span> <span class="n">chunks</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">():</span>
         <span class="n">dataset</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
-            <span class="nb">sorted</span><span class="p">(</span><span class="n">directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.bin&quot;</span><span class="p">)),</span>
-            <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;binfile&quot;</span><span class="p">,</span>
+            <span class="nb">sorted</span><span class="p">(</span><span class="n">directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">"*.bin"</span><span class="p">)),</span>
+            <span class="n">engine</span><span class="o">=</span><span class="s2">"binfile"</span><span class="p">,</span>
             <span class="n">read_specs_getter</span><span class="o">=</span><span class="n">getter</span><span class="o">.</span><span class="n">reader</span><span class="p">,</span>
             <span class="n">chunks</span><span class="o">=</span><span class="n">chunks</span><span class="p">,</span>
             <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -472,26 +524,26 @@ logical CPU cores: 4
     <span class="k">return</span> <span class="n">run</span>
 
 
-<span class="n">chunks</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span>
-<span class="n">sizes</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;small&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span> <span class="s2">&quot;large&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">}</span>
-<span class="n">dtypes</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;float32&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="s2">&quot;float64&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">}</span>
+<span class="n">chunks</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"time"</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span>
+<span class="n">sizes</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"small"</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span> <span class="s2">"large"</span><span class="p">:</span> <span class="mi">40</span><span class="p">}</span>
+<span class="n">dtypes</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"float32"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="s2">"float64"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">}</span>
 
 <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">dtype_name</span><span class="p">,</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="n">dtypes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
     <span class="k">for</span> <span class="n">size_label</span><span class="p">,</span> <span class="n">num_points</span> <span class="ow">in</span> <span class="n">sizes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">directory</span> <span class="o">=</span> <span class="n">workdir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dtype_name</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">size_label</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">directory</span> <span class="o">=</span> <span class="n">workdir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">dtype_name</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">size_label</span><span class="si">}</span><span class="s2">"</span>
         <span class="n">getter</span> <span class="o">=</span> <span class="n">make_dataset</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">num_points</span><span class="o">=</span><span class="n">num_points</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
         <span class="n">operation</span> <span class="o">=</span> <span class="n">open_reduce_operation</span><span class="p">(</span><span class="n">getter</span><span class="p">,</span> <span class="n">directory</span><span class="p">,</span> <span class="n">chunks</span><span class="p">)</span>
         <span class="n">best</span><span class="p">,</span> <span class="n">median</span> <span class="o">=</span> <span class="n">benchmark</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span> <span class="n">repeats</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">warmup</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">megabytes</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.bin&quot;</span><span class="p">))</span> <span class="o">/</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">megabytes</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">"*.bin"</span><span class="p">))</span> <span class="o">/</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">2</span>
         <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
             <span class="p">{</span>
-                <span class="s2">&quot;dtype&quot;</span><span class="p">:</span> <span class="n">dtype_name</span><span class="p">,</span>
-                <span class="s2">&quot;points_per_axis&quot;</span><span class="p">:</span> <span class="n">num_points</span><span class="p">,</span>
-                <span class="s2">&quot;dataset_MiB&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">megabytes</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
-                <span class="s2">&quot;best_s&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">best</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
-                <span class="s2">&quot;median_s&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">median</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
-                <span class="s2">&quot;MiB_per_s&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">megabytes</span> <span class="o">/</span> <span class="n">best</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="s2">"dtype"</span><span class="p">:</span> <span class="n">dtype_name</span><span class="p">,</span>
+                <span class="s2">"points_per_axis"</span><span class="p">:</span> <span class="n">num_points</span><span class="p">,</span>
+                <span class="s2">"dataset_MiB"</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">megabytes</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                <span class="s2">"best_s"</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">best</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+                <span class="s2">"median_s"</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">median</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+                <span class="s2">"MiB_per_s"</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">megabytes</span> <span class="o">/</span> <span class="n">best</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
             <span class="p">}</span>
         <span class="p">)</span>
 
@@ -533,36 +585,36 @@ logical CPU cores: 4
       <td>float32</td>
       <td>24</td>
       <td>1.27</td>
-      <td>0.1194</td>
-      <td>0.1194</td>
-      <td>10.6</td>
+      <td>0.1108</td>
+      <td>0.1114</td>
+      <td>11.4</td>
     </tr>
     <tr>
       <th>1</th>
       <td>float32</td>
       <td>40</td>
       <td>5.86</td>
-      <td>0.1188</td>
-      <td>0.1193</td>
-      <td>49.3</td>
+      <td>0.1126</td>
+      <td>0.1132</td>
+      <td>52.0</td>
     </tr>
     <tr>
       <th>2</th>
       <td>float64</td>
       <td>24</td>
       <td>2.53</td>
-      <td>0.1181</td>
-      <td>0.1200</td>
-      <td>21.4</td>
+      <td>0.1108</td>
+      <td>0.1112</td>
+      <td>22.8</td>
     </tr>
     <tr>
       <th>3</th>
       <td>float64</td>
       <td>40</td>
       <td>11.72</td>
-      <td>0.1195</td>
-      <td>0.1195</td>
-      <td>98.1</td>
+      <td>0.1129</td>
+      <td>0.1135</td>
+      <td>103.8</td>
     </tr>
   </tbody>
 </table>
@@ -656,7 +708,7 @@ logical CPU cores: 4
     <i class="fa-solid fa-list"></i> Contents
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#record-your-environment">Record your environment</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-tiny-benchmarking-harness">A tiny benchmarking harness</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sweep-data-type-and-dimension-size">Sweep data type and dimension size</a></li>
@@ -710,8 +762,8 @@ By Felipe N. Schuch
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
   </footer>

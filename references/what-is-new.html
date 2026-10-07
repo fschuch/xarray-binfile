@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
     <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
@@ -61,26 +61,33 @@
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'references/what-is-new';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="prev" title="How to Contribute" href="how-to-contribute.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -106,7 +113,51 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
     </header>
   
 
@@ -337,7 +388,8 @@
                 <h2> Contents </h2>
             </div>
             <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-2-0">v0.2.0</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-1-0">v0.1.0</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-1-0b2">v0.1.0b2</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-1-0b1">v0.1.0b1</a></li>
@@ -357,6 +409,59 @@
 <h1>What’s New<a class="headerlink" href="#what-s-new" title="Link to this heading">#</a></h1>
 <p>The format is based on <a class="reference external" href="https://keepachangelog.com/en/1.0.0/">Keep a Changelog</a>, and this project adheres to <a class="reference external" href="https://jacobtomlinson.dev/effver/">Intended Effort Versioning</a> (EffVer for short).
 Release notes are automatically recovered from GitHub by <a class="reference external" href="https://github.com/ewjoachim/sphinx-github-changelog">sphinx-github-changelog</a>.</p>
+<section id="release-v0-2-0">
+<h2>v0.2.0<a class="headerlink" href="#release-v0-2-0" title="Link to this heading">#</a></h2>
+<p><em>Released on 2026-10-07 - <a class="reference external" href="https://github.com/fschuch/xarray-binfile/releases/tag/v0.2.0">GitHub</a> - <a class="reference external" href="https://pypi.org/project/xarray-binfile/v0.2.0/">PyPI</a></em></p>
+
+<h2>What's Changed</h2>
+<h3>Added</h3>
+<ul>
+<li>New <code>xarray_binfile.conventions</code> module with ready-to-use implementations of the read and write spec getter protocols:
+<ul>
+<li><code>FilenamePattern</code> builds both the writer's formatter and the reader's regular expression from a single <code>str.format</code> template such as <code>"{name}-{step:04d}.bin"</code>. Matching is anchored to the whole filename, zero-fill is a minimum width, and formatting verifies that the result parses back, so write and read conventions can no longer drift apart.</li>
+<li><code>Layout</code> declares the on-disk dimension order, coordinates and dtype, and validates arrays strictly before writing (dimensions, sizes and, by default, coordinate values).</li>
+<li><code>StepIndexedFiles</code> for files numbered by an integer step, with optional <code>time_step</code> to map steps to physical time on read and back on write. Values that do not land on an integer step raise instead of being truncated.</li>
+<li><code>TimeStampedFiles</code> for files named with the physical time (for example <code>ux-0.250.bin</code>), rejecting values that collide at the pattern precision.</li>
+<li><code>StaticFiles</code> for fields without a time dimension, one file per variable.</li>
+<li><code>FolderConventions</code> to dispatch on the parent folder when different folders hold arrays of different shapes. Writes require exactly one convention to accept the array and raise <code>LayoutMismatchError</code> otherwise.</li>
+</ul>
+</li>
+<li><code>WriteSpecs.filename</code> may include sub-folders, created on demand, or be an absolute path, so one <code>to_file</code> call can target several locations.</li>
+</ul>
+<h3>Changed</h3>
+<ul>
+<li><code>to_file</code> stages each file in a temporary sibling next to its destination and moves it into place atomically, instead of using one temporary directory inside the output directory. Relative filenames that escape the output directory through <code>..</code> are rejected; the output directory itself must exist.</li>
+<li><code>to_file</code> no longer copies the array when the on-disk dtype equals the in-memory dtype.</li>
+</ul>
+<h3>Documentation</h3>
+<ul>
+<li>The spec getter protocols page is rewritten around the shipped conventions, with examples for step-indexed, time-stamped, static and folder-dependent layouts. All tutorials use the new conventions, and the API reference gains a Conventions section.</li>
+</ul>
+<ul>
+<li>Added CONTRIBUTING, CODE_OF_CONDUCT, and CITATION.cff by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/fschuch/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/fschuch">@fschuch</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5748612443" data-permission-text="Title is private" data-url="https://github.com/fschuch/xarray-binfile/issues/45" data-hovercard-type="pull_request" data-hovercard-url="/fschuch/xarray-binfile/pull/45/hovercard" href="https://github.com/fschuch/xarray-binfile/pull/45">#45</a></li>
+</ul>
+<h3>Deprecated</h3>
+<ul>
+<li><code>xarray_binfile.tutorial.FileSpecsGetter</code> is deprecated in favour of <code>xarray_binfile.conventions.StepIndexedFiles</code>. It is kept unchanged and emits a <code>DeprecationWarning</code>. Replace <code>FileSpecsGetter(base_coords=coords, dtype=dtype)</code> with <code>StepIndexedFiles(Layout(coords, dtype=dtype))</code>; the default pattern produces the same filenames.</li>
+</ul>
+<h3>Internals</h3>
+<ul>
+<li>Build(deps-dev): bump pytest-rerunfailures from 16.3 to 16.4 in the pip-dependencies group by <a class="user-mention notranslate" data-hovercard-type="organization" data-hovercard-url="/orgs/dependabot/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/dependabot">@dependabot</a>[bot] in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="4849252437" data-permission-text="Title is private" data-url="https://github.com/fschuch/xarray-binfile/issues/32" data-hovercard-type="pull_request" data-hovercard-url="/fschuch/xarray-binfile/pull/32/hovercard" href="https://github.com/fschuch/xarray-binfile/pull/32">#32</a></li>
+<li>Build(deps): bump SonarSource/sonarqube-scan-action from 8.2.0 to 8.2.1 in the actions group by <a class="user-mention notranslate" data-hovercard-type="organization" data-hovercard-url="/orgs/dependabot/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/dependabot">@dependabot</a>[bot] in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="4962168512" data-permission-text="Title is private" data-url="https://github.com/fschuch/xarray-binfile/issues/35" data-hovercard-type="pull_request" data-hovercard-url="/fschuch/xarray-binfile/pull/35/hovercard" href="https://github.com/fschuch/xarray-binfile/pull/35">#35</a></li>
+<li>Build(deps-dev): bump pytest-rerunfailures from 16.4 to 16.5 in the pip-dependencies group by <a class="user-mention notranslate" data-hovercard-type="organization" data-hovercard-url="/orgs/dependabot/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/dependabot">@dependabot</a>[bot] in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5207089414" data-permission-text="Title is private" data-url="https://github.com/fschuch/xarray-binfile/issues/37" data-hovercard-type="pull_request" data-hovercard-url="/fschuch/xarray-binfile/pull/37/hovercard" href="https://github.com/fschuch/xarray-binfile/pull/37">#37</a></li>
+<li>Build(deps): bump the actions group across 1 directory with 4 updates by <a class="user-mention notranslate" data-hovercard-type="organization" data-hovercard-url="/orgs/dependabot/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/dependabot">@dependabot</a>[bot] in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5207089725" data-permission-text="Title is private" data-url="https://github.com/fschuch/xarray-binfile/issues/38" data-hovercard-type="pull_request" data-hovercard-url="/fschuch/xarray-binfile/pull/38/hovercard" href="https://github.com/fschuch/xarray-binfile/pull/38">#38</a></li>
+<li>Build(deps-dev): bump pytest-rerunfailures from 16.5 to 16.6 in the pip-dependencies group by <a class="user-mention notranslate" data-hovercard-type="organization" data-hovercard-url="/orgs/dependabot/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/dependabot">@dependabot</a>[bot] in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5271328430" data-permission-text="Title is private" data-url="https://github.com/fschuch/xarray-binfile/issues/39" data-hovercard-type="pull_request" data-hovercard-url="/fschuch/xarray-binfile/pull/39/hovercard" href="https://github.com/fschuch/xarray-binfile/pull/39">#39</a></li>
+<li>Build(deps-dev): bump the pip-dependencies group with 2 updates by <a class="user-mention notranslate" data-hovercard-type="organization" data-hovercard-url="/orgs/dependabot/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/dependabot">@dependabot</a>[bot] in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5416415665" data-permission-text="Title is private" data-url="https://github.com/fschuch/xarray-binfile/issues/40" data-hovercard-type="pull_request" data-hovercard-url="/fschuch/xarray-binfile/pull/40/hovercard" href="https://github.com/fschuch/xarray-binfile/pull/40">#40</a></li>
+<li>Build(deps): bump SonarSource/sonarqube-scan-action from 8.2.1 to 8.2.2 in the actions group by <a class="user-mention notranslate" data-hovercard-type="organization" data-hovercard-url="/orgs/dependabot/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/dependabot">@dependabot</a>[bot] in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5573416348" data-permission-text="Title is private" data-url="https://github.com/fschuch/xarray-binfile/issues/41" data-hovercard-type="pull_request" data-hovercard-url="/fschuch/xarray-binfile/pull/41/hovercard" href="https://github.com/fschuch/xarray-binfile/pull/41">#41</a></li>
+<li>Build(deps-dev): bump pytest-rerunfailures from 16.6.1 to 16.7 in the pip-dependencies group by <a class="user-mention notranslate" data-hovercard-type="organization" data-hovercard-url="/orgs/dependabot/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/dependabot">@dependabot</a>[bot] in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5573419504" data-permission-text="Title is private" data-url="https://github.com/fschuch/xarray-binfile/issues/42" data-hovercard-type="pull_request" data-hovercard-url="/fschuch/xarray-binfile/pull/42/hovercard" href="https://github.com/fschuch/xarray-binfile/pull/42">#42</a></li>
+</ul>
+<h3>Other Changes</h3>
+<ul>
+<li>pre-commit autoupdate by <a class="user-mention notranslate" data-hovercard-type="organization" data-hovercard-url="/orgs/pre-commit-ci/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/pre-commit-ci">@pre-commit-ci</a>[bot] in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="4877386752" data-permission-text="Title is private" data-url="https://github.com/fschuch/xarray-binfile/issues/33" data-hovercard-type="pull_request" data-hovercard-url="/fschuch/xarray-binfile/pull/33/hovercard" href="https://github.com/fschuch/xarray-binfile/pull/33">#33</a></li>
+<li>pre-commit autoupdate by <a class="user-mention notranslate" data-hovercard-type="organization" data-hovercard-url="/orgs/pre-commit-ci/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/pre-commit-ci">@pre-commit-ci</a>[bot] in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="4932624774" data-permission-text="Title is private" data-url="https://github.com/fschuch/xarray-binfile/issues/34" data-hovercard-type="pull_request" data-hovercard-url="/fschuch/xarray-binfile/pull/34/hovercard" href="https://github.com/fschuch/xarray-binfile/pull/34">#34</a></li>
+<li>pre-commit autoupdate by <a class="user-mention notranslate" data-hovercard-type="organization" data-hovercard-url="/orgs/pre-commit-ci/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/pre-commit-ci">@pre-commit-ci</a>[bot] in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5719415030" data-permission-text="Title is private" data-url="https://github.com/fschuch/xarray-binfile/issues/43" data-hovercard-type="pull_request" data-hovercard-url="/fschuch/xarray-binfile/pull/43/hovercard" href="https://github.com/fschuch/xarray-binfile/pull/43">#43</a></li>
+</ul>
+<p><strong>Full Changelog</strong>: <a class="commit-link" href="https://github.com/fschuch/xarray-binfile/compare/v0.1.0...v0.2.0"><tt>v0.1.0...v0.2.0</tt></a></p></section>
 <section id="release-v0-1-0">
 <h2>v0.1.0<a class="headerlink" href="#release-v0-1-0" title="Link to this heading">#</a></h2>
 <p><em>Released on 2026-07-07 - <a class="reference external" href="https://github.com/fschuch/xarray-binfile/releases/tag/v0.1.0">GitHub</a> - <a class="reference external" href="https://pypi.org/project/xarray-binfile/v0.1.0/">PyPI</a></em></p>
@@ -471,7 +576,8 @@ Release notes are automatically recovered from GitHub by <a class="reference ext
     <i class="fa-solid fa-list"></i> Contents
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-2-0">v0.2.0</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-1-0">v0.1.0</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-1-0b2">v0.1.0b2</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-1-0b1">v0.1.0b1</a></li>
@@ -524,8 +630,8 @@ By Felipe N. Schuch
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
   </footer>

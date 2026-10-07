@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
     <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
@@ -61,6 +61,7 @@
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'tutorials/examples';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Further Reading" href="../references/further-reading.html" />
@@ -68,20 +69,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -107,7 +114,51 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
     </header>
   
 
@@ -338,7 +389,7 @@
                 <h2> Contents </h2>
             </div>
             <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-example-data">Generate example data</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#batch-convert-every-file-from-float64-to-float32">1. Batch-convert every file from float64 to float32</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extract-a-probe-time-series-and-export-to-csv">2. Extract a probe time series and export to CSV</a></li>
@@ -366,8 +417,8 @@
 <p>All input files are synthesized on the fly with <code class="docutils literal notranslate"><span class="pre">DatasetGenerator</span></code>, so the notebook is self-contained and reproducible.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>These recipes reuse the shipped <code class="docutils literal notranslate"><span class="pre">FileSpecsGetter</span></code> convention
-(<code class="docutils literal notranslate"><span class="pre">{name}-{digits:04}.bin</span></code>). For a different on-disk layout, provide your own
+<p>These recipes reuse the shipped <code class="docutils literal notranslate"><span class="pre">StepIndexedFiles</span></code> convention
+(<code class="docutils literal notranslate"><span class="pre">{name}-{step:04d}.bin</span></code>). For a different on-disk layout, provide your own
 read/write getters as shown in
 <a class="reference internal" href="../usage/spec-getter-protocols.html"><span class="std std-doc">Spec getter protocols</span></a>.</p>
 </div>
@@ -382,7 +433,8 @@ read/write getters as shown in
 <span class="kn">import</span><span class="w"> </span><span class="nn">xarray</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xr</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">xarray_binfile</span>  <span class="c1"># noqa: F401  (registers the .binary_engine accessors)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">xarray_binfile.tutorial</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetGenerator</span><span class="p">,</span> <span class="n">FileSpecsGetter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">xarray_binfile.conventions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Layout</span><span class="p">,</span> <span class="n">StepIndexedFiles</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">xarray_binfile.tutorial</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetGenerator</span>
 
 <span class="n">source_directory_holder</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span>
 <span class="n">float32_directory_holder</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span>
@@ -395,7 +447,7 @@ read/write getters as shown in
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>PosixPath(&#39;/tmp/tmpljjpnx2u&#39;)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>PosixPath('/tmp/tmpwwcsleo9')
 </pre></div>
 </div>
 </div>
@@ -406,31 +458,31 @@ read/write getters as shown in
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">base_coords</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
-    <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
-    <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+    <span class="s2">"x"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+    <span class="s2">"y"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+    <span class="s2">"z"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
 <span class="p">}</span>
 
-<span class="n">reader_float64</span> <span class="o">=</span> <span class="n">FileSpecsGetter</span><span class="p">(</span><span class="n">base_coords</span><span class="o">=</span><span class="n">base_coords</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<span class="n">reader_float64</span> <span class="o">=</span> <span class="n">StepIndexedFiles</span><span class="p">(</span><span class="n">Layout</span><span class="p">(</span><span class="n">base_coords</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">))</span>
 <span class="n">dataset_generator</span> <span class="o">=</span> <span class="n">DatasetGenerator</span><span class="p">(</span><span class="n">reader_float64</span><span class="o">.</span><span class="n">reader</span><span class="p">)</span>
 <span class="n">filenames</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">reader_float64</span><span class="o">.</span><span class="n">filename_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="n">step</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;ux&quot;</span><span class="p">,</span> <span class="s2">&quot;uy&quot;</span><span class="p">,</span> <span class="s2">&quot;uz&quot;</span><span class="p">)</span>
+    <span class="n">reader_float64</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"ux"</span><span class="p">,</span> <span class="s2">"uy"</span><span class="p">,</span> <span class="s2">"uz"</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
 <span class="p">)</span>
 <span class="n">source_dataset</span> <span class="o">=</span> <span class="n">dataset_generator</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="n">filenames</span><span class="p">))</span>
 <span class="n">source_dataset</span><span class="o">.</span><span class="n">binary_engine</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">reader_float64</span><span class="o">.</span><span class="n">writer</span><span class="p">,</span> <span class="n">source_directory</span><span class="p">)</span>
-<span class="nb">sorted</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">source_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.bin&quot;</span><span class="p">))[:</span><span class="mi">6</span><span class="p">]</span>
+<span class="nb">sorted</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">source_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">"*.bin"</span><span class="p">))[:</span><span class="mi">6</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;ux-0000.bin&#39;,
- &#39;ux-0001.bin&#39;,
- &#39;ux-0002.bin&#39;,
- &#39;ux-0003.bin&#39;,
- &#39;ux-0004.bin&#39;,
- &#39;ux-0005.bin&#39;]
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>['ux-0000.bin',
+ 'ux-0001.bin',
+ 'ux-0002.bin',
+ 'ux-0003.bin',
+ 'ux-0004.bin',
+ 'ux-0005.bin']
 </pre></div>
 </div>
 </div>
@@ -441,28 +493,28 @@ read/write getters as shown in
 <p>Halving the on-disk word size is a common way to shrink large binary outputs when single precision is enough. Because the raw files carry no dtype information, we read them with a <code class="docutils literal notranslate"><span class="pre">float64</span></code> getter, cast each variable to <code class="docutils literal notranslate"><span class="pre">float32</span></code>, and write the result into a separate directory.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reader_float32</span> <span class="o">=</span> <span class="n">FileSpecsGetter</span><span class="p">(</span><span class="n">base_coords</span><span class="o">=</span><span class="n">base_coords</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reader_float32</span> <span class="o">=</span> <span class="n">StepIndexedFiles</span><span class="p">(</span><span class="n">Layout</span><span class="p">(</span><span class="n">base_coords</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
 
-<span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">source_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.bin&quot;</span><span class="p">)):</span>
+<span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">source_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">"*.bin"</span><span class="p">)):</span>
     <span class="n">single</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span>
-        <span class="n">path</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;binfile&quot;</span><span class="p">,</span> <span class="n">read_specs_getter</span><span class="o">=</span><span class="n">reader_float64</span><span class="o">.</span><span class="n">reader</span>
+        <span class="n">path</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s2">"binfile"</span><span class="p">,</span> <span class="n">read_specs_getter</span><span class="o">=</span><span class="n">reader_float64</span><span class="o">.</span><span class="n">reader</span>
     <span class="p">)</span>
     <span class="n">name</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">single</span><span class="o">.</span><span class="n">data_vars</span><span class="p">))</span>
     <span class="n">single</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">binary_engine</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span>
         <span class="n">reader_float32</span><span class="o">.</span><span class="n">writer</span><span class="p">,</span> <span class="n">float32_directory</span>
     <span class="p">)</span>
 
-<span class="nb">sorted</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">float32_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.bin&quot;</span><span class="p">))[:</span><span class="mi">6</span><span class="p">]</span>
+<span class="nb">sorted</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">float32_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">"*.bin"</span><span class="p">))[:</span><span class="mi">6</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;ux-0000.bin&#39;,
- &#39;ux-0001.bin&#39;,
- &#39;ux-0002.bin&#39;,
- &#39;ux-0003.bin&#39;,
- &#39;ux-0004.bin&#39;,
- &#39;ux-0005.bin&#39;]
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>['ux-0000.bin',
+ 'ux-0001.bin',
+ 'ux-0002.bin',
+ 'ux-0003.bin',
+ 'ux-0004.bin',
+ 'ux-0005.bin']
 </pre></div>
 </div>
 </div>
@@ -470,22 +522,22 @@ read/write getters as shown in
 <p>The converted directory keeps the same file names, but each file is half the size. Reading it back requires a getter that declares <code class="docutils literal notranslate"><span class="pre">float32</span></code>; using the wrong dtype would silently misinterpret the bytes.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">original_bytes</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">source_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.bin&quot;</span><span class="p">))</span>
-<span class="n">converted_bytes</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">float32_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.bin&quot;</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">original_bytes</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">source_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">"*.bin"</span><span class="p">))</span>
+<span class="n">converted_bytes</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">float32_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">"*.bin"</span><span class="p">))</span>
 <span class="n">ratio</span> <span class="o">=</span> <span class="n">converted_bytes</span> <span class="o">/</span> <span class="n">original_bytes</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;on-disk size: </span><span class="si">{</span><span class="n">original_bytes</span><span class="si">}</span><span class="s2"> B -&gt; </span><span class="si">{</span><span class="n">converted_bytes</span><span class="si">}</span><span class="s2"> B (</span><span class="si">{</span><span class="n">ratio</span><span class="si">:</span><span class="s2">.0%</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"on-disk size: </span><span class="si">{</span><span class="n">original_bytes</span><span class="si">}</span><span class="s2"> B -&gt; </span><span class="si">{</span><span class="n">converted_bytes</span><span class="si">}</span><span class="s2"> B (</span><span class="si">{</span><span class="n">ratio</span><span class="si">:</span><span class="s2">.0%</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
 
 <span class="n">converted_dataset</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
-    <span class="nb">sorted</span><span class="p">(</span><span class="n">float32_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.bin&quot;</span><span class="p">)),</span>
-    <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;binfile&quot;</span><span class="p">,</span>
+    <span class="nb">sorted</span><span class="p">(</span><span class="n">float32_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">"*.bin"</span><span class="p">)),</span>
+    <span class="n">engine</span><span class="o">=</span><span class="s2">"binfile"</span><span class="p">,</span>
     <span class="n">read_specs_getter</span><span class="o">=</span><span class="n">reader_float32</span><span class="o">.</span><span class="n">reader</span><span class="p">,</span>
-    <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
+    <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">"time"</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
     <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">xr</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
     <span class="n">converted_dataset</span><span class="o">.</span><span class="n">compute</span><span class="p">(),</span> <span class="n">source_dataset</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;dtype:&quot;</span><span class="p">,</span> <span class="n">converted_dataset</span><span class="p">[</span><span class="s2">&quot;ux&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="s2">&quot;| round-trip matches source&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"dtype:"</span><span class="p">,</span> <span class="n">converted_dataset</span><span class="p">[</span><span class="s2">"ux"</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="s2">"| round-trip matches source"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -503,17 +555,17 @@ dtype: float32 | round-trip matches source
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lazy_dataset</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
-    <span class="nb">sorted</span><span class="p">(</span><span class="n">source_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.bin&quot;</span><span class="p">)),</span>
-    <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;binfile&quot;</span><span class="p">,</span>
+    <span class="nb">sorted</span><span class="p">(</span><span class="n">source_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">"*.bin"</span><span class="p">)),</span>
+    <span class="n">engine</span><span class="o">=</span><span class="s2">"binfile"</span><span class="p">,</span>
     <span class="n">read_specs_getter</span><span class="o">=</span><span class="n">reader_float64</span><span class="o">.</span><span class="n">reader</span><span class="p">,</span>
-    <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
+    <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s2">"z"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">"time"</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
     <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">speed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
-    <span class="n">lazy_dataset</span><span class="p">[</span><span class="s2">&quot;ux&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">lazy_dataset</span><span class="p">[</span><span class="s2">&quot;uy&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">lazy_dataset</span><span class="p">[</span><span class="s2">&quot;uz&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
-<span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">&quot;speed&quot;</span><span class="p">)</span>
+    <span class="n">lazy_dataset</span><span class="p">[</span><span class="s2">"ux"</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">lazy_dataset</span><span class="p">[</span><span class="s2">"uy"</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">lazy_dataset</span><span class="p">[</span><span class="s2">"uz"</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
+<span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">"speed"</span><span class="p">)</span>
 
-<span class="n">probe</span> <span class="o">=</span> <span class="n">speed</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="n">probe</span> <span class="o">=</span> <span class="n">speed</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"nearest"</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
 <span class="n">probe</span>
 </pre></div>
 </div>
@@ -1068,12 +1120,12 @@ Coordinates:
   * time     (time) int64 48B 0 1 2 3 4 5
     x        float32 4B 1.6
     y        float32 4B 0.09091
-    z        float32 4B 0.8571</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.DataArray</div><div class='xr-obj-name'>&#x27;speed&#x27;</div><ul class='xr-dim-list'><li><span class='xr-has-index'>time</span>: 6</li></ul></div><ul class='xr-sections'><li class='xr-section-item'><div class='xr-array-wrap'><input id='section-4c3ef45d-110e-42d4-b301-265d4f17c4d4' class='xr-array-in' type='checkbox' checked><label for='section-4c3ef45d-110e-42d4-b301-265d4f17c4d4' title='Show/hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-array-preview xr-preview'><span>1.048 1.372 0.4447 0.3349 1.104 1.076</span></div><div class='xr-array-data'><pre>array([1.04787615, 1.37214209, 0.44474456, 0.33486995, 1.10443433,
-       1.07600751])</pre></div></div></li><li class='xr-section-item'><input id='section-a4ab101d-8d27-4cd9-85b2-03f76d892bae' class='xr-section-summary-in' type='checkbox' checked /><label for='section-a4ab101d-8d27-4cd9-85b2-03f76d892bae' class='xr-section-summary' title='Expand/collapse section'>Coordinates: <span>(4)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>time</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>int64</div><div class='xr-var-preview xr-preview'>0 1 2 3 4 5</div><input id='attrs-df049cbf-0e57-407f-b8ba-cea6cebdfa9c' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-df049cbf-0e57-407f-b8ba-cea6cebdfa9c' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-6fa68e5b-157d-4bfa-8b1e-ba8bdc80d75d' class='xr-var-data-in' type='checkbox'><label for='data-6fa68e5b-157d-4bfa-8b1e-ba8bdc80d75d' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0, 1, 2, 3, 4, 5])</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>x</span></div><div class='xr-var-dims'>()</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>1.6</div><input id='attrs-c6947bb4-596f-4dad-bc0b-40a49d4fd164' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-c6947bb4-596f-4dad-bc0b-40a49d4fd164' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-9b6dab7c-61b5-44f5-8f48-70f416c5d6de' class='xr-var-data-in' type='checkbox'><label for='data-9b6dab7c-61b5-44f5-8f48-70f416c5d6de' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array(1.6, dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>y</span></div><div class='xr-var-dims'>()</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.09091</div><input id='attrs-ff369241-0b14-4ab2-a376-5293b0cd9591' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-ff369241-0b14-4ab2-a376-5293b0cd9591' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-86fa0eea-077c-4ef5-baa4-a912392f007a' class='xr-var-data-in' type='checkbox'><label for='data-86fa0eea-077c-4ef5-baa4-a912392f007a' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array(0.09090909, dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>z</span></div><div class='xr-var-dims'>()</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.8571</div><input id='attrs-f1ddd3c3-927c-4495-84fe-daf8952ace27' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-f1ddd3c3-927c-4495-84fe-daf8952ace27' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-e131fa35-ee02-4bec-b0b6-6b3f7e170083' class='xr-var-data-in' type='checkbox'><label for='data-e131fa35-ee02-4bec-b0b6-6b3f7e170083' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array(0.85714287, dtype=float32)</pre></div></li></ul></div></li></ul></div></div></div></div>
+    z        float32 4B 0.8571</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.DataArray</div><div class='xr-obj-name'>&#x27;speed&#x27;</div><ul class='xr-dim-list'><li><span class='xr-has-index'>time</span>: 6</li></ul></div><ul class='xr-sections'><li class='xr-section-item'><div class='xr-array-wrap'><input id='section-3d672d02-a335-475c-bc64-ab87529cd92a' class='xr-array-in' type='checkbox' checked><label for='section-3d672d02-a335-475c-bc64-ab87529cd92a' title='Show/hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-array-preview xr-preview'><span>1.048 1.372 0.4447 0.3349 1.104 1.076</span></div><div class='xr-array-data'><pre>array([1.04787615, 1.37214209, 0.44474456, 0.33486995, 1.10443433,
+       1.07600751])</pre></div></div></li><li class='xr-section-item'><input id='section-e71635af-05b9-4d36-b04a-55dd984e8c87' class='xr-section-summary-in' type='checkbox' checked /><label for='section-e71635af-05b9-4d36-b04a-55dd984e8c87' class='xr-section-summary' title='Expand/collapse section'>Coordinates: <span>(4)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>time</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>int64</div><div class='xr-var-preview xr-preview'>0 1 2 3 4 5</div><input id='attrs-2627f401-9610-4ea4-9056-ab0442de517a' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-2627f401-9610-4ea4-9056-ab0442de517a' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-2b8e4c95-cca9-423a-9c7c-f883316fcb21' class='xr-var-data-in' type='checkbox'><label for='data-2b8e4c95-cca9-423a-9c7c-f883316fcb21' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0, 1, 2, 3, 4, 5])</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>x</span></div><div class='xr-var-dims'>()</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>1.6</div><input id='attrs-61604d4b-a4b0-465e-8a5b-f57c8067713f' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-61604d4b-a4b0-465e-8a5b-f57c8067713f' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-4333d367-9125-491e-93b6-217c7d8ebebd' class='xr-var-data-in' type='checkbox'><label for='data-4333d367-9125-491e-93b6-217c7d8ebebd' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array(1.6, dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>y</span></div><div class='xr-var-dims'>()</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.09091</div><input id='attrs-25a3e5e5-4d3f-472d-b223-251bbacef9bd' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-25a3e5e5-4d3f-472d-b223-251bbacef9bd' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-5d586dc1-d586-46f5-9b8e-71b5395b58fa' class='xr-var-data-in' type='checkbox'><label for='data-5d586dc1-d586-46f5-9b8e-71b5395b58fa' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array(0.09090909, dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>z</span></div><div class='xr-var-dims'>()</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.8571</div><input id='attrs-7c16dffb-d3e9-490e-b24d-b13e108f1e7e' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-7c16dffb-d3e9-490e-b24d-b13e108f1e7e' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-fde7196d-b958-49d1-beed-671d61797015' class='xr-var-data-in' type='checkbox'><label for='data-fde7196d-b958-49d1-beed-671d61797015' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array(0.85714287, dtype=float32)</pre></div></li></ul></div></li></ul></div></div></div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">csv_path</span> <span class="o">=</span> <span class="n">csv_directory</span> <span class="o">/</span> <span class="s2">&quot;probe_speed.csv&quot;</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">csv_path</span> <span class="o">=</span> <span class="n">csv_directory</span> <span class="o">/</span> <span class="s2">"probe_speed.csv"</span>
 <span class="n">probe</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">()</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">csv_path</span><span class="p">)</span>
 
 <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv_path</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -1157,18 +1209,18 @@ Coordinates:
 <p>xarray’s <code class="docutils literal notranslate"><span class="pre">.plot()</span></code> helpers draw straight onto matplotlib axes, so you can mix them with plain matplotlib calls. First, a time-averaged horizontal slice of the speed field:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mean_speed</span> <span class="o">=</span> <span class="n">speed</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mean_speed</span> <span class="o">=</span> <span class="n">speed</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">"time"</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">))</span>
-<span class="n">mean_speed</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">z</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Time-mean speed at z index 0&quot;</span><span class="p">)</span>
+<span class="n">mean_speed</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">z</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">"viridis"</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Time-mean speed at z index 0"</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/bb3ec350290d27075a471e2fa7501e3c28863f295defdee9cc7d379c50306543.png" src="../_images/bb3ec350290d27075a471e2fa7501e3c28863f295defdee9cc7d379c50306543.png" />
+<img alt="../_images/4ee294f4c08ee1c90633087037466bb07018beb54ea1965e6c5325817721729f.png" src="../_images/4ee294f4c08ee1c90633087037466bb07018beb54ea1965e6c5325817721729f.png" />
 </div>
 </div>
 <p>Next, the probe time series and the distribution of the mean-speed field side by side, using matplotlib directly:</p>
@@ -1176,15 +1228,15 @@ Coordinates:
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax_line</span><span class="p">,</span> <span class="n">ax_hist</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">))</span>
 
-<span class="n">ax_line</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">probe</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">],</span> <span class="n">probe</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">)</span>
-<span class="n">ax_line</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
-<span class="n">ax_line</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;speed&quot;</span><span class="p">)</span>
-<span class="n">ax_line</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Probe at (x=1.5, y=0.0, z=1.0)&quot;</span><span class="p">)</span>
+<span class="n">ax_line</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">probe</span><span class="p">[</span><span class="s2">"time"</span><span class="p">],</span> <span class="n">probe</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"o"</span><span class="p">)</span>
+<span class="n">ax_line</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"time"</span><span class="p">)</span>
+<span class="n">ax_line</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"speed"</span><span class="p">)</span>
+<span class="n">ax_line</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Probe at (x=1.5, y=0.0, z=1.0)"</span><span class="p">)</span>
 
-<span class="n">ax_hist</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">mean_speed</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;steelblue&quot;</span><span class="p">)</span>
-<span class="n">ax_hist</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;mean speed&quot;</span><span class="p">)</span>
-<span class="n">ax_hist</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;count&quot;</span><span class="p">)</span>
-<span class="n">ax_hist</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Distribution of time-mean speed&quot;</span><span class="p">)</span>
+<span class="n">ax_hist</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">mean_speed</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"steelblue"</span><span class="p">)</span>
+<span class="n">ax_hist</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"mean speed"</span><span class="p">)</span>
+<span class="n">ax_hist</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"count"</span><span class="p">)</span>
+<span class="n">ax_hist</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Distribution of time-mean speed"</span><span class="p">)</span>
 
 <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -1192,7 +1244,7 @@ Coordinates:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/82878c933c45bfa63911cf62d398dae87b0744e0e7e74c65e509d907258067ad.png" src="../_images/82878c933c45bfa63911cf62d398dae87b0744e0e7e74c65e509d907258067ad.png" />
+<img alt="../_images/f00ee3171440bffba30a5d9acfdc116d02cd82a3139edf7ff6138fcb362bb72a.png" src="../_images/f00ee3171440bffba30a5d9acfdc116d02cd82a3139edf7ff6138fcb362bb72a.png" />
 </div>
 </div>
 <p>From here, the full xarray and Dask APIs are available for indexing, reductions, and larger-than-memory workflows. See the <a class="reference external" href="https://docs.xarray.dev">xarray documentation</a> and the <a class="reference external" href="https://docs.dask.org">Dask documentation</a> for more.</p>
@@ -1264,7 +1316,7 @@ Coordinates:
     <i class="fa-solid fa-list"></i> Contents
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-example-data">Generate example data</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#batch-convert-every-file-from-float64-to-float32">1. Batch-convert every file from float64 to float32</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extract-a-probe-time-series-and-export-to-csv">2. Extract a probe time series and export to CSV</a></li>
@@ -1317,8 +1369,8 @@ By Felipe N. Schuch
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
   </footer>

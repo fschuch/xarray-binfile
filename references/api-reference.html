@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
     <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
@@ -61,6 +61,7 @@
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'references/api-reference';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="How to Contribute" href="how-to-contribute.html" />
@@ -68,20 +69,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -107,7 +114,51 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
     </header>
   
 
@@ -338,7 +389,7 @@
                 <h2> Contents </h2>
             </div>
             <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-xarray_binfile.read">Read backend</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.read.RawBinaryEntrypoint"><code class="docutils literal notranslate"><span class="pre">RawBinaryEntrypoint</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.read.RawBinaryEntrypoint.open_dataset"><code class="docutils literal notranslate"><span class="pre">RawBinaryEntrypoint.open_dataset()</span></code></a></li>
@@ -376,12 +427,49 @@
 </li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-xarray_binfile.conventions">Conventions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.ConventionProtocol"><code class="docutils literal notranslate"><span class="pre">ConventionProtocol</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.ConventionProtocol.reader"><code class="docutils literal notranslate"><span class="pre">ConventionProtocol.reader</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.ConventionProtocol.writer"><code class="docutils literal notranslate"><span class="pre">ConventionProtocol.writer</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.FilenamePattern"><code class="docutils literal notranslate"><span class="pre">FilenamePattern</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.FilenamePattern.__post_init__"><code class="docutils literal notranslate"><span class="pre">FilenamePattern.__post_init__()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.FilenamePattern.format"><code class="docutils literal notranslate"><span class="pre">FilenamePattern.format()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.FilenamePattern.matches"><code class="docutils literal notranslate"><span class="pre">FilenamePattern.matches()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.FilenamePattern.parse"><code class="docutils literal notranslate"><span class="pre">FilenamePattern.parse()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.FolderConventions"><code class="docutils literal notranslate"><span class="pre">FolderConventions</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.FolderConventions.reader"><code class="docutils literal notranslate"><span class="pre">FolderConventions.reader()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.FolderConventions.writer"><code class="docutils literal notranslate"><span class="pre">FolderConventions.writer()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.Layout"><code class="docutils literal notranslate"><span class="pre">Layout</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.Layout.dims"><code class="docutils literal notranslate"><span class="pre">Layout.dims</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.Layout.dtype"><code class="docutils literal notranslate"><span class="pre">Layout.dtype</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.Layout.shape"><code class="docutils literal notranslate"><span class="pre">Layout.shape</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.Layout.transpose"><code class="docutils literal notranslate"><span class="pre">Layout.transpose()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.Layout.validate"><code class="docutils literal notranslate"><span class="pre">Layout.validate()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.LayoutMismatchError"><code class="docutils literal notranslate"><span class="pre">LayoutMismatchError</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.StaticFiles"><code class="docutils literal notranslate"><span class="pre">StaticFiles</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.StaticFiles.reader"><code class="docutils literal notranslate"><span class="pre">StaticFiles.reader()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.StaticFiles.writer"><code class="docutils literal notranslate"><span class="pre">StaticFiles.writer()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.StepIndexedFiles"><code class="docutils literal notranslate"><span class="pre">StepIndexedFiles</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.TimeStampedFiles"><code class="docutils literal notranslate"><span class="pre">TimeStampedFiles</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-xarray_binfile.tutorial">Tutorial helpers</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.tutorial.DatasetGenerator"><code class="docutils literal notranslate"><span class="pre">DatasetGenerator</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.tutorial.DatasetGenerator.__call__"><code class="docutils literal notranslate"><span class="pre">DatasetGenerator.__call__()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.tutorial.FileSpecsGetter"><code class="docutils literal notranslate"><span class="pre">FileSpecsGetter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.tutorial.FileSpecsGetter.__post_init__"><code class="docutils literal notranslate"><span class="pre">FileSpecsGetter.__post_init__()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.tutorial.FileSpecsGetter.dtype"><code class="docutils literal notranslate"><span class="pre">FileSpecsGetter.dtype</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.tutorial.FileSpecsGetter.reader"><code class="docutils literal notranslate"><span class="pre">FileSpecsGetter.reader()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.tutorial.FileSpecsGetter.writer"><code class="docutils literal notranslate"><span class="pre">FileSpecsGetter.writer()</span></code></a></li>
@@ -407,20 +495,20 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="xarray_binfile.read.RawBinaryEntrypoint">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xarray_binfile.read.</span></span><span class="sig-name descname"><span class="pre">RawBinaryEntrypoint</span></span><a class="headerlink" href="#xarray_binfile.read.RawBinaryEntrypoint" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.backends.BackendEntrypoint.html#xarray.backends.BackendEntrypoint" title="(in xarray v2026.4.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BackendEntrypoint</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.backends.BackendEntrypoint.html#xarray.backends.BackendEntrypoint" title="(in xarray v2026.9.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BackendEntrypoint</span></code></a></p>
 <p>Backend entry point for reading binary files in Xarray.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Variables<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>open_dataset_parameters</strong> (<em>ClassVar</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em> | </em><em>None</em><em>]</em>) – Parameters accepted by the <cite>open_dataset</cite> method.</p></li>
-<li><p><strong>description</strong> (<em>ClassVar</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>]</em>) – Description of the backend.</p></li>
-<li><p><strong>url</strong> (<em>ClassVar</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>]</em>) – URL to the backend documentation.</p></li>
+<li><p><strong>open_dataset_parameters</strong> (<em>ClassVar</em><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em> | </em><em>None</em><em>]</em>) – Parameters accepted by the <cite>open_dataset</cite> method.</p></li>
+<li><p><strong>description</strong> (<em>ClassVar</em><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>]</em>) – Description of the backend.</p></li>
+<li><p><strong>url</strong> (<em>ClassVar</em><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>]</em>) – URL to the backend documentation.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="xarray_binfile.read.RawBinaryEntrypoint.open_dataset">
-<span class="sig-name descname"><span class="pre">open_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename_or_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/os.html#os.PathLike" title="(in Python v3.14)"><span class="pre">PathLike</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_specs_getter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#xarray_binfile.read.ReadSpecsGetterProtocol" title="xarray_binfile.read.file_metadata.ReadSpecsGetterProtocol"><span class="pre">ReadSpecsGetterProtocol</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_variables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.Dataset.html#xarray.Dataset" title="(in xarray v2026.4.0)"><span class="pre">Dataset</span></a></span></span><a class="headerlink" href="#xarray_binfile.read.RawBinaryEntrypoint.open_dataset" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">open_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename_or_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/os.html#os.PathLike" title="(in Python v3.14)"><span class="pre">PathLike</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_specs_getter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#xarray_binfile.read.ReadSpecsGetterProtocol" title="xarray_binfile.read.file_metadata.ReadSpecsGetterProtocol"><span class="pre">ReadSpecsGetterProtocol</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_variables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.Dataset.html#xarray.Dataset" title="(in xarray v2026.9.0)"><span class="pre">Dataset</span></a></span></span><a class="headerlink" href="#xarray_binfile.read.RawBinaryEntrypoint.open_dataset" title="Link to this definition">#</a></dt>
 <dd><p>Open a dataset from a binary file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -435,8 +523,8 @@
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <cite>filename_or_obj</cite> is not a valid file path.</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If there is an error reading the metadata from the file path.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <cite>filename_or_obj</cite> is not a valid file path.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If there is an error reading the metadata from the file path.</p></li>
 </ul>
 </dd>
 </dl>
@@ -446,8 +534,8 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="xarray_binfile.read.ReadSpecs">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xarray_binfile.read.</span></span><span class="sig-name descname"><span class="pre">ReadSpecs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DTypeLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.14)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ArrayLike</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">attrs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.14)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xarray_binfile.read.ReadSpecs" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xarray_binfile.read.</span></span><span class="sig-name descname"><span class="pre">ReadSpecs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DTypeLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.14)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ArrayLike</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">attrs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.14)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xarray_binfile.read.ReadSpecs" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Immutable metadata contract for interpreting one binary file.</p>
 <p>A raw binary file does not carry enough semantic information to be decoded
 safely by itself. This object provides that missing context so the backend
@@ -464,15 +552,15 @@ can expose the data as a labeled xarray variable.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filepath</strong> (<em>pathlib._local.Path</em>) – Path to the binary file.</p></li>
 <li><p><strong>dtype</strong> (<em>DTypeLike</em>) – Data type of the binary file.</p></li>
-<li><p><strong>coords</strong> (<em>Mapping</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>ArrayLike</em><em>]</em>) – Coordinates of the data in the binary file.</p></li>
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Name of the dataset or variable.</p></li>
+<li><p><strong>coords</strong> (<em>Mapping</em><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>ArrayLike</em><em>]</em>) – Coordinates of the data in the binary file.</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Name of the dataset or variable.</p></li>
 <li><p><strong>attrs</strong> (<em>Mapping</em><em>[</em><em>Any</em><em>, </em><em>Any</em><em>] </em><em>| </em><em>None</em>) – Additional attributes for the dataset or variable.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="xarray_binfile.read.ReadSpecs.dims">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dims</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#xarray_binfile.read.ReadSpecs.dims" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dims</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#xarray_binfile.read.ReadSpecs.dims" title="Link to this definition">#</a></dt>
 <dd><p>Gets the dimension names of the data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -483,7 +571,7 @@ can expose the data as a labeled xarray variable.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="xarray_binfile.read.ReadSpecs.shape">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shape</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#xarray_binfile.read.ReadSpecs.shape" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shape</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#xarray_binfile.read.ReadSpecs.shape" title="Link to this definition">#</a></dt>
 <dd><p>Gets the shape of the data based on the coordinates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -530,12 +618,12 @@ specs getter. No inheritance is required.</p>
 <span id="write-accessors"></span><h2>Write accessors<a class="headerlink" href="#module-xarray_binfile.write" title="Link to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="xarray_binfile.write.BinaryEngineDataArray">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xarray_binfile.write.</span></span><span class="sig-name descname"><span class="pre">BinaryEngineDataArray</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray" title="(in xarray v2026.4.0)"><span class="pre">DataArray</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xarray_binfile.write.BinaryEngineDataArray" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xarray_binfile.write.</span></span><span class="sig-name descname"><span class="pre">BinaryEngineDataArray</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray" title="(in xarray v2026.9.0)"><span class="pre">DataArray</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xarray_binfile.write.BinaryEngineDataArray" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>An accessor with extra utilities for xarray.DataArray.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="xarray_binfile.write.BinaryEngineDataArray.to_file">
-<span class="sig-name descname"><span class="pre">to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">write_specs_getter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#xarray_binfile.write.WriteSpecsGetterProtocol" title="xarray_binfile.write.file_metadata.WriteSpecsGetterProtocol"><span class="pre">WriteSpecsGetterProtocol</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#xarray_binfile.write.BinaryEngineDataArray.to_file" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">write_specs_getter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#xarray_binfile.write.WriteSpecsGetterProtocol" title="xarray_binfile.write.file_metadata.WriteSpecsGetterProtocol"><span class="pre">WriteSpecsGetterProtocol</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/os.html#os.PathLike" title="(in Python v3.14)"><span class="pre">PathLike</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#xarray_binfile.write.BinaryEngineDataArray.to_file" title="Link to this definition">#</a></dt>
 <dd><p>Writes the data array to binary files.</p>
 <p>Writes are eager and whole-file only. For each write specification,
 the entire <code class="docutils literal notranslate"><span class="pre">sub_array</span></code> is loaded into memory (triggering a Dask
@@ -545,11 +633,11 @@ re-writing a file always replaces its whole content instead of trying
 to guess or patch existing bytes, which avoids leaving files in a
 partially-updated, corrupted state.</p>
 <p>Writes are also atomic per file: the bytes are first serialized into
-a unique temporary directory created inside the destination directory
-(so the final move stays on the same filesystem), and each file is
-moved to its final path with <a class="reference external" href="https://docs.python.org/3/library/os.html#os.replace" title="(in Python v3.14)"><code class="xref py py-func docutils literal notranslate"><span class="pre">os.replace()</span></code></a> only once it is
-complete. An interrupted write never leaves a truncated file at the
-destination, and the temporary directory is removed automatically.</p>
+a temporary file created next to the destination (so the final move
+stays on the same filesystem), and each file is moved to its final
+path with <a class="reference external" href="https://docs.python.org/3/library/os.html#os.replace" title="(in Python v3.14)"><code class="xref py py-func docutils literal notranslate"><span class="pre">os.replace()</span></code></a> only once it is complete. An interrupted
+write never leaves a truncated file at the destination, and the
+temporary file is removed automatically.</p>
 <p>Plan the write specifications so that every individual output file
 fits comfortably in memory, for example by splitting the array into
 one file per time step. If you need streaming, incremental, or
@@ -558,11 +646,24 @@ xarray, such as NetCDF or Zarr.</p>
 <p>Each file is written with the in-memory dtype and native byte order,
 unless the write specification sets <code class="docutils literal notranslate"><span class="pre">dtype</span></code>, in which case the
 values are cast right before serialization.</p>
+<p>A relative <code class="docutils literal notranslate"><span class="pre">WriteSpecs.filename</span></code> is resolved against <code class="docutils literal notranslate"><span class="pre">directory</span></code>,
+which must already exist, and may contain sub-folders (for example
+<code class="docutils literal notranslate"><span class="pre">&quot;3d/ux-0001.bin&quot;</span></code>), which are created on demand. It must stay
+inside <code class="docutils literal notranslate"><span class="pre">directory</span></code>: paths escaping it through <code class="docutils literal notranslate"><span class="pre">..</span></code> are rejected
+(symbolic links inside <code class="docutils literal notranslate"><span class="pre">directory</span></code> are not followed for this check,
+so a linked sub-folder is fine). An absolute filename is used as is,
+which lets one call target several locations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>write_specs_getter</strong> – A callable that generates write specifications for the data array.</p></li>
-<li><p><strong>directory</strong> – The directory where the binary files will be written. Defaults to the current working directory.</p></li>
+<li><p><strong>directory</strong> – The base directory for relative filenames. Defaults to the current working directory.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#FileNotFoundError" title="(in Python v3.14)"><strong>FileNotFoundError</strong></a> – If a relative filename is used and <code class="docutils literal notranslate"><span class="pre">directory</span></code> does not exist.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If a relative filename escapes <code class="docutils literal notranslate"><span class="pre">directory</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -572,12 +673,12 @@ values are cast right before serialization.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="xarray_binfile.write.BinaryEngineDataset">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xarray_binfile.write.</span></span><span class="sig-name descname"><span class="pre">BinaryEngineDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.Dataset.html#xarray.Dataset" title="(in xarray v2026.4.0)"><span class="pre">Dataset</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xarray_binfile.write.BinaryEngineDataset" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xarray_binfile.write.</span></span><span class="sig-name descname"><span class="pre">BinaryEngineDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.Dataset.html#xarray.Dataset" title="(in xarray v2026.9.0)"><span class="pre">Dataset</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xarray_binfile.write.BinaryEngineDataset" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>An accessor with extra utilities for xarray.Dataset.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="xarray_binfile.write.BinaryEngineDataset.to_file">
-<span class="sig-name descname"><span class="pre">to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">write_specs_getter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#xarray_binfile.write.WriteSpecsGetterProtocol" title="xarray_binfile.write.file_metadata.WriteSpecsGetterProtocol"><span class="pre">WriteSpecsGetterProtocol</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#xarray_binfile.write.BinaryEngineDataset.to_file" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">write_specs_getter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#xarray_binfile.write.WriteSpecsGetterProtocol" title="xarray_binfile.write.file_metadata.WriteSpecsGetterProtocol"><span class="pre">WriteSpecsGetterProtocol</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/os.html#os.PathLike" title="(in Python v3.14)"><span class="pre">PathLike</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#xarray_binfile.write.BinaryEngineDataset.to_file" title="Link to this definition">#</a></dt>
 <dd><p>Writes the dataset to binary files.</p>
 <p>Every data variable is delegated to
 <a class="reference internal" href="#xarray_binfile.write.BinaryEngineDataArray.to_file" title="xarray_binfile.write.BinaryEngineDataArray.to_file"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BinaryEngineDataArray.to_file()</span></code></a>, so the same eager, atomic,
@@ -600,7 +701,7 @@ streaming or partial writes are needed.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="xarray_binfile.write.WriteSpecs">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xarray_binfile.write.</span></span><span class="sig-name descname"><span class="pre">WriteSpecs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray" title="(in xarray v2026.4.0)"><span class="pre">DataArray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DTypeLike</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xarray_binfile.write.WriteSpecs" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xarray_binfile.write.</span></span><span class="sig-name descname"><span class="pre">WriteSpecs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray" title="(in xarray v2026.9.0)"><span class="pre">DataArray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DTypeLike</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xarray_binfile.write.WriteSpecs" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.NamedTuple" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">NamedTuple</span></code></a></p>
 <p>Immutable write instruction for one output binary file.</p>
 <p>Each item defines both the output filename and the exact DataArray slice to
@@ -608,8 +709,12 @@ serialize into that file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Variables<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The name of the binary file.</p></li>
-<li><p><strong>sub_array</strong> (<a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray" title="(in xarray v2026.4.0)"><em>xarray.core.dataarray.DataArray</em></a>) – The portion of the DataArray to be written.</p></li>
+<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path of the binary file. A relative path is resolved
+against the (existing) output directory passed to <code class="docutils literal notranslate"><span class="pre">to_file</span></code> and
+may include sub-folders, which are created on demand (for example
+<code class="docutils literal notranslate"><span class="pre">&quot;3d/ux-0001.bin&quot;</span></code>); it must not escape that directory. An
+absolute path is written as is.</p></li>
+<li><p><strong>sub_array</strong> (<a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray" title="(in xarray v2026.9.0)"><em>xarray.core.dataarray.DataArray</em></a>) – The portion of the DataArray to be written.</p></li>
 <li><p><strong>dtype</strong> (<em>DTypeLike</em><em> | </em><em>None</em>) – Optional on-disk data type. When set, the sub-array is cast to
 this dtype (including byte order, for example <code class="docutils literal notranslate"><span class="pre">&quot;&lt;f4&quot;</span></code>) right
 before serialization. When <code class="docutils literal notranslate"><span class="pre">None</span></code>, the in-memory dtype and
@@ -620,19 +725,19 @@ your read specs getter declares.</p></li>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="xarray_binfile.write.WriteSpecs.dtype">
-<span class="sig-name descname"><span class="pre">dtype</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DTypeLike</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#xarray_binfile.write.WriteSpecs.dtype" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">dtype</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DTypeLike</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#xarray_binfile.write.WriteSpecs.dtype" title="Link to this definition">#</a></dt>
 <dd><p>Alias for field number 2</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="xarray_binfile.write.WriteSpecs.filename">
-<span class="sig-name descname"><span class="pre">filename</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#xarray_binfile.write.WriteSpecs.filename" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">filename</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#xarray_binfile.write.WriteSpecs.filename" title="Link to this definition">#</a></dt>
 <dd><p>Alias for field number 0</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="xarray_binfile.write.WriteSpecs.sub_array">
-<span class="sig-name descname"><span class="pre">sub_array</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray" title="(in xarray v2026.4.0)"><span class="pre">DataArray</span></a></em><a class="headerlink" href="#xarray_binfile.write.WriteSpecs.sub_array" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">sub_array</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray" title="(in xarray v2026.9.0)"><span class="pre">DataArray</span></a></em><a class="headerlink" href="#xarray_binfile.write.WriteSpecs.sub_array" title="Link to this definition">#</a></dt>
 <dd><p>Alias for field number 1</p>
 </dd></dl>
 
@@ -659,7 +764,7 @@ is written in a single pass.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="xarray_binfile.write.WriteSpecsGetterProtocol.__call__">
-<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray" title="(in xarray v2026.4.0)"><span class="pre">DataArray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator" title="(in Python v3.14)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#xarray_binfile.write.WriteSpecs" title="xarray_binfile.write.file_metadata.WriteSpecs"><span class="pre">WriteSpecs</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#xarray_binfile.write.WriteSpecsGetterProtocol.__call__" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray" title="(in xarray v2026.9.0)"><span class="pre">DataArray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator" title="(in Python v3.14)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#xarray_binfile.write.WriteSpecs" title="xarray_binfile.write.file_metadata.WriteSpecs"><span class="pre">WriteSpecs</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#xarray_binfile.write.WriteSpecsGetterProtocol.__call__" title="Link to this definition">#</a></dt>
 <dd><p>Generate write instructions for a DataArray.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -674,12 +779,451 @@ is written in a single pass.</p></li>
 </dd></dl>
 
 </section>
+<section id="module-xarray_binfile.conventions">
+<span id="conventions"></span><h2>Conventions<a class="headerlink" href="#module-xarray_binfile.conventions" title="Link to this heading">#</a></h2>
+<p>Ready-to-use file conventions built on the read and write spec protocols.</p>
+<p>Start from the convention closest to your project’s naming scheme, or copy one
+and adapt it when none fits.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="xarray_binfile.conventions.ConventionProtocol">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xarray_binfile.conventions.</span></span><span class="sig-name descname"><span class="pre">ConventionProtocol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xarray_binfile.conventions.ConventionProtocol" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Protocol" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Protocol</span></code></a></p>
+<p>Structural protocol for a file convention.</p>
+<p>A convention bundles a read specs getter and a write specs getter that
+agree on the same filename pattern and on-disk layout, so files written by
+one can always be read back by the other. No inheritance is required: any
+object exposing <code class="docutils literal notranslate"><span class="pre">reader</span></code> and <code class="docutils literal notranslate"><span class="pre">writer</span></code> attributes with the right
+signatures is a convention, including the classes shipped in
+<a class="reference internal" href="#module-xarray_binfile.conventions" title="xarray_binfile.conventions"><code class="xref py py-mod docutils literal notranslate"><span class="pre">xarray_binfile.conventions</span></code></a>.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="xarray_binfile.conventions.ConventionProtocol.reader">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reader</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#xarray_binfile.read.ReadSpecsGetterProtocol" title="xarray_binfile.read.file_metadata.ReadSpecsGetterProtocol"><span class="pre">ReadSpecsGetterProtocol</span></a></em><a class="headerlink" href="#xarray_binfile.conventions.ConventionProtocol.reader" title="Link to this definition">#</a></dt>
+<dd><p>Read specs getter for files that follow the convention.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A callable matching <code class="xref py py-class docutils literal notranslate"><span class="pre">ReadSpecsGetterProtocol</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="xarray_binfile.conventions.ConventionProtocol.writer">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">writer</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#xarray_binfile.write.WriteSpecsGetterProtocol" title="xarray_binfile.write.file_metadata.WriteSpecsGetterProtocol"><span class="pre">WriteSpecsGetterProtocol</span></a></em><a class="headerlink" href="#xarray_binfile.conventions.ConventionProtocol.writer" title="Link to this definition">#</a></dt>
+<dd><p>Write specs getter producing files that follow the convention.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A callable matching <code class="xref py py-class docutils literal notranslate"><span class="pre">WriteSpecsGetterProtocol</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xarray_binfile.conventions.FilenamePattern">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xarray_binfile.conventions.</span></span><span class="sig-name descname"><span class="pre">FilenamePattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xarray_binfile.conventions.FilenamePattern" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Format and parse filenames from a single <code class="docutils literal notranslate"><span class="pre">str.format</span></code>-style template.</p>
+<p>The regular expression used by <a class="reference internal" href="#xarray_binfile.conventions.FilenamePattern.parse" title="xarray_binfile.conventions.FilenamePattern.parse"><code class="xref py py-meth docutils literal notranslate"><span class="pre">parse()</span></code></a> is derived from <code class="docutils literal notranslate"><span class="pre">template</span></code>,
+so writing with <a class="reference internal" href="#xarray_binfile.conventions.FilenamePattern.format" title="xarray_binfile.conventions.FilenamePattern.format"><code class="xref py py-meth docutils literal notranslate"><span class="pre">format()</span></code></a> and reading with <a class="reference internal" href="#xarray_binfile.conventions.FilenamePattern.parse" title="xarray_binfile.conventions.FilenamePattern.parse"><code class="xref py py-meth docutils literal notranslate"><span class="pre">parse()</span></code></a> are always
+consistent. Matching is anchored to the whole filename, so a trailing
+<code class="docutils literal notranslate"><span class="pre">.bak</span></code> or a different suffix is rejected.</p>
+<p>Supported field specifications:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">{name}</span></code> or <code class="docutils literal notranslate"><span class="pre">{name:s}</span></code>: a word made of letters, digits and underscores.
+It is matched lazily, so <code class="docutils literal notranslate"><span class="pre">&quot;{name}{step:03d}&quot;</span></code> splits <code class="docutils literal notranslate"><span class="pre">ux001</span></code> into
+<code class="docutils literal notranslate"><span class="pre">ux</span></code> and <code class="docutils literal notranslate"><span class="pre">1</span></code>; without a separator, names ending in a digit are
+ambiguous and should be avoided.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">{step:d}</span></code>, <code class="docutils literal notranslate"><span class="pre">{step:04d}</span></code>: an integer. A zero-fill width is treated as
+a minimum width, matching <code class="docutils literal notranslate"><span class="pre">str.format</span></code> semantics, so step <code class="docutils literal notranslate"><span class="pre">12345</span></code>
+written with <code class="docutils literal notranslate"><span class="pre">04d</span></code> can still be read back.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">{time:.3f}</span></code>, <code class="docutils literal notranslate"><span class="pre">{time:f}</span></code>, <code class="docutils literal notranslate"><span class="pre">{time:e}</span></code>, <code class="docutils literal notranslate"><span class="pre">{time:g}</span></code>: a float.</p></li>
+</ul>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pattern</span> <span class="o">=</span> <span class="n">FilenamePattern</span><span class="p">(</span><span class="s2">"</span><span class="si">{name}</span><span class="s2">-</span><span class="si">{step:04d}</span><span class="s2">.bin"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pattern</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"ux"</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+<span class="go">'ux-0007.bin'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pattern</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">"ux-0007.bin"</span><span class="p">)</span>
+<span class="go">{'name': 'ux', 'step': 7}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pattern</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">"ux-12345.bin"</span><span class="p">)</span>
+<span class="go">{'name': 'ux', 'step': 12345}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">FilenamePattern</span><span class="p">(</span><span class="s2">"</span><span class="si">{name}{step:03d}</span><span class="s2">"</span><span class="p">)</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">"ux001"</span><span class="p">)</span>
+<span class="go">{'name': 'ux', 'step': 1}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>template</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The <code class="docutils literal notranslate"><span class="pre">str.format</span></code> template.</p></li>
+<li><p><strong>fields</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>...</em><em>]</em>) – Field names in the order they appear in <code class="docutils literal notranslate"><span class="pre">template</span></code>.</p></li>
+<li><p><strong>regex</strong> (<a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern" title="(in Python v3.14)"><em>re.Pattern</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>]</em>) – Compiled regular expression equivalent to <code class="docutils literal notranslate"><span class="pre">template</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="xarray_binfile.conventions.FilenamePattern.__post_init__">
+<span class="sig-name descname"><span class="pre">__post_init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#xarray_binfile.conventions.FilenamePattern.__post_init__" title="Link to this definition">#</a></dt>
+<dd><p>Derive <code class="docutils literal notranslate"><span class="pre">fields</span></code>, <code class="docutils literal notranslate"><span class="pre">regex</span></code> and the field types from <code class="docutils literal notranslate"><span class="pre">template</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the template has no fields, repeats a field, uses a
+    conversion flag (<code class="docutils literal notranslate"><span class="pre">!r</span></code>), or uses an unsupported specification.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xarray_binfile.conventions.FilenamePattern.format">
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fields</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#xarray_binfile.conventions.FilenamePattern.format" title="Link to this definition">#</a></dt>
+<dd><p>Build a filename from field values.</p>
+<p>The result is checked against the derived regular expression, so a
+filename that <a class="reference internal" href="#xarray_binfile.conventions.FilenamePattern.parse" title="xarray_binfile.conventions.FilenamePattern.parse"><code class="xref py py-meth docutils literal notranslate"><span class="pre">parse()</span></code></a> could not read back (for example a name
+containing <code class="docutils literal notranslate"><span class="pre">.</span></code> or <code class="docutils literal notranslate"><span class="pre">-</span></code>) is rejected here, at write time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**fields</strong> – One value per field declared in the template.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The formatted filename.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the formatted filename does not match the pattern.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xarray_binfile.conventions.FilenamePattern.matches">
+<span class="sig-name descname"><span class="pre">matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#xarray_binfile.conventions.FilenamePattern.matches" title="Link to this definition">#</a></dt>
+<dd><p>Check whether <code class="docutils literal notranslate"><span class="pre">filename</span></code> follows the template.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> – The file name (without directories) to test.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the whole filename matches the template.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xarray_binfile.conventions.FilenamePattern.parse">
+<span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#xarray_binfile.conventions.FilenamePattern.parse" title="Link to this definition">#</a></dt>
+<dd><p>Extract typed field values from <code class="docutils literal notranslate"><span class="pre">filename</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> – The file name (without directories) to parse.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A mapping from field name to its value, converted to <code class="docutils literal notranslate"><span class="pre">str</span></code>,
+<code class="docutils literal notranslate"><span class="pre">int</span></code> or <code class="docutils literal notranslate"><span class="pre">float</span></code> according to the template specification.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">filename</span></code> does not follow the template.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xarray_binfile.conventions.FolderConventions">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xarray_binfile.conventions.</span></span><span class="sig-name descname"><span class="pre">FolderConventions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conventions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.14)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#xarray_binfile.conventions.ConventionProtocol" title="xarray_binfile.conventions.protocol.ConventionProtocol"><span class="pre">ConventionProtocol</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xarray_binfile.conventions.FolderConventions" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Dispatch to one convention per sub-folder.</p>
+<p>Projects often keep arrays of different shapes in different folders, for
+example <code class="docutils literal notranslate"><span class="pre">xy_planes/ux-0001.bin</span></code> next to <code class="docutils literal notranslate"><span class="pre">3d/ux-0001.bin</span></code>. Reading
+picks the convention whose folder matches the end of the file’s parent
+path, preferring the most specific (longest) folder when several match. Writing offers the array to every convention and requires exactly
+one of them to accept it, then prefixes the resulting filenames with that
+folder; a mismatch raises instead of guessing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>conventions</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.14)"><em>collections.abc.Mapping</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><a class="reference internal" href="#xarray_binfile.conventions.ConventionProtocol" title="xarray_binfile.conventions.protocol.ConventionProtocol"><em>xarray_binfile.conventions.protocol.ConventionProtocol</em></a><em>]</em>) – Mapping of folder (relative to the dataset root, possibly
+nested such as <code class="docutils literal notranslate"><span class="pre">&quot;snapshots/3d&quot;</span></code>) to the convention used inside it.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="xarray_binfile.conventions.FolderConventions.reader">
+<span class="sig-name descname"><span class="pre">reader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#xarray_binfile.read.ReadSpecs" title="xarray_binfile.read.file_metadata.ReadSpecs"><span class="pre">ReadSpecs</span></a></span></span><a class="headerlink" href="#xarray_binfile.conventions.FolderConventions.reader" title="Link to this definition">#</a></dt>
+<dd><p>Build read specs using the convention of the file’s folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> – Path to the binary file, inside one of the known folders.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The metadata required to decode <code class="docutils literal notranslate"><span class="pre">path</span></code>.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If no convention is registered for the file’s folder.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xarray_binfile.conventions.FolderConventions.writer">
+<span class="sig-name descname"><span class="pre">writer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray" title="(in xarray v2026.9.0)"><span class="pre">DataArray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator" title="(in Python v3.14)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#xarray_binfile.write.WriteSpecs" title="xarray_binfile.write.file_metadata.WriteSpecs"><span class="pre">WriteSpecs</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#xarray_binfile.conventions.FolderConventions.writer" title="Link to this definition">#</a></dt>
+<dd><p>Yield write specs from the single convention that accepts the array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data_array</strong> – The array to write.</p>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p>The accepting convention’s write specs, with filenames prefixed by
+its folder (always using <code class="docutils literal notranslate"><span class="pre">/</span></code> as separator).</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#xarray_binfile.conventions.LayoutMismatchError" title="xarray_binfile.conventions.LayoutMismatchError"><strong>LayoutMismatchError</strong></a> – If no convention or more than one convention
+    accepts the array.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xarray_binfile.conventions.Layout">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xarray_binfile.conventions.</span></span><span class="sig-name descname"><span class="pre">Layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">coords:</span> <span class="pre">~collections.abc.Mapping[str,</span> <span class="pre">ArrayLike],</span> <span class="pre">dtype:</span> <span class="pre">DTypeLike</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.float64'&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#xarray_binfile.conventions.Layout" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Dimension order, coordinate values and dtype of the arrays stored on disk.</p>
+<p>Raw binary files carry none of this information, so a layout is the shared
+contract between the read and write sides of a convention: readers attach
+these coordinates to every file they decode, and writers refuse arrays that
+do not match them instead of guessing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coords</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.14)"><em>collections.abc.Mapping</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>ArrayLike</em><em>]</em>) – Mapping of dimension name to coordinate values, in on-disk order.</p></li>
+<li><p><strong>dtype</strong> (<em>DTypeLike</em>) – On-disk data type. Be explicit about byte order when files move
+between machines (for example <code class="docutils literal notranslate"><span class="pre">&quot;&lt;f4&quot;</span></code>).</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="xarray_binfile.conventions.Layout.dims">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dims</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#xarray_binfile.conventions.Layout.dims" title="Link to this definition">#</a></dt>
+<dd><p>Dimension names in on-disk order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The dimension names.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="xarray_binfile.conventions.Layout.dtype">
+<span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#xarray_binfile.conventions.Layout.dtype" title="Link to this definition">#</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code></p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="xarray_binfile.conventions.Layout.shape">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shape</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#xarray_binfile.conventions.Layout.shape" title="Link to this definition">#</a></dt>
+<dd><p>Array shape derived from the coordinate lengths.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The shape of one array on disk.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xarray_binfile.conventions.Layout.transpose">
+<span class="sig-name descname"><span class="pre">transpose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray" title="(in xarray v2026.9.0)"><span class="pre">DataArray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray" title="(in xarray v2026.9.0)"><span class="pre">DataArray</span></a></span></span><a class="headerlink" href="#xarray_binfile.conventions.Layout.transpose" title="Link to this definition">#</a></dt>
+<dd><p>Reorder <code class="docutils literal notranslate"><span class="pre">data_array</span></code> to the on-disk dimension order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data_array</strong> – An array holding exactly the layout dimensions.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The transposed array.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xarray_binfile.conventions.Layout.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray" title="(in xarray v2026.9.0)"><span class="pre">DataArray</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_dims</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#xarray_binfile.conventions.Layout.validate" title="Link to this definition">#</a></dt>
+<dd><p>Check that <code class="docutils literal notranslate"><span class="pre">data_array</span></code> can be written with this layout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_array</strong> – The array about to be written.</p></li>
+<li><p><strong>extra_dims</strong> – Dimensions the array may have on top of the layout
+dimensions, typically the dimension that is split across files.</p></li>
+<li><p><strong>check_coords</strong> – Also require the coordinate values to be equal, not
+only the dimension names and sizes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#xarray_binfile.conventions.LayoutMismatchError" title="xarray_binfile.conventions.LayoutMismatchError"><strong>LayoutMismatchError</strong></a> – If the dimensions, sizes or coordinate values
+    of <code class="docutils literal notranslate"><span class="pre">data_array</span></code> differ from the layout.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="xarray_binfile.conventions.LayoutMismatchError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xarray_binfile.conventions.</span></span><span class="sig-name descname"><span class="pre">LayoutMismatchError</span></span><a class="headerlink" href="#xarray_binfile.conventions.LayoutMismatchError" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a></p>
+<p>Raised when a DataArray does not fit the on-disk layout of a convention.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xarray_binfile.conventions.StaticFiles">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xarray_binfile.conventions.</span></span><span class="sig-name descname"><span class="pre">StaticFiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#xarray_binfile.conventions.Layout" title="xarray_binfile.conventions.layout.Layout"><span class="pre">Layout</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#xarray_binfile.conventions.FilenamePattern" title="xarray_binfile.conventions.filename_pattern.FilenamePattern"><span class="pre">FilenamePattern</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'{name}.bin'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xarray_binfile.conventions.StaticFiles" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ConventionBase</span></code></p>
+<p>One file per variable, with no dimension split across files.</p>
+<p>Typical for fields that do not change in time, such as a mask or a
+geometry (<code class="docutils literal notranslate"><span class="pre">epsi.bin</span></code>). Reading attaches exactly the layout coordinates;
+writing produces a single file per DataArray.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">convention</span> <span class="o">=</span> <span class="n">StaticFiles</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">layout</span><span class="o">=</span><span class="n">Layout</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="s2">"y"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">3</span><span class="p">)},</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"&lt;f4"</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">pattern</span><span class="o">=</span><span class="s2">"</span><span class="si">{name}</span><span class="s2">.bin"</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">specs</span> <span class="o">=</span> <span class="n">convention</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">"epsi.bin"</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">specs</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">specs</span><span class="o">.</span><span class="n">dims</span>
+<span class="go">('epsi', ('x', 'y'))</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layout</strong> (<a class="reference internal" href="#xarray_binfile.conventions.Layout" title="xarray_binfile.conventions.layout.Layout"><em>xarray_binfile.conventions.layout.Layout</em></a>) – Dimension order, coordinates and dtype of each file.</p></li>
+<li><p><strong>pattern</strong> (<a class="reference internal" href="#xarray_binfile.conventions.FilenamePattern" title="xarray_binfile.conventions.filename_pattern.FilenamePattern"><em>xarray_binfile.conventions.filename_pattern.FilenamePattern</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Filename pattern declaring <code class="docutils literal notranslate"><span class="pre">{name}</span></code>. Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;{name}.bin&quot;</span></code>.</p></li>
+<li><p><strong>check_coords</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether <a class="reference internal" href="#xarray_binfile.conventions.StaticFiles.writer" title="xarray_binfile.conventions.StaticFiles.writer"><code class="xref py py-meth docutils literal notranslate"><span class="pre">writer()</span></code></a> also requires coordinate values to
+match <code class="docutils literal notranslate"><span class="pre">layout</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="xarray_binfile.conventions.StaticFiles.reader">
+<span class="sig-name descname"><span class="pre">reader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#xarray_binfile.read.ReadSpecs" title="xarray_binfile.read.file_metadata.ReadSpecs"><span class="pre">ReadSpecs</span></a></span></span><a class="headerlink" href="#xarray_binfile.conventions.StaticFiles.reader" title="Link to this definition">#</a></dt>
+<dd><p>Build read specs for one static file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> – Path to the binary file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The metadata required to decode <code class="docutils literal notranslate"><span class="pre">path</span></code>.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the filename does not follow <code class="docutils literal notranslate"><span class="pre">pattern</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xarray_binfile.conventions.StaticFiles.writer">
+<span class="sig-name descname"><span class="pre">writer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray" title="(in xarray v2026.9.0)"><span class="pre">DataArray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator" title="(in Python v3.14)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#xarray_binfile.write.WriteSpecs" title="xarray_binfile.write.file_metadata.WriteSpecs"><span class="pre">WriteSpecs</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#xarray_binfile.conventions.StaticFiles.writer" title="Link to this definition">#</a></dt>
+<dd><p>Yield the single write spec for <code class="docutils literal notranslate"><span class="pre">data_array</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data_array</strong> – The array to write, holding exactly the layout dimensions.</p>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p>One write spec.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#xarray_binfile.conventions.LayoutMismatchError" title="xarray_binfile.conventions.LayoutMismatchError"><strong>LayoutMismatchError</strong></a> – If the array does not fit <code class="docutils literal notranslate"><span class="pre">layout</span></code>.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the array has no name.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xarray_binfile.conventions.StepIndexedFiles">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xarray_binfile.conventions.</span></span><span class="sig-name descname"><span class="pre">StepIndexedFiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#xarray_binfile.conventions.Layout" title="xarray_binfile.conventions.layout.Layout"><span class="pre">Layout</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#xarray_binfile.conventions.FilenamePattern" title="xarray_binfile.conventions.filename_pattern.FilenamePattern"><span class="pre">FilenamePattern</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'{name}-{step:04d}.bin'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'time'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xarray_binfile.conventions.StepIndexedFiles" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_SplitAlongDimension</span></code></p>
+<p>One file per snapshot, numbered with an integer step counter.</p>
+<p>This is the most common solver convention, for example <code class="docutils literal notranslate"><span class="pre">ux-0001.bin</span></code>,
+<code class="docutils literal notranslate"><span class="pre">ux.0002</span></code> or <code class="docutils literal notranslate"><span class="pre">ux0003.dat</span></code>. The <code class="docutils literal notranslate"><span class="pre">time</span></code> coordinate is derived from the
+step: it is the step itself by default, or <code class="docutils literal notranslate"><span class="pre">step</span> <span class="pre">*</span> <span class="pre">time_step</span></code> when the
+interval between snapshots is known. Writing inverts that mapping and
+refuses coordinate values that do not land on an integer step.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">convention</span> <span class="o">=</span> <span class="n">StepIndexedFiles</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">layout</span><span class="o">=</span><span class="n">Layout</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="s2">"y"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">3</span><span class="p">)}),</span>
+<span class="gp">... </span>    <span class="n">pattern</span><span class="o">=</span><span class="s2">"</span><span class="si">{name}</span><span class="s2">-</span><span class="si">{step:04d}</span><span class="s2">.bin"</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">time_step</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">specs</span> <span class="o">=</span> <span class="n">convention</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">"ux-0007.bin"</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">specs</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">specs</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="s2">"time"</span><span class="p">]</span>
+<span class="go">('ux', array([3.5]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">da</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="n">coords</span><span class="o">=</span><span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="s2">"y"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="s2">"time"</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">]},</span>
+<span class="gp">... </span>    <span class="n">name</span><span class="o">=</span><span class="s2">"ux"</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">spec</span><span class="o">.</span><span class="n">filename</span> <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">convention</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">da</span><span class="p">)]</span>
+<span class="go">['ux-0002.bin', 'ux-0003.bin']</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layout</strong> (<a class="reference internal" href="#xarray_binfile.conventions.Layout" title="xarray_binfile.conventions.layout.Layout"><em>xarray_binfile.conventions.layout.Layout</em></a>) – Dimension order, coordinates and dtype of each file.</p></li>
+<li><p><strong>pattern</strong> (<a class="reference internal" href="#xarray_binfile.conventions.FilenamePattern" title="xarray_binfile.conventions.filename_pattern.FilenamePattern"><em>xarray_binfile.conventions.filename_pattern.FilenamePattern</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Filename pattern declaring <code class="docutils literal notranslate"><span class="pre">{name}</span></code> and <code class="docutils literal notranslate"><span class="pre">{step}</span></code>.
+Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;{name}-{step:04d}.bin&quot;</span></code>.</p></li>
+<li><p><strong>check_coords</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether <code class="xref py py-meth docutils literal notranslate"><span class="pre">writer()</span></code> also requires coordinate values to
+match <code class="docutils literal notranslate"><span class="pre">layout</span></code>.</p></li>
+<li><p><strong>time_dim</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Name of the dimension split across files. Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;time&quot;</span></code>.</p></li>
+<li><p><strong>time_step</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> | </em><em>None</em>) – Interval between consecutive steps. When <code class="docutils literal notranslate"><span class="pre">None</span></code> the
+<code class="docutils literal notranslate"><span class="pre">time</span></code> coordinate is the integer step itself.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xarray_binfile.conventions.TimeStampedFiles">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xarray_binfile.conventions.</span></span><span class="sig-name descname"><span class="pre">TimeStampedFiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#xarray_binfile.conventions.Layout" title="xarray_binfile.conventions.layout.Layout"><span class="pre">Layout</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#xarray_binfile.conventions.FilenamePattern" title="xarray_binfile.conventions.filename_pattern.FilenamePattern"><span class="pre">FilenamePattern</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'{name}-{time:.3f}.bin'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'time'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xarray_binfile.conventions.TimeStampedFiles" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_SplitAlongDimension</span></code></p>
+<p>One file per snapshot, named with the physical time of the snapshot.</p>
+<p>Some solvers write <code class="docutils literal notranslate"><span class="pre">ux-0.250.bin</span></code> instead of a step counter. The <code class="docutils literal notranslate"><span class="pre">time</span></code>
+coordinate is the float parsed from the filename, so what is on disk is
+the single source of truth. Writing formats each coordinate value with the
+pattern precision and refuses arrays whose values collide at that precision.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">convention</span> <span class="o">=</span> <span class="n">TimeStampedFiles</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">layout</span><span class="o">=</span><span class="n">Layout</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">)}),</span>
+<span class="gp">... </span>    <span class="n">pattern</span><span class="o">=</span><span class="s2">"</span><span class="si">{name}</span><span class="s2">-</span><span class="si">{time:.3f}</span><span class="s2">.bin"</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">convention</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">"ux-0.250.bin"</span><span class="p">))</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="s2">"time"</span><span class="p">]</span>
+<span class="go">array([0.25])</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layout</strong> (<a class="reference internal" href="#xarray_binfile.conventions.Layout" title="xarray_binfile.conventions.layout.Layout"><em>xarray_binfile.conventions.layout.Layout</em></a>) – Dimension order, coordinates and dtype of each file.</p></li>
+<li><p><strong>pattern</strong> (<a class="reference internal" href="#xarray_binfile.conventions.FilenamePattern" title="xarray_binfile.conventions.filename_pattern.FilenamePattern"><em>xarray_binfile.conventions.filename_pattern.FilenamePattern</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Filename pattern declaring <code class="docutils literal notranslate"><span class="pre">{name}</span></code> and <code class="docutils literal notranslate"><span class="pre">{time}</span></code>.
+Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;{name}-{time:.3f}.bin&quot;</span></code>.</p></li>
+<li><p><strong>check_coords</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether <code class="xref py py-meth docutils literal notranslate"><span class="pre">writer()</span></code> also requires coordinate values to
+match <code class="docutils literal notranslate"><span class="pre">layout</span></code>.</p></li>
+<li><p><strong>time_dim</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Name of the dimension split across files. Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;time&quot;</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
 <section id="module-xarray_binfile.tutorial">
 <span id="tutorial-helpers"></span><h2>Tutorial helpers<a class="headerlink" href="#module-xarray_binfile.tutorial" title="Link to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="xarray_binfile.tutorial.DatasetGenerator">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xarray_binfile.tutorial.</span></span><span class="sig-name descname"><span class="pre">DatasetGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">read_specs_getter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#xarray_binfile.read.ReadSpecsGetterProtocol" title="xarray_binfile.read.file_metadata.ReadSpecsGetterProtocol"><span class="pre">ReadSpecsGetterProtocol</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xarray_binfile.tutorial.DatasetGenerator" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Utility that generates synthetic datasets from read specs metadata.</p>
 <p>This helper is intended for tutorials and tests where you want deterministic
 mock data that follows the same metadata conventions expected by the backend.</p>
@@ -693,7 +1237,7 @@ mock data that follows the same metadata conventions expected by the backend.</p
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="xarray_binfile.tutorial.DatasetGenerator.__call__">
-<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter_filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator" title="(in Python v3.14)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.Dataset.html#xarray.Dataset" title="(in xarray v2026.4.0)"><span class="pre">Dataset</span></a></span></span><a class="headerlink" href="#xarray_binfile.tutorial.DatasetGenerator.__call__" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter_filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator" title="(in Python v3.14)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.Dataset.html#xarray.Dataset" title="(in xarray v2026.9.0)"><span class="pre">Dataset</span></a></span></span><a class="headerlink" href="#xarray_binfile.tutorial.DatasetGenerator.__call__" title="Link to this definition">#</a></dt>
 <dd><p>Generate and merge datasets for the provided file paths.</p>
 <p>Each path is converted to <code class="docutils literal notranslate"><span class="pre">ReadSpecs</span></code> using <code class="docutils literal notranslate"><span class="pre">read_specs_getter</span></code>.
 A synthetic variable is generated for each metadata object, and all
@@ -713,8 +1257,16 @@ variables are merged into one Dataset.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="xarray_binfile.tutorial.FileSpecsGetter">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xarray_binfile.tutorial.</span></span><span class="sig-name descname"><span class="pre">FileSpecsGetter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">base_coords:</span> <span class="pre">dict[str,</span> <span class="pre">ArrayLike],</span> <span class="pre">dtype:</span> <span class="pre">DTypeLike</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.float64'&gt;,</span> <span class="pre">filename_template:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'{name}-{digits:04}.bin',</span> <span class="pre">filename_regex:</span> <span class="pre">~re.Pattern</span> <span class="pre">=</span> <span class="pre">re.compile('(?P&lt;name&gt;\\w+)-(?P&lt;digits&gt;\\d{4})\\.bin')</span></em><span class="sig-paren">)</span><a class="headerlink" href="#xarray_binfile.tutorial.FileSpecsGetter" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Reference implementation of both read and write spec getter protocols.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version Use: </span><a class="reference internal" href="#xarray_binfile.conventions.StepIndexedFiles" title="xarray_binfile.conventions.StepIndexedFiles"><code class="xref py py-class docutils literal notranslate"><span class="pre">xarray_binfile.conventions.StepIndexedFiles</span></code></a> instead. It
+derives the filename regex from the template (so the two cannot drift
+apart), anchors matching to the whole filename, supports an interval
+between snapshots through <code class="docutils literal notranslate"><span class="pre">time_step</span></code>, and refuses coordinate values
+that would collide on disk. This class is kept unchanged for backward
+compatibility and will be removed in a future release.</p>
+</div>
 <p>This helper is intended for tutorials, tests, and simple projects with a
 filename convention that encodes variable name and step index.</p>
 <p>It is intentionally narrow: the default regex expects time-indexed files
@@ -731,13 +1283,19 @@ the same read/write protocol contracts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Variables<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>base_coords</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>ArrayLike</em><em>]</em>) – Base coordinates for the data.</p></li>
+<li><p><strong>base_coords</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>ArrayLike</em><em>]</em>) – Base coordinates for the data.</p></li>
 <li><p><strong>dtype</strong> (<em>DTypeLike</em>) – Data type of the binary file. Defaults to np.float64.</p></li>
-<li><p><strong>filename_template</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Template for generating filenames.</p></li>
+<li><p><strong>filename_template</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Template for generating filenames.</p></li>
 <li><p><strong>filename_regex</strong> (<a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern" title="(in Python v3.14)"><em>re.Pattern</em></a>) – Regular expression for parsing filenames.</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="xarray_binfile.tutorial.FileSpecsGetter.__post_init__">
+<span class="sig-name descname"><span class="pre">__post_init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#xarray_binfile.tutorial.FileSpecsGetter.__post_init__" title="Link to this definition">#</a></dt>
+<dd><p>Warn that this class is superseded by <code class="docutils literal notranslate"><span class="pre">StepIndexedFiles</span></code>.</p>
+</dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="xarray_binfile.tutorial.FileSpecsGetter.dtype">
 <span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#xarray_binfile.tutorial.FileSpecsGetter.dtype" title="Link to this definition">#</a></dt>
@@ -762,14 +1320,14 @@ number.</p>
 <dd class="field-odd"><p><a class="reference internal" href="#xarray_binfile.read.ReadSpecs" title="xarray_binfile.read.ReadSpecs">ReadSpecs</a></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the filename does not match the expected pattern.</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the filename does not match the expected pattern.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="xarray_binfile.tutorial.FileSpecsGetter.writer">
-<span class="sig-name descname"><span class="pre">writer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray" title="(in xarray v2026.4.0)"><span class="pre">DataArray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator" title="(in Python v3.14)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#xarray_binfile.write.WriteSpecs" title="xarray_binfile.write.file_metadata.WriteSpecs"><span class="pre">WriteSpecs</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#xarray_binfile.tutorial.FileSpecsGetter.writer" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">writer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray" title="(in xarray v2026.9.0)"><span class="pre">DataArray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator" title="(in Python v3.14)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#xarray_binfile.write.WriteSpecs" title="xarray_binfile.write.file_metadata.WriteSpecs"><span class="pre">WriteSpecs</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#xarray_binfile.tutorial.FileSpecsGetter.writer" title="Link to this definition">#</a></dt>
 <dd><p>Yield <code class="docutils literal notranslate"><span class="pre">WriteSpecs</span></code> for one DataArray.</p>
 <p>The default behavior writes one file per time coordinate value using
 <code class="docutils literal notranslate"><span class="pre">filename_template</span></code> and transposes each slice to <code class="docutils literal notranslate"><span class="pre">base_coords</span></code>
@@ -855,7 +1413,7 @@ on write, so files always round-trip with <a class="reference internal" href="#x
     <i class="fa-solid fa-list"></i> Contents
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-xarray_binfile.read">Read backend</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.read.RawBinaryEntrypoint"><code class="docutils literal notranslate"><span class="pre">RawBinaryEntrypoint</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.read.RawBinaryEntrypoint.open_dataset"><code class="docutils literal notranslate"><span class="pre">RawBinaryEntrypoint.open_dataset()</span></code></a></li>
@@ -893,12 +1451,49 @@ on write, so files always round-trip with <a class="reference internal" href="#x
 </li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-xarray_binfile.conventions">Conventions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.ConventionProtocol"><code class="docutils literal notranslate"><span class="pre">ConventionProtocol</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.ConventionProtocol.reader"><code class="docutils literal notranslate"><span class="pre">ConventionProtocol.reader</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.ConventionProtocol.writer"><code class="docutils literal notranslate"><span class="pre">ConventionProtocol.writer</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.FilenamePattern"><code class="docutils literal notranslate"><span class="pre">FilenamePattern</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.FilenamePattern.__post_init__"><code class="docutils literal notranslate"><span class="pre">FilenamePattern.__post_init__()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.FilenamePattern.format"><code class="docutils literal notranslate"><span class="pre">FilenamePattern.format()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.FilenamePattern.matches"><code class="docutils literal notranslate"><span class="pre">FilenamePattern.matches()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.FilenamePattern.parse"><code class="docutils literal notranslate"><span class="pre">FilenamePattern.parse()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.FolderConventions"><code class="docutils literal notranslate"><span class="pre">FolderConventions</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.FolderConventions.reader"><code class="docutils literal notranslate"><span class="pre">FolderConventions.reader()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.FolderConventions.writer"><code class="docutils literal notranslate"><span class="pre">FolderConventions.writer()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.Layout"><code class="docutils literal notranslate"><span class="pre">Layout</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.Layout.dims"><code class="docutils literal notranslate"><span class="pre">Layout.dims</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.Layout.dtype"><code class="docutils literal notranslate"><span class="pre">Layout.dtype</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.Layout.shape"><code class="docutils literal notranslate"><span class="pre">Layout.shape</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.Layout.transpose"><code class="docutils literal notranslate"><span class="pre">Layout.transpose()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.Layout.validate"><code class="docutils literal notranslate"><span class="pre">Layout.validate()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.LayoutMismatchError"><code class="docutils literal notranslate"><span class="pre">LayoutMismatchError</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.StaticFiles"><code class="docutils literal notranslate"><span class="pre">StaticFiles</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.StaticFiles.reader"><code class="docutils literal notranslate"><span class="pre">StaticFiles.reader()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.StaticFiles.writer"><code class="docutils literal notranslate"><span class="pre">StaticFiles.writer()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.StepIndexedFiles"><code class="docutils literal notranslate"><span class="pre">StepIndexedFiles</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.conventions.TimeStampedFiles"><code class="docutils literal notranslate"><span class="pre">TimeStampedFiles</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-xarray_binfile.tutorial">Tutorial helpers</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.tutorial.DatasetGenerator"><code class="docutils literal notranslate"><span class="pre">DatasetGenerator</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.tutorial.DatasetGenerator.__call__"><code class="docutils literal notranslate"><span class="pre">DatasetGenerator.__call__()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.tutorial.FileSpecsGetter"><code class="docutils literal notranslate"><span class="pre">FileSpecsGetter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.tutorial.FileSpecsGetter.__post_init__"><code class="docutils literal notranslate"><span class="pre">FileSpecsGetter.__post_init__()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.tutorial.FileSpecsGetter.dtype"><code class="docutils literal notranslate"><span class="pre">FileSpecsGetter.dtype</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.tutorial.FileSpecsGetter.reader"><code class="docutils literal notranslate"><span class="pre">FileSpecsGetter.reader()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#xarray_binfile.tutorial.FileSpecsGetter.writer"><code class="docutils literal notranslate"><span class="pre">FileSpecsGetter.writer()</span></code></a></li>
@@ -954,8 +1549,8 @@ By Felipe N. Schuch
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
   </footer>

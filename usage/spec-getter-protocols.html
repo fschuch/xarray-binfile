@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
     <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
@@ -61,6 +61,7 @@
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'usage/spec-getter-protocols';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Read Binary Files Lazily With Xarray and Dask" href="../tutorials/read.html" />
@@ -68,20 +69,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -107,7 +114,51 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
     </header>
   
 
@@ -338,18 +389,19 @@
                 <h2> Contents </h2>
             </div>
             <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-spec-getters-exist">Why spec getters exist</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#file-layout-examples">File-layout examples</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#time-series-variables-only">Time-series variables only</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mixed-time-series-plus-static-fields">Mixed time-series plus static fields</a></li>
-</ul>
-</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#read-protocol">Read protocol</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#write-protocol">Write protocol</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementations-shipped-with-xarray-binfile">Implementations shipped with xarray-binfile</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-create-your-own-read-specs-getter">How to create your own read specs getter</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-create-your-own-write-specs-getter">How to create your own write specs getter</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#shipped-conventions">Shipped conventions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#time-series-numbered-by-step">Time-series numbered by step</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#time-series-stamped-with-the-physical-time">Time-series stamped with the physical time</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#static-fields">Static fields</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#shapes-that-depend-on-the-folder">Shapes that depend on the folder</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#validation-on-write">Validation on write</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-create-your-own-convention">How to create your own convention</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#validation-checklist-for-custom-implementations">Validation checklist for custom implementations</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#related-pages">Related pages</a></li>
 </ul>
@@ -365,11 +417,11 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="spec-getter-protocols-for-read-and-write">
 <h1>Spec Getter Protocols for Read and Write<a class="headerlink" href="#spec-getter-protocols-for-read-and-write" title="Link to this heading">#</a></h1>
-<p>This page explains the protocol interfaces used by xarray-binfile and shows:</p>
+<p>This page explains how xarray-binfile learns about your files. It covers:</p>
 <ul class="simple">
 <li><p>the protocol contracts for read and write operations</p></li>
-<li><p>the implementations shipped with the package</p></li>
-<li><p>how to implement your own getters for custom binary layouts</p></li>
+<li><p>the conventions shipped with the package, and how to compose them</p></li>
+<li><p>how to implement your own getters when no shipped convention fits</p></li>
 </ul>
 <section id="why-spec-getters-exist">
 <h2>Why spec getters exist<a class="headerlink" href="#why-spec-getters-exist" title="Link to this heading">#</a></h2>
@@ -380,49 +432,7 @@
 <li><p>variable name</p></li>
 <li><p>dtype and byte order</p></li>
 </ul>
-<p>xarray-binfile solves this by asking you for callables that provide metadata for reads and file splitting rules for writes.</p>
-</section>
-<section id="file-layout-examples">
-<h2>File-layout examples<a class="headerlink" href="#file-layout-examples" title="Link to this heading">#</a></h2>
-<p>The protocol approach is useful because real projects organize files differently.</p>
-<section id="time-series-variables-only">
-<h3>Time-series variables only<a class="headerlink" href="#time-series-variables-only" title="Link to this heading">#</a></h3>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>caseA/
-	ux001.bin
-	ux002.bin
-	ux003.bin
-	uy001.bin
-	uy002.bin
-	uy003.bin
-</pre></div>
-</div>
-<p>In this layout, the read specs getter usually parses:</p>
-<ul class="simple">
-<li><p>variable name (<code class="docutils literal notranslate"><span class="pre">ux</span></code>, <code class="docutils literal notranslate"><span class="pre">uy</span></code>)</p></li>
-<li><p>step index (<code class="docutils literal notranslate"><span class="pre">001</span></code>, <code class="docutils literal notranslate"><span class="pre">002</span></code>, <code class="docutils literal notranslate"><span class="pre">003</span></code>)</p></li>
-</ul>
-<p>and returns <code class="docutils literal notranslate"><span class="pre">coords</span></code> including a single-value <code class="docutils literal notranslate"><span class="pre">time</span></code> coordinate for each file.</p>
-</section>
-<section id="mixed-time-series-plus-static-fields">
-<h3>Mixed time-series plus static fields<a class="headerlink" href="#mixed-time-series-plus-static-fields" title="Link to this heading">#</a></h3>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>caseB/
-	ux001.bin
-	ux002.bin
-	ux003.bin
-	uy001.bin
-	uy002.bin
-	uy003.bin
-	epsi.bin
-</pre></div>
-</div>
-<p>Here, <code class="docutils literal notranslate"><span class="pre">ux*</span></code> and <code class="docutils literal notranslate"><span class="pre">uy*</span></code> are time-dependent while <code class="docutils literal notranslate"><span class="pre">epsi.bin</span></code> is static.</p>
-<p>A custom read specs getter can support this by using two filename rules:</p>
-<ul class="simple">
-<li><p>time-series rule: parse variable + step, include <code class="docutils literal notranslate"><span class="pre">time=[step]</span></code></p></li>
-<li><p>static rule: parse static variable (for example <code class="docutils literal notranslate"><span class="pre">epsi</span></code>), return coords without <code class="docutils literal notranslate"><span class="pre">time</span></code></p></li>
-</ul>
-<p>In xarray workflows, static variables without a <code class="docutils literal notranslate"><span class="pre">time</span></code> dimension can be naturally broadcast against time-dependent variables during computations.</p>
-</section>
+<p>xarray-binfile solves this by asking you for callables that provide metadata for reads and file-splitting rules for writes. Most projects follow a filename convention such as <code class="docutils literal notranslate"><span class="pre">&lt;variable&gt;&lt;separator&gt;&lt;number&gt;.&lt;suffix&gt;</span></code>, sometimes with the parent folder indicating the shape of the files. The shipped conventions cover those cases; the protocols let you cover everything else.</p>
 </section>
 <section id="read-protocol">
 <h2>Read protocol<a class="headerlink" href="#read-protocol" title="Link to this heading">#</a></h2>
@@ -436,15 +446,11 @@
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">filepath</span></code>: path to the binary file</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">dtype</span></code>: data type (for example <code class="docutils literal notranslate"><span class="pre">np.float32</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;&lt;f4&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;&gt;f8&quot;</span></code>)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">coords</span></code>: mapping of dimension name to coordinate array</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">coords</span></code>: mapping of dimension name to coordinate array, in on-disk order</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: variable name</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">attrs</span></code>: optional attributes</p></li>
 </ul>
-<p>See the API reference for authoritative signatures and behavior:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">ReadSpecs</span></code>: <a class="reference internal" href="../references/api-reference.html"><span class="std std-doc">API reference</span></a></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ReadSpecsGetterProtocol</span></code>: <a class="reference internal" href="../references/api-reference.html"><span class="std std-doc">API reference</span></a></p></li>
-</ul>
+<p>The backend validates the file size against <code class="docutils literal notranslate"><span class="pre">coords</span></code> and <code class="docutils literal notranslate"><span class="pre">dtype</span></code> before reading anything, so a wrong shape or byte order fails early instead of producing garbage.</p>
 </section>
 <section id="write-protocol">
 <h2>Write protocol<a class="headerlink" href="#write-protocol" title="Link to this heading">#</a></h2>
@@ -456,73 +462,143 @@
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">WriteSpecs</span></code> fields:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">filename</span></code>: output file name</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">sub_array</span></code>: array slice to write into that file</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">filename</span></code>: output path. A relative path is resolved against the directory passed to <code class="docutils literal notranslate"><span class="pre">to_file</span></code>, which must exist, and may include sub-folders, which are created on demand, but it must stay inside that directory (<code class="docutils literal notranslate"><span class="pre">..</span></code> escaping it is rejected; symbolic links are not followed for this check). An absolute path is used as is, so one call can target several locations</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sub_array</span></code>: array slice to write into that file, already transposed to on-disk order</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">dtype</span></code>: optional on-disk data type; when set, the sub-array is cast right before serialization (including byte order, for example <code class="docutils literal notranslate"><span class="pre">&quot;&lt;f4&quot;</span></code>). When omitted, the in-memory dtype and native byte order are written as-is, so make sure they match what your read specs getter declares.</p></li>
 </ul>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Writes are eager and whole-file only. Each <code class="docutils literal notranslate"><span class="pre">sub_array</span></code> is fully loaded into memory (a Dask compute for lazy data) and its file is written in a single pass — the backend never appends to, patches, or resumes a file. Files are staged in a unique temporary directory inside the destination and atomically moved into place with <code class="docutils literal notranslate"><span class="pre">os.replace</span></code> once complete, so an interrupted write never leaves a truncated file behind. That protects against partially-updated, corrupted files, but it means every <code class="docutils literal notranslate"><span class="pre">sub_array</span></code> you yield must fit in memory. Split large arrays into more, smaller files, and reach for xarray-supported formats such as NetCDF or Zarr when you need streaming or partial writes.</p>
+<p>Writes are eager and whole-file only. Each <code class="docutils literal notranslate"><span class="pre">sub_array</span></code> is fully loaded into memory (a Dask compute for lazy data) and its file is written in a single pass — the backend never appends to, patches, or resumes a file. Files are staged in a temporary file next to their destination and atomically moved into place with <code class="docutils literal notranslate"><span class="pre">os.replace</span></code> once complete, so an interrupted write never leaves a truncated file behind. That protects against partially-updated, corrupted files, but it means every <code class="docutils literal notranslate"><span class="pre">sub_array</span></code> you yield must fit in memory. Split large arrays into more, smaller files, and reach for xarray-supported formats such as NetCDF or Zarr when you need streaming or partial writes.</p>
 </div>
-<p>See the API reference for authoritative signatures and behavior:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">WriteSpecs</span></code>: <a class="reference internal" href="../references/api-reference.html"><span class="std std-doc">API reference</span></a></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">WriteSpecsGetterProtocol</span></code>: <a class="reference internal" href="../references/api-reference.html"><span class="std std-doc">API reference</span></a></p></li>
-</ul>
+<p>See the <a class="reference internal" href="../references/api-reference.html"><span class="std std-doc">API reference</span></a> for the authoritative signatures.</p>
 </section>
-<section id="implementations-shipped-with-xarray-binfile">
-<h2>Implementations shipped with xarray-binfile<a class="headerlink" href="#implementations-shipped-with-xarray-binfile" title="Link to this heading">#</a></h2>
-<p>The package includes a built-in reference implementation in <code class="docutils literal notranslate"><span class="pre">xarray_binfile.tutorial.FileSpecsGetter</span></code>.</p>
-<p>It provides both protocol implementations:</p>
+<section id="shipped-conventions">
+<h2>Shipped conventions<a class="headerlink" href="#shipped-conventions" title="Link to this heading">#</a></h2>
+<p>The module <code class="docutils literal notranslate"><span class="pre">xarray_binfile.conventions</span></code> provides small, ready-to-use implementations of both protocols. Each convention exposes a <code class="docutils literal notranslate"><span class="pre">reader</span></code> (the read specs getter) and a <code class="docutils literal notranslate"><span class="pre">writer</span></code> (the write specs getter) built from the same two ingredients, so files written by one can always be read back by the other:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">FileSpecsGetter.reader</span></code>: implements <code class="docutils literal notranslate"><span class="pre">ReadSpecsGetterProtocol</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">FileSpecsGetter.writer</span></code>: implements <code class="docutils literal notranslate"><span class="pre">WriteSpecsGetterProtocol</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FilenamePattern</span></code>: one <code class="docutils literal notranslate"><span class="pre">str.format</span></code>-style template such as <code class="docutils literal notranslate"><span class="pre">&quot;{name}-{step:04d}.bin&quot;</span></code>. The regular expression used for reading is derived from the template, so the two cannot drift apart. Matching is anchored to the whole filename, and a zero-fill width is a minimum width (step <code class="docutils literal notranslate"><span class="pre">12345</span></code> written with <code class="docutils literal notranslate"><span class="pre">04d</span></code> still reads back).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Layout</span></code>: the dimension order, coordinate values and dtype of one file on disk. Readers attach these coordinates to every file; writers refuse arrays that do not match them.</p></li>
 </ul>
-<p>It uses a common pattern:</p>
-<ul class="simple">
-<li><p>filename convention like <code class="docutils literal notranslate"><span class="pre">{name}-{digits:04}.bin</span></code></p></li>
-<li><p>regex parsing for variable name and time index</p></li>
-<li><p>base coordinates plus a <code class="docutils literal notranslate"><span class="pre">time</span></code> coordinate extracted from filename</p></li>
-</ul>
-<p>This shipped helper targets a single time-series naming convention. Mixed layouts (for example <code class="docutils literal notranslate"><span class="pre">ux001.bin</span></code> together with static <code class="docutils literal notranslate"><span class="pre">epsi.bin</span></code>) are typically handled by creating your own getter based on the same protocol contracts.</p>
-<p>A second shipped helper, <code class="docutils literal notranslate"><span class="pre">xarray_binfile.tutorial.DatasetGenerator</span></code>, consumes a read specs getter and generates synthetic datasets for tests/tutorials.</p>
-<p>These implementations are documented in the API section and should be considered the source of truth:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">FileSpecsGetter</span></code>: <a class="reference internal" href="../references/api-reference.html"><span class="std std-doc">API reference</span></a></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">DatasetGenerator</span></code>: <a class="reference internal" href="../references/api-reference.html"><span class="std std-doc">API reference</span></a></p></li>
-</ul>
+<section id="time-series-numbered-by-step">
+<h3>Time-series numbered by step<a class="headerlink" href="#time-series-numbered-by-step" title="Link to this heading">#</a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>caseA/
+	ux-0001.bin
+	ux-0002.bin
+	uy-0001.bin
+	uy-0002.bin
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">xarray_binfile.conventions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Layout</span><span class="p">,</span> <span class="n">StepIndexedFiles</span>
+
+<span class="n">layout</span> <span class="o">=</span> <span class="n">Layout</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">64</span><span class="p">),</span> <span class="s2">"y"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">32</span><span class="p">),</span> <span class="s2">"z"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">16</span><span class="p">)},</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"&lt;f4"</span><span class="p">)</span>
+<span class="n">convention</span> <span class="o">=</span> <span class="n">StepIndexedFiles</span><span class="p">(</span><span class="n">layout</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s2">"</span><span class="si">{name}</span><span class="s2">-</span><span class="si">{step:04d}</span><span class="s2">.bin"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>By default the <code class="docutils literal notranslate"><span class="pre">time</span></code> coordinate is the integer step. When the interval between snapshots is known, pass <code class="docutils literal notranslate"><span class="pre">time_step</span></code> and the coordinate becomes <code class="docutils literal notranslate"><span class="pre">step</span> <span class="pre">*</span> <span class="pre">time_step</span></code> on read, while on write the coordinate is divided back into a step. Values that do not land on an integer step raise instead of being truncated, so two snapshots can never silently overwrite each other:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">convention</span> <span class="o">=</span> <span class="n">StepIndexedFiles</span><span class="p">(</span><span class="n">layout</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s2">"</span><span class="si">{name}</span><span class="s2">.</span><span class="si">{step:06d}</span><span class="s2">"</span><span class="p">,</span> <span class="n">time_step</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Other spellings of the same idea only change the pattern: <code class="docutils literal notranslate"><span class="pre">&quot;{name}{step:03d}.dat&quot;</span></code> for <code class="docutils literal notranslate"><span class="pre">ux001.dat</span></code>, or <code class="docutils literal notranslate"><span class="pre">&quot;{name}_{step:d}.bin&quot;</span></code> for an unpadded counter.</p>
 </section>
-<section id="how-to-create-your-own-read-specs-getter">
-<h2>How to create your own read specs getter<a class="headerlink" href="#how-to-create-your-own-read-specs-getter" title="Link to this heading">#</a></h2>
-<p>Create a callable that follows <code class="docutils literal notranslate"><span class="pre">ReadSpecsGetterProtocol</span></code>. In practice:</p>
+<section id="time-series-stamped-with-the-physical-time">
+<h3>Time-series stamped with the physical time<a class="headerlink" href="#time-series-stamped-with-the-physical-time" title="Link to this heading">#</a></h3>
+<p>Some solvers write the time itself in the filename:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>caseB/
+	ux-0.250.bin
+	ux-0.500.bin
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">xarray_binfile.conventions</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeStampedFiles</span>
+
+<span class="n">convention</span> <span class="o">=</span> <span class="n">TimeStampedFiles</span><span class="p">(</span><span class="n">layout</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s2">"</span><span class="si">{name}</span><span class="s2">-</span><span class="si">{time:.3f}</span><span class="s2">.bin"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">time</span></code> coordinate is the float parsed from the filename. On write, each value is formatted with the pattern precision, and arrays whose values collide at that precision are rejected.</p>
+</section>
+<section id="static-fields">
+<h3>Static fields<a class="headerlink" href="#static-fields" title="Link to this heading">#</a></h3>
+<p>Fields without a time dimension, such as a geometry or a mask, use one file per variable:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">xarray_binfile.conventions</span><span class="w"> </span><span class="kn">import</span> <span class="n">StaticFiles</span>
+
+<span class="n">static</span> <span class="o">=</span> <span class="n">StaticFiles</span><span class="p">(</span><span class="n">layout</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s2">"</span><span class="si">{name}</span><span class="s2">.bin"</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="shapes-that-depend-on-the-folder">
+<h3>Shapes that depend on the folder<a class="headerlink" href="#shapes-that-depend-on-the-folder" title="Link to this heading">#</a></h3>
+<p>Projects often keep arrays of different shapes in different folders:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>caseC/
+	xy_planes/
+		ux-0001.bin
+	3d/
+		ux-0001.bin
+	static/
+		epsi.bin
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">FolderConventions</span></code> dispatches to one convention per folder. Reading picks the convention whose folder matches the end of the file’s parent path, preferring the most specific folder when several match (<code class="docutils literal notranslate"><span class="pre">snapshots/3d</span></code> over <code class="docutils literal notranslate"><span class="pre">3d</span></code>). Writing offers the array to every convention and requires exactly one to accept it, based on the array dimensions and coordinates, then writes into that folder. If no convention or more than one accepts the array, a <code class="docutils literal notranslate"><span class="pre">LayoutMismatchError</span></code> is raised: the backend never guesses.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">xarray_binfile.conventions</span><span class="w"> </span><span class="kn">import</span> <span class="n">FolderConventions</span>
+
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">64</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">32</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">conventions</span> <span class="o">=</span> <span class="n">FolderConventions</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">"xy_planes"</span><span class="p">:</span> <span class="n">StepIndexedFiles</span><span class="p">(</span><span class="n">Layout</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="n">y</span><span class="p">},</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"&lt;f4"</span><span class="p">)),</span>
+        <span class="s2">"3d"</span><span class="p">:</span> <span class="n">StepIndexedFiles</span><span class="p">(</span><span class="n">Layout</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span> <span class="s2">"z"</span><span class="p">:</span> <span class="n">z</span><span class="p">},</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"&lt;f4"</span><span class="p">)),</span>
+        <span class="s2">"static"</span><span class="p">:</span> <span class="n">StaticFiles</span><span class="p">(</span><span class="n">Layout</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span> <span class="s2">"z"</span><span class="p">:</span> <span class="n">z</span><span class="p">},</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"&lt;f4"</span><span class="p">)),</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
+    <span class="nb">sorted</span><span class="p">(</span><span class="n">case_dir</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">"*.bin"</span><span class="p">)),</span> <span class="n">engine</span><span class="o">=</span><span class="s2">"binfile"</span><span class="p">,</span> <span class="n">read_specs_getter</span><span class="o">=</span><span class="n">conventions</span><span class="o">.</span><span class="n">reader</span>
+<span class="p">)</span>
+<span class="n">dataset</span><span class="o">.</span><span class="n">binary_engine</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">conventions</span><span class="o">.</span><span class="n">writer</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="validation-on-write">
+<h3>Validation on write<a class="headerlink" href="#validation-on-write" title="Link to this heading">#</a></h3>
+<p>Every shipped writer checks the array against its <code class="docutils literal notranslate"><span class="pre">Layout</span></code> before yielding anything:</p>
+<ul class="simple">
+<li><p>dimension names must match the layout plus the split dimension (<code class="docutils literal notranslate"><span class="pre">time</span></code> by default)</p></li>
+<li><p>sizes along each dimension must match</p></li>
+<li><p>coordinate values must be equal to the layout coordinates, unless <code class="docutils literal notranslate"><span class="pre">check_coords=False</span></code></p></li>
+</ul>
+<p>It also requires the array to be named, refuses names or values that would produce a filename the paired reader cannot parse back (for example a variable called <code class="docutils literal notranslate"><span class="pre">u.x</span></code> with the default pattern), and refuses to proceed when two slices would map to the same filename. Mismatches raise <code class="docutils literal notranslate"><span class="pre">LayoutMismatchError</span></code> (a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>) with the offending dimension in the message.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">xarray_binfile.tutorial.FileSpecsGetter</span></code> is the previous reference implementation. It is deprecated in favor of <code class="docutils literal notranslate"><span class="pre">StepIndexedFiles</span></code> and kept unchanged for backward compatibility. Replace <code class="docutils literal notranslate"><span class="pre">FileSpecsGetter(base_coords=coords,</span> <span class="pre">dtype=dtype)</span></code> with <code class="docutils literal notranslate"><span class="pre">StepIndexedFiles(Layout(coords,</span> <span class="pre">dtype=dtype))</span></code>; the default pattern <code class="docutils literal notranslate"><span class="pre">&quot;{name}-{step:04d}.bin&quot;</span></code> produces the same filenames.</p>
+</div>
+</section>
+</section>
+<section id="how-to-create-your-own-convention">
+<h2>How to create your own convention<a class="headerlink" href="#how-to-create-your-own-convention" title="Link to this heading">#</a></h2>
+<p>Start from the shipped convention closest to your files and change only what differs. When none fits, implement the two protocols directly; <code class="docutils literal notranslate"><span class="pre">FilenamePattern</span></code> and <code class="docutils literal notranslate"><span class="pre">Layout</span></code> are reusable on their own.</p>
+<p>Read specs getter:</p>
 <ol class="arabic simple">
-<li><p>Parse your filename convention.</p></li>
+<li><p>Parse your filename convention (and the parent folder, if it carries information).</p></li>
 <li><p>Resolve variable identity (for example variable name and step index).</p></li>
 <li><p>Build explicit <code class="docutils literal notranslate"><span class="pre">coords</span></code> and <code class="docutils literal notranslate"><span class="pre">dtype</span></code>.</p></li>
 <li><p>Return a <code class="docutils literal notranslate"><span class="pre">ReadSpecs</span></code> object.</p></li>
 </ol>
-<p>Use <code class="docutils literal notranslate"><span class="pre">FileSpecsGetter.reader</span></code> as the reference behavior and adapt only what differs for your project.</p>
-</section>
-<section id="how-to-create-your-own-write-specs-getter">
-<h2>How to create your own write specs getter<a class="headerlink" href="#how-to-create-your-own-write-specs-getter" title="Link to this heading">#</a></h2>
-<p>Create a callable that follows <code class="docutils literal notranslate"><span class="pre">WriteSpecsGetterProtocol</span></code>. In practice:</p>
+<p>Write specs getter:</p>
 <ol class="arabic simple">
+<li><p>Validate the array against the on-disk layout and raise on mismatch.</p></li>
 <li><p>Decide how one in-memory array maps to one or more output files.</p></li>
-<li><p>Yield one <code class="docutils literal notranslate"><span class="pre">WriteSpecs</span></code> object per output file.</p></li>
-<li><p>Ensure each <code class="docutils literal notranslate"><span class="pre">sub_array</span></code> is transposed to the expected on-disk dimension order.</p></li>
+<li><p>Yield one <code class="docutils literal notranslate"><span class="pre">WriteSpecs</span></code> object per output file, with <code class="docutils literal notranslate"><span class="pre">sub_array</span></code> transposed to the on-disk dimension order.</p></li>
 <li><p>Keep each <code class="docutils literal notranslate"><span class="pre">sub_array</span></code> small enough to fit in memory, since it is fully materialized before its file is written.</p></li>
 <li><p>Use deterministic filename rules that your read getter can parse back.</p></li>
 </ol>
-<p>Use <code class="docutils literal notranslate"><span class="pre">FileSpecsGetter.writer</span></code> as the reference behavior and adapt only what differs for your project.</p>
 </section>
 <section id="validation-checklist-for-custom-implementations">
 <h2>Validation checklist for custom implementations<a class="headerlink" href="#validation-checklist-for-custom-implementations" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>Validate filename parsing with explicit errors.</p></li>
+<li><p>Derive the read and write filename rules from one definition.</p></li>
+<li><p>Anchor filename matching to the whole name so stale or backup files are rejected.</p></li>
 <li><p>Keep dimension order explicit and consistent.</p></li>
 <li><p>Make dtype and endianness explicit.</p></li>
-<li><p>Test read/write round-trips (<code class="docutils literal notranslate"><span class="pre">xarray.testing.assert_allclose</span></code>).</p></li>
-<li><p>Start from <code class="docutils literal notranslate"><span class="pre">FileSpecsGetter</span></code> and replace only what differs.</p></li>
+<li><p>Fail loudly on layout mismatch instead of broadcasting or squeezing.</p></li>
+<li><p>Test read/write round-trips (<code class="docutils literal notranslate"><span class="pre">xarray.testing.assert_identical</span></code>).</p></li>
 </ul>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -604,18 +680,19 @@
     <i class="fa-solid fa-list"></i> Contents
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-spec-getters-exist">Why spec getters exist</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#file-layout-examples">File-layout examples</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#time-series-variables-only">Time-series variables only</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mixed-time-series-plus-static-fields">Mixed time-series plus static fields</a></li>
-</ul>
-</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#read-protocol">Read protocol</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#write-protocol">Write protocol</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementations-shipped-with-xarray-binfile">Implementations shipped with xarray-binfile</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-create-your-own-read-specs-getter">How to create your own read specs getter</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-create-your-own-write-specs-getter">How to create your own write specs getter</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#shipped-conventions">Shipped conventions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#time-series-numbered-by-step">Time-series numbered by step</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#time-series-stamped-with-the-physical-time">Time-series stamped with the physical time</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#static-fields">Static fields</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#shapes-that-depend-on-the-folder">Shapes that depend on the folder</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#validation-on-write">Validation on write</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-create-your-own-convention">How to create your own convention</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#validation-checklist-for-custom-implementations">Validation checklist for custom implementations</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#related-pages">Related pages</a></li>
 </ul>
@@ -666,8 +743,8 @@ By Felipe N. Schuch
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
   </footer>

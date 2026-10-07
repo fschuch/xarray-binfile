@@ -26,8 +26,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
@@ -38,10 +38,10 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
     <script src="_static/documentation_options.js?v=9eb32ce0"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -60,25 +60,32 @@
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'genindex';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -104,7 +111,47 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
     </header>
   
 
@@ -298,13 +345,17 @@
 <div class="genindex-jumpbox">
  <a href="#_"><strong>_</strong></a>
  | <a href="#B"><strong>B</strong></a>
+ | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
  | <a href="#F"><strong>F</strong></a>
+ | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#O"><strong>O</strong></a>
+ | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
+ | <a href="#V"><strong>V</strong></a>
  | <a href="#W"><strong>W</strong></a>
  | <a href="#X"><strong>X</strong></a>
  
@@ -318,6 +369,14 @@
         <li><a href="references/api-reference.html#xarray_binfile.tutorial.DatasetGenerator.__call__">(xarray_binfile.tutorial.DatasetGenerator method)</a>
 </li>
         <li><a href="references/api-reference.html#xarray_binfile.write.WriteSpecsGetterProtocol.__call__">(xarray_binfile.write.WriteSpecsGetterProtocol method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.FilenamePattern.__post_init__">__post_init__() (xarray_binfile.conventions.FilenamePattern method)</a>
+
+      <ul>
+        <li><a href="references/api-reference.html#xarray_binfile.tutorial.FileSpecsGetter.__post_init__">(xarray_binfile.tutorial.FileSpecsGetter method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -335,18 +394,32 @@
   </ul></td>
 </tr></table>
 
+<h2 id="C">C</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.ConventionProtocol">ConventionProtocol (class in xarray_binfile.conventions)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="references/api-reference.html#xarray_binfile.tutorial.DatasetGenerator">DatasetGenerator (class in xarray_binfile.tutorial)</a>
 </li>
-      <li><a href="references/api-reference.html#xarray_binfile.read.ReadSpecs.dims">dims (xarray_binfile.read.ReadSpecs property)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="references/api-reference.html#xarray_binfile.tutorial.FileSpecsGetter.dtype">dtype (xarray_binfile.tutorial.FileSpecsGetter attribute)</a>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.Layout.dims">dims (xarray_binfile.conventions.Layout property)</a>
 
       <ul>
+        <li><a href="references/api-reference.html#xarray_binfile.read.ReadSpecs.dims">(xarray_binfile.read.ReadSpecs property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.Layout.dtype">dtype (xarray_binfile.conventions.Layout attribute)</a>
+
+      <ul>
+        <li><a href="references/api-reference.html#xarray_binfile.tutorial.FileSpecsGetter.dtype">(xarray_binfile.tutorial.FileSpecsGetter attribute)</a>
+</li>
         <li><a href="references/api-reference.html#xarray_binfile.write.WriteSpecs.dtype">(xarray_binfile.write.WriteSpecs attribute)</a>
 </li>
       </ul></li>
@@ -358,9 +431,27 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="references/api-reference.html#xarray_binfile.write.WriteSpecs.filename">filename (xarray_binfile.write.WriteSpecs attribute)</a>
 </li>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.FilenamePattern">FilenamePattern (class in xarray_binfile.conventions)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="references/api-reference.html#xarray_binfile.tutorial.FileSpecsGetter">FileSpecsGetter (class in xarray_binfile.tutorial)</a>
+</li>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.FolderConventions">FolderConventions (class in xarray_binfile.conventions)</a>
+</li>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.FilenamePattern.format">format() (xarray_binfile.conventions.FilenamePattern method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.Layout">Layout (class in xarray_binfile.conventions)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.LayoutMismatchError">LayoutMismatchError</a>
 </li>
   </ul></td>
 </tr></table>
@@ -368,10 +459,14 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.FilenamePattern.matches">matches() (xarray_binfile.conventions.FilenamePattern method)</a>
+</li>
       <li>
     module
 
       <ul>
+        <li><a href="references/api-reference.html#module-xarray_binfile.conventions">xarray_binfile.conventions</a>
+</li>
         <li><a href="references/api-reference.html#module-xarray_binfile.read">xarray_binfile.read</a>
 </li>
         <li><a href="references/api-reference.html#module-xarray_binfile.tutorial">xarray_binfile.tutorial</a>
@@ -390,13 +485,29 @@
   </ul></td>
 </tr></table>
 
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.FilenamePattern.parse">parse() (xarray_binfile.conventions.FilenamePattern method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="references/api-reference.html#xarray_binfile.read.RawBinaryEntrypoint">RawBinaryEntrypoint (class in xarray_binfile.read)</a>
 </li>
-      <li><a href="references/api-reference.html#xarray_binfile.tutorial.FileSpecsGetter.reader">reader() (xarray_binfile.tutorial.FileSpecsGetter method)</a>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.ConventionProtocol.reader">reader (xarray_binfile.conventions.ConventionProtocol property)</a>
 </li>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.FolderConventions.reader">reader() (xarray_binfile.conventions.FolderConventions method)</a>
+
+      <ul>
+        <li><a href="references/api-reference.html#xarray_binfile.conventions.StaticFiles.reader">(xarray_binfile.conventions.StaticFiles method)</a>
+</li>
+        <li><a href="references/api-reference.html#xarray_binfile.tutorial.FileSpecsGetter.reader">(xarray_binfile.tutorial.FileSpecsGetter method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="references/api-reference.html#xarray_binfile.read.ReadSpecs">ReadSpecs (class in xarray_binfile.read)</a>
@@ -409,10 +520,18 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="references/api-reference.html#xarray_binfile.read.ReadSpecs.shape">shape (xarray_binfile.read.ReadSpecs property)</a>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.Layout.shape">shape (xarray_binfile.conventions.Layout property)</a>
+
+      <ul>
+        <li><a href="references/api-reference.html#xarray_binfile.read.ReadSpecs.shape">(xarray_binfile.read.ReadSpecs property)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.StaticFiles">StaticFiles (class in xarray_binfile.conventions)</a>
+</li>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.StepIndexedFiles">StepIndexedFiles (class in xarray_binfile.conventions)</a>
+</li>
       <li><a href="references/api-reference.html#xarray_binfile.write.WriteSpecs.sub_array">sub_array (xarray_binfile.write.WriteSpecs attribute)</a>
 </li>
   </ul></td>
@@ -421,6 +540,8 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.TimeStampedFiles">TimeStampedFiles (class in xarray_binfile.conventions)</a>
+</li>
       <li><a href="references/api-reference.html#xarray_binfile.write.BinaryEngineDataArray.to_file">to_file() (xarray_binfile.write.BinaryEngineDataArray method)</a>
 
       <ul>
@@ -428,13 +549,33 @@
 </li>
       </ul></li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.Layout.transpose">transpose() (xarray_binfile.conventions.Layout method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.Layout.validate">validate() (xarray_binfile.conventions.Layout method)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="W">W</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="references/api-reference.html#xarray_binfile.tutorial.FileSpecsGetter.writer">writer() (xarray_binfile.tutorial.FileSpecsGetter method)</a>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.ConventionProtocol.writer">writer (xarray_binfile.conventions.ConventionProtocol property)</a>
 </li>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.FolderConventions.writer">writer() (xarray_binfile.conventions.FolderConventions method)</a>
+
+      <ul>
+        <li><a href="references/api-reference.html#xarray_binfile.conventions.StaticFiles.writer">(xarray_binfile.conventions.StaticFiles method)</a>
+</li>
+        <li><a href="references/api-reference.html#xarray_binfile.tutorial.FileSpecsGetter.writer">(xarray_binfile.tutorial.FileSpecsGetter method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="references/api-reference.html#xarray_binfile.write.WriteSpecs">WriteSpecs (class in xarray_binfile.write)</a>
@@ -448,12 +589,21 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li>
+    xarray_binfile.conventions
+
+      <ul>
+        <li><a href="references/api-reference.html#module-xarray_binfile.conventions">module</a>
+</li>
+      </ul></li>
+      <li>
     xarray_binfile.read
 
       <ul>
         <li><a href="references/api-reference.html#module-xarray_binfile.read">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     xarray_binfile.tutorial
 
@@ -461,8 +611,6 @@
         <li><a href="references/api-reference.html#module-xarray_binfile.tutorial">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     xarray_binfile.write
 
@@ -535,8 +683,8 @@ By Felipe N. Schuch
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
   </footer>

@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
     <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
@@ -61,6 +61,7 @@
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'tutorials/write';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Parallel And Larger-Than-Memory Workflows" href="parallel-and-larger-than-memory.html" />
@@ -68,20 +69,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -107,7 +114,51 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
     </header>
   
 
@@ -338,7 +389,7 @@
                 <h2> Contents </h2>
             </div>
             <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-write-specifications">Custom write specifications</a></li>
 </ul>
             </nav>
@@ -368,15 +419,13 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">xarray</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xr</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">xarray_binfile</span><span class="w"> </span><span class="kn">import</span> <span class="n">WriteSpecs</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">xarray_binfile.tutorial</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetGenerator</span><span class="p">,</span> <span class="n">FileSpecsGetter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">xarray_binfile.conventions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Layout</span><span class="p">,</span> <span class="n">StepIndexedFiles</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">xarray_binfile.tutorial</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetGenerator</span>
 
 <span class="n">input_directory_holder</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span>
 <span class="n">output_directory_holder</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span>
@@ -387,7 +436,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(PosixPath(&#39;/tmp/tmpj7cev_tt&#39;), PosixPath(&#39;/tmp/tmpnjlhk8e_&#39;))
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(PosixPath('/tmp/tmp8fj6iq7q'), PosixPath('/tmp/tmp3uzp7tdo'))
 </pre></div>
 </div>
 </div>
@@ -395,37 +444,35 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">base_coords</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
-    <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
-    <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+    <span class="s2">"x"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+    <span class="s2">"y"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+    <span class="s2">"z"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
 <span class="p">}</span>
 
-<span class="n">input_specs_getter</span> <span class="o">=</span> <span class="n">FileSpecsGetter</span><span class="p">(</span>
-    <span class="n">base_coords</span><span class="o">=</span><span class="n">base_coords</span><span class="p">,</span>
-    <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
-    <span class="n">filename_template</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{name}</span><span class="s2">-</span><span class="si">{digits:04}</span><span class="s2">.bin&quot;</span><span class="p">,</span>
-    <span class="n">filename_regex</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(?P&lt;name&gt;\w+)-(?P&lt;digits&gt;\d</span><span class="si">{4}</span><span class="s2">)\.bin&quot;</span><span class="p">),</span>
+<span class="n">input_specs_getter</span> <span class="o">=</span> <span class="n">StepIndexedFiles</span><span class="p">(</span>
+    <span class="n">layout</span><span class="o">=</span><span class="n">Layout</span><span class="p">(</span><span class="n">base_coords</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+    <span class="n">pattern</span><span class="o">=</span><span class="s2">"</span><span class="si">{name}</span><span class="s2">-</span><span class="si">{step:04d}</span><span class="s2">.bin"</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">dataset_generator</span> <span class="o">=</span> <span class="n">DatasetGenerator</span><span class="p">(</span><span class="n">input_specs_getter</span><span class="o">.</span><span class="n">reader</span><span class="p">)</span>
 <span class="n">filenames</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">input_specs_getter</span><span class="o">.</span><span class="n">filename_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="n">step</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;ux&quot;</span><span class="p">,</span> <span class="s2">&quot;uy&quot;</span><span class="p">,</span> <span class="s2">&quot;uz&quot;</span><span class="p">)</span>
+    <span class="n">input_specs_getter</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"ux"</span><span class="p">,</span> <span class="s2">"uy"</span><span class="p">,</span> <span class="s2">"uz"</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
 <span class="p">)</span>
 <span class="n">source_dataset</span> <span class="o">=</span> <span class="n">dataset_generator</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="n">filenames</span><span class="p">))</span>
 <span class="n">source_dataset</span><span class="o">.</span><span class="n">binary_engine</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">input_specs_getter</span><span class="o">.</span><span class="n">writer</span><span class="p">,</span> <span class="n">input_directory</span><span class="p">)</span>
-<span class="nb">sorted</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">input_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.bin&quot;</span><span class="p">))[:</span><span class="mi">6</span><span class="p">]</span>
+<span class="nb">sorted</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">input_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">"*.bin"</span><span class="p">))[:</span><span class="mi">6</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;ux-0000.bin&#39;,
- &#39;ux-0001.bin&#39;,
- &#39;ux-0002.bin&#39;,
- &#39;ux-0003.bin&#39;,
- &#39;ux-0004.bin&#39;,
- &#39;ux-0005.bin&#39;]
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>['ux-0000.bin',
+ 'ux-0001.bin',
+ 'ux-0002.bin',
+ 'ux-0003.bin',
+ 'ux-0004.bin',
+ 'ux-0005.bin']
 </pre></div>
 </div>
 </div>
@@ -433,10 +480,10 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lazy_dataset</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
-    <span class="nb">sorted</span><span class="p">(</span><span class="n">input_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.bin&quot;</span><span class="p">)),</span>
-    <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;binfile&quot;</span><span class="p">,</span>
+    <span class="nb">sorted</span><span class="p">(</span><span class="n">input_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">"*.bin"</span><span class="p">)),</span>
+    <span class="n">engine</span><span class="o">=</span><span class="s2">"binfile"</span><span class="p">,</span>
     <span class="n">read_specs_getter</span><span class="o">=</span><span class="n">input_specs_getter</span><span class="o">.</span><span class="n">reader</span><span class="p">,</span>
-    <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
+    <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s2">"z"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">"time"</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
     <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">lazy_dataset</span>
@@ -996,14 +1043,14 @@ Coordinates:
 Data variables:
     ux       (x, y, z, time) float32 166kB dask.array&lt;chunksize=(6, 6, 4, 1), meta=np.ndarray&gt;
     uy       (x, y, z, time) float32 166kB dask.array&lt;chunksize=(6, 6, 4, 1), meta=np.ndarray&gt;
-    uz       (x, y, z, time) float32 166kB dask.array&lt;chunksize=(6, 6, 4, 1), meta=np.ndarray&gt;</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.Dataset</div></div><ul class='xr-sections'><li class='xr-section-item'><input id='section-22717630-b87f-4ae8-98a3-9d8194898ad4' class='xr-section-summary-in' type='checkbox' disabled /><label for='section-22717630-b87f-4ae8-98a3-9d8194898ad4' class='xr-section-summary'>Dimensions:</label><div class='xr-section-inline-details'><ul class='xr-dim-list'><li><span class='xr-has-index'>x</span>: 24</li><li><span class='xr-has-index'>y</span>: 18</li><li><span class='xr-has-index'>z</span>: 12</li><li><span class='xr-has-index'>time</span>: 8</li></ul></div></li><li class='xr-section-item'><input id='section-2ee710b0-17f3-4a9d-85b4-21173ea5fd23' class='xr-section-summary-in' type='checkbox' checked /><label for='section-2ee710b0-17f3-4a9d-85b4-21173ea5fd23' class='xr-section-summary' title='Expand/collapse section'>Coordinates: <span>(4)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>x</span></div><div class='xr-var-dims'>(x)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.0 0.08696 0.1739 ... 1.913 2.0</div><input id='attrs-d1435305-6d94-4775-afaf-c3b34173e603' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-d1435305-6d94-4775-afaf-c3b34173e603' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-d8f29d47-d203-49e8-bf8e-f802f3fa166f' class='xr-var-data-in' type='checkbox'><label for='data-d8f29d47-d203-49e8-bf8e-f802f3fa166f' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0.      , 0.086957, 0.173913, 0.26087 , 0.347826, 0.434783, 0.521739,
+    uz       (x, y, z, time) float32 166kB dask.array&lt;chunksize=(6, 6, 4, 1), meta=np.ndarray&gt;</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.Dataset</div></div><ul class='xr-sections'><li class='xr-section-item'><input id='section-92bce412-eabd-4827-a741-88dc20cfb363' class='xr-section-summary-in' type='checkbox' disabled /><label for='section-92bce412-eabd-4827-a741-88dc20cfb363' class='xr-section-summary'>Dimensions:</label><div class='xr-section-inline-details'><ul class='xr-dim-list'><li><span class='xr-has-index'>x</span>: 24</li><li><span class='xr-has-index'>y</span>: 18</li><li><span class='xr-has-index'>z</span>: 12</li><li><span class='xr-has-index'>time</span>: 8</li></ul></div></li><li class='xr-section-item'><input id='section-aa0e58a1-1a80-4491-bfcd-d822d6470b26' class='xr-section-summary-in' type='checkbox' checked /><label for='section-aa0e58a1-1a80-4491-bfcd-d822d6470b26' class='xr-section-summary' title='Expand/collapse section'>Coordinates: <span>(4)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>x</span></div><div class='xr-var-dims'>(x)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.0 0.08696 0.1739 ... 1.913 2.0</div><input id='attrs-fb83d095-c8d1-48ef-b336-dba640694e08' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-fb83d095-c8d1-48ef-b336-dba640694e08' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-f4c8370a-6c9e-467a-9bcc-6d783bf645e8' class='xr-var-data-in' type='checkbox'><label for='data-f4c8370a-6c9e-467a-9bcc-6d783bf645e8' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0.      , 0.086957, 0.173913, 0.26087 , 0.347826, 0.434783, 0.521739,
        0.608696, 0.695652, 0.782609, 0.869565, 0.956522, 1.043478, 1.130435,
        1.217391, 1.304348, 1.391304, 1.478261, 1.565217, 1.652174, 1.73913 ,
-       1.826087, 1.913043, 2.      ], dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>y</span></div><div class='xr-var-dims'>(y)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>-1.0 -0.8824 -0.7647 ... 0.8824 1.0</div><input id='attrs-adb8b9ad-29c1-4c64-998f-e46a0f288130' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-adb8b9ad-29c1-4c64-998f-e46a0f288130' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-a9c2d514-ab5e-4162-9d2c-a5de4df3e717' class='xr-var-data-in' type='checkbox'><label for='data-a9c2d514-ab5e-4162-9d2c-a5de4df3e717' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([-1.      , -0.882353, -0.764706, -0.647059, -0.529412, -0.411765,
+       1.826087, 1.913043, 2.      ], dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>y</span></div><div class='xr-var-dims'>(y)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>-1.0 -0.8824 -0.7647 ... 0.8824 1.0</div><input id='attrs-38916b81-a058-449d-a66d-3ee948cfc2ec' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-38916b81-a058-449d-a66d-3ee948cfc2ec' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-951e6190-6698-4078-9b89-3c489da5ab79' class='xr-var-data-in' type='checkbox'><label for='data-951e6190-6698-4078-9b89-3c489da5ab79' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([-1.      , -0.882353, -0.764706, -0.647059, -0.529412, -0.411765,
        -0.294118, -0.176471, -0.058824,  0.058824,  0.176471,  0.294118,
         0.411765,  0.529412,  0.647059,  0.764706,  0.882353,  1.      ],
-      dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>z</span></div><div class='xr-var-dims'>(z)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.0 0.1364 0.2727 ... 1.364 1.5</div><input id='attrs-9f66076e-47b2-488a-9d38-f6572b55d876' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-9f66076e-47b2-488a-9d38-f6572b55d876' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-6450cdeb-071d-4b61-a9c3-dfa3f15bab8c' class='xr-var-data-in' type='checkbox'><label for='data-6450cdeb-071d-4b61-a9c3-dfa3f15bab8c' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0.      , 0.136364, 0.272727, 0.409091, 0.545455, 0.681818, 0.818182,
-       0.954545, 1.090909, 1.227273, 1.363636, 1.5     ], dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>time</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>int64</div><div class='xr-var-preview xr-preview'>0 1 2 3 4 5 6 7</div><input id='attrs-1b597b9a-7d87-4ebc-a748-395516b677fc' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-1b597b9a-7d87-4ebc-a748-395516b677fc' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-a761bac9-5e66-4f34-9819-622f0c282537' class='xr-var-data-in' type='checkbox'><label for='data-a761bac9-5e66-4f34-9819-622f0c282537' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0, 1, 2, 3, 4, 5, 6, 7])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-59e97a88-85ec-42d4-8166-6a935fd45505' class='xr-section-summary-in' type='checkbox' checked /><label for='section-59e97a88-85ec-42d4-8166-6a935fd45505' class='xr-section-summary' title='Expand/collapse section'>Data variables: <span>(3)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span>ux</span></div><div class='xr-var-dims'>(x, y, z, time)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(6, 6, 4, 1), meta=np.ndarray&gt;</div><input id='attrs-0123bf77-860b-4a30-be8d-fa1be794a2cc' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-0123bf77-860b-4a30-be8d-fa1be794a2cc' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-684bc4a3-5a96-471a-916e-e5b34e35114b' class='xr-var-data-in' type='checkbox'><label for='data-684bc4a3-5a96-471a-916e-e5b34e35114b' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><table>
+      dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>z</span></div><div class='xr-var-dims'>(z)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.0 0.1364 0.2727 ... 1.364 1.5</div><input id='attrs-0ebfe478-26e0-459a-8d2b-400c41530071' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-0ebfe478-26e0-459a-8d2b-400c41530071' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-2fdfffe9-f8fc-47f9-8760-163284287135' class='xr-var-data-in' type='checkbox'><label for='data-2fdfffe9-f8fc-47f9-8760-163284287135' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0.      , 0.136364, 0.272727, 0.409091, 0.545455, 0.681818, 0.818182,
+       0.954545, 1.090909, 1.227273, 1.363636, 1.5     ], dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>time</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>int64</div><div class='xr-var-preview xr-preview'>0 1 2 3 4 5 6 7</div><input id='attrs-61773041-7b3a-4820-992b-333ca78fda9d' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-61773041-7b3a-4820-992b-333ca78fda9d' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-ea0bc85d-fc6e-45ab-aa5e-fb0148512790' class='xr-var-data-in' type='checkbox'><label for='data-ea0bc85d-fc6e-45ab-aa5e-fb0148512790' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0, 1, 2, 3, 4, 5, 6, 7])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-2848e00d-2009-4ffd-bc2b-7df2359929b9' class='xr-section-summary-in' type='checkbox' checked /><label for='section-2848e00d-2009-4ffd-bc2b-7df2359929b9' class='xr-section-summary' title='Expand/collapse section'>Data variables: <span>(3)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span>ux</span></div><div class='xr-var-dims'>(x, y, z, time)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(6, 6, 4, 1), meta=np.ndarray&gt;</div><input id='attrs-21897078-c7ce-4a58-97bc-f08c72561165' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-21897078-c7ce-4a58-97bc-f08c72561165' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-847c5a06-bff8-469b-88c3-35ba787e54f6' class='xr-var-data-in' type='checkbox'><label for='data-847c5a06-bff8-469b-88c3-35ba787e54f6' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><table>
     <tr>
         <td>
             <table style="border-collapse: collapse;">
@@ -1122,7 +1169,7 @@ Data variables:
 </svg>
         </td>
     </tr>
-</table></div></li><li class='xr-var-item'><div class='xr-var-name'><span>uy</span></div><div class='xr-var-dims'>(x, y, z, time)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(6, 6, 4, 1), meta=np.ndarray&gt;</div><input id='attrs-9276a11d-379f-4fe8-84ab-fa307a1c50d2' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-9276a11d-379f-4fe8-84ab-fa307a1c50d2' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-a1db3915-8b38-4561-8ef3-c9b26bbfd75b' class='xr-var-data-in' type='checkbox'><label for='data-a1db3915-8b38-4561-8ef3-c9b26bbfd75b' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><table>
+</table></div></li><li class='xr-var-item'><div class='xr-var-name'><span>uy</span></div><div class='xr-var-dims'>(x, y, z, time)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(6, 6, 4, 1), meta=np.ndarray&gt;</div><input id='attrs-c3994231-b9a6-47d1-9f93-c2e1576def28' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-c3994231-b9a6-47d1-9f93-c2e1576def28' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-f52cc366-f2e5-42ba-8808-426b3e2cce8d' class='xr-var-data-in' type='checkbox'><label for='data-f52cc366-f2e5-42ba-8808-426b3e2cce8d' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><table>
     <tr>
         <td>
             <table style="border-collapse: collapse;">
@@ -1241,7 +1288,7 @@ Data variables:
 </svg>
         </td>
     </tr>
-</table></div></li><li class='xr-var-item'><div class='xr-var-name'><span>uz</span></div><div class='xr-var-dims'>(x, y, z, time)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(6, 6, 4, 1), meta=np.ndarray&gt;</div><input id='attrs-7b1a3646-6b53-4913-a760-123fa1175831' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-7b1a3646-6b53-4913-a760-123fa1175831' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-f5f9ea51-1ab7-4fcc-8a0d-f266caf0f242' class='xr-var-data-in' type='checkbox'><label for='data-f5f9ea51-1ab7-4fcc-8a0d-f266caf0f242' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><table>
+</table></div></li><li class='xr-var-item'><div class='xr-var-name'><span>uz</span></div><div class='xr-var-dims'>(x, y, z, time)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(6, 6, 4, 1), meta=np.ndarray&gt;</div><input id='attrs-e6818161-5df0-4474-8a1b-aca0a781934d' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-e6818161-5df0-4474-8a1b-aca0a781934d' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-c3fc1e1e-35df-4bc5-b8c6-03df24554a75' class='xr-var-data-in' type='checkbox'><label for='data-c3fc1e1e-35df-4bc5-b8c6-03df24554a75' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><table>
     <tr>
         <td>
             <table style="border-collapse: collapse;">
@@ -1365,8 +1412,8 @@ Data variables:
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">speed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
-    <span class="n">lazy_dataset</span><span class="p">[</span><span class="s2">&quot;ux&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">lazy_dataset</span><span class="p">[</span><span class="s2">&quot;uy&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">lazy_dataset</span><span class="p">[</span><span class="s2">&quot;uz&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
-<span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">&quot;speed&quot;</span><span class="p">)</span>
+    <span class="n">lazy_dataset</span><span class="p">[</span><span class="s2">"ux"</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">lazy_dataset</span><span class="p">[</span><span class="s2">"uy"</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">lazy_dataset</span><span class="p">[</span><span class="s2">"uz"</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
+<span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">"speed"</span><span class="p">)</span>
 <span class="n">speed</span>
 </pre></div>
 </div>
@@ -1920,7 +1967,7 @@ Coordinates:
   * x        (x) float32 96B 0.0 0.08696 0.1739 0.2609 ... 1.739 1.826 1.913 2.0
   * y        (y) float32 72B -1.0 -0.8824 -0.7647 -0.6471 ... 0.7647 0.8824 1.0
   * z        (z) float32 48B 0.0 0.1364 0.2727 0.4091 ... 1.091 1.227 1.364 1.5
-  * time     (time) int64 64B 0 1 2 3 4 5 6 7</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.DataArray</div><div class='xr-obj-name'>&#x27;speed&#x27;</div><ul class='xr-dim-list'><li><span class='xr-has-index'>x</span>: 24</li><li><span class='xr-has-index'>y</span>: 18</li><li><span class='xr-has-index'>z</span>: 12</li><li><span class='xr-has-index'>time</span>: 8</li></ul></div><ul class='xr-sections'><li class='xr-section-item'><div class='xr-array-wrap'><input id='section-7a067661-9b6a-4e44-a56a-15384a24ef19' class='xr-array-in' type='checkbox' checked><label for='section-7a067661-9b6a-4e44-a56a-15384a24ef19' title='Show/hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-array-preview xr-preview'><span>dask.array&lt;chunksize=(6, 6, 4, 1), meta=np.ndarray&gt;</span></div><div class='xr-array-data'><table>
+  * time     (time) int64 64B 0 1 2 3 4 5 6 7</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.DataArray</div><div class='xr-obj-name'>&#x27;speed&#x27;</div><ul class='xr-dim-list'><li><span class='xr-has-index'>x</span>: 24</li><li><span class='xr-has-index'>y</span>: 18</li><li><span class='xr-has-index'>z</span>: 12</li><li><span class='xr-has-index'>time</span>: 8</li></ul></div><ul class='xr-sections'><li class='xr-section-item'><div class='xr-array-wrap'><input id='section-37eb1156-c4ad-4110-8d63-e79eb75e1a56' class='xr-array-in' type='checkbox' checked><label for='section-37eb1156-c4ad-4110-8d63-e79eb75e1a56' title='Show/hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-array-preview xr-preview'><span>dask.array&lt;chunksize=(6, 6, 4, 1), meta=np.ndarray&gt;</span></div><div class='xr-array-data'><table>
     <tr>
         <td>
             <table style="border-collapse: collapse;">
@@ -2039,19 +2086,19 @@ Coordinates:
 </svg>
         </td>
     </tr>
-</table></div></div></li><li class='xr-section-item'><input id='section-2c7ace0f-7741-4b19-ae4d-f3525451b9eb' class='xr-section-summary-in' type='checkbox' checked /><label for='section-2c7ace0f-7741-4b19-ae4d-f3525451b9eb' class='xr-section-summary' title='Expand/collapse section'>Coordinates: <span>(4)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>x</span></div><div class='xr-var-dims'>(x)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.0 0.08696 0.1739 ... 1.913 2.0</div><input id='attrs-dc42b8e2-2111-4a40-b61f-0a944114f31b' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-dc42b8e2-2111-4a40-b61f-0a944114f31b' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-11b033fd-c496-4f51-be96-9e6cf9cf9fc8' class='xr-var-data-in' type='checkbox'><label for='data-11b033fd-c496-4f51-be96-9e6cf9cf9fc8' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0.      , 0.086957, 0.173913, 0.26087 , 0.347826, 0.434783, 0.521739,
+</table></div></div></li><li class='xr-section-item'><input id='section-9f9c46d4-79c9-44e8-9126-8626aacf7774' class='xr-section-summary-in' type='checkbox' checked /><label for='section-9f9c46d4-79c9-44e8-9126-8626aacf7774' class='xr-section-summary' title='Expand/collapse section'>Coordinates: <span>(4)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>x</span></div><div class='xr-var-dims'>(x)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.0 0.08696 0.1739 ... 1.913 2.0</div><input id='attrs-4de87511-0aae-475e-b02b-05a993990e69' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-4de87511-0aae-475e-b02b-05a993990e69' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-3b1cb34a-5d41-4aab-b850-2dcf75e517e8' class='xr-var-data-in' type='checkbox'><label for='data-3b1cb34a-5d41-4aab-b850-2dcf75e517e8' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0.      , 0.086957, 0.173913, 0.26087 , 0.347826, 0.434783, 0.521739,
        0.608696, 0.695652, 0.782609, 0.869565, 0.956522, 1.043478, 1.130435,
        1.217391, 1.304348, 1.391304, 1.478261, 1.565217, 1.652174, 1.73913 ,
-       1.826087, 1.913043, 2.      ], dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>y</span></div><div class='xr-var-dims'>(y)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>-1.0 -0.8824 -0.7647 ... 0.8824 1.0</div><input id='attrs-ea2e2909-551a-4a36-80e5-65effdadb705' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-ea2e2909-551a-4a36-80e5-65effdadb705' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-efb9118a-6fe8-477d-93b0-81a726cdd5d4' class='xr-var-data-in' type='checkbox'><label for='data-efb9118a-6fe8-477d-93b0-81a726cdd5d4' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([-1.      , -0.882353, -0.764706, -0.647059, -0.529412, -0.411765,
+       1.826087, 1.913043, 2.      ], dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>y</span></div><div class='xr-var-dims'>(y)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>-1.0 -0.8824 -0.7647 ... 0.8824 1.0</div><input id='attrs-e279156a-74a2-4d5b-bbf5-76358711ccb0' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-e279156a-74a2-4d5b-bbf5-76358711ccb0' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-bbd49180-c281-4353-9dc1-f5669da92a86' class='xr-var-data-in' type='checkbox'><label for='data-bbd49180-c281-4353-9dc1-f5669da92a86' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([-1.      , -0.882353, -0.764706, -0.647059, -0.529412, -0.411765,
        -0.294118, -0.176471, -0.058824,  0.058824,  0.176471,  0.294118,
         0.411765,  0.529412,  0.647059,  0.764706,  0.882353,  1.      ],
-      dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>z</span></div><div class='xr-var-dims'>(z)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.0 0.1364 0.2727 ... 1.364 1.5</div><input id='attrs-2095e19c-c9cb-464f-99fa-c93c6e2a1b35' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-2095e19c-c9cb-464f-99fa-c93c6e2a1b35' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-5a77784f-ec34-415f-81dc-8b730dcdde5e' class='xr-var-data-in' type='checkbox'><label for='data-5a77784f-ec34-415f-81dc-8b730dcdde5e' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0.      , 0.136364, 0.272727, 0.409091, 0.545455, 0.681818, 0.818182,
-       0.954545, 1.090909, 1.227273, 1.363636, 1.5     ], dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>time</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>int64</div><div class='xr-var-preview xr-preview'>0 1 2 3 4 5 6 7</div><input id='attrs-42defd18-b2ed-40df-89ba-04aa7722cd07' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-42defd18-b2ed-40df-89ba-04aa7722cd07' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-8df74777-8d7d-4bb1-9aea-0d8b485c52e4' class='xr-var-data-in' type='checkbox'><label for='data-8df74777-8d7d-4bb1-9aea-0d8b485c52e4' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0, 1, 2, 3, 4, 5, 6, 7])</pre></div></li></ul></div></li></ul></div></div></div></div>
+      dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>z</span></div><div class='xr-var-dims'>(z)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.0 0.1364 0.2727 ... 1.364 1.5</div><input id='attrs-c3bbe6aa-d7ec-4dd3-8cb8-20b762e94473' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-c3bbe6aa-d7ec-4dd3-8cb8-20b762e94473' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-03645b94-bb8b-435d-87cd-d8c7c8d7585b' class='xr-var-data-in' type='checkbox'><label for='data-03645b94-bb8b-435d-87cd-d8c7c8d7585b' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0.      , 0.136364, 0.272727, 0.409091, 0.545455, 0.681818, 0.818182,
+       0.954545, 1.090909, 1.227273, 1.363636, 1.5     ], dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>time</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>int64</div><div class='xr-var-preview xr-preview'>0 1 2 3 4 5 6 7</div><input id='attrs-740f2342-a897-4aa0-85f4-700459954617' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-740f2342-a897-4aa0-85f4-700459954617' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-ca476325-c247-4fad-b74a-a4537d445b03' class='xr-var-data-in' type='checkbox'><label for='data-ca476325-c247-4fad-b74a-a4537d445b03' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0, 1, 2, 3, 4, 5, 6, 7])</pre></div></li></ul></div></li></ul></div></div></div></div>
 </div>
 <p>The derived <code class="docutils literal notranslate"><span class="pre">speed</span></code> array is still lazy. You can compute a lightweight summary first, then decide whether to persist a full result.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">speed_time_series</span> <span class="o">=</span> <span class="n">speed</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">speed_time_series</span> <span class="o">=</span> <span class="n">speed</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="p">(</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">,</span> <span class="s2">"z"</span><span class="p">))</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
 <span class="n">speed_time_series</span>
 </pre></div>
 </div>
@@ -2603,58 +2650,52 @@ dl.xr-attrs {
 array([0.9637632 , 0.9667021 , 0.9645986 , 0.95585877, 0.9610805 ,
        0.95524615, 0.9609951 , 0.95937735], dtype=float32)
 Coordinates:
-  * time     (time) int64 64B 0 1 2 3 4 5 6 7</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.DataArray</div><div class='xr-obj-name'>&#x27;speed&#x27;</div><ul class='xr-dim-list'><li><span class='xr-has-index'>time</span>: 8</li></ul></div><ul class='xr-sections'><li class='xr-section-item'><div class='xr-array-wrap'><input id='section-7b30afde-445d-4f49-9648-cdb4df567f48' class='xr-array-in' type='checkbox' checked><label for='section-7b30afde-445d-4f49-9648-cdb4df567f48' title='Show/hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-array-preview xr-preview'><span>0.9638 0.9667 0.9646 0.9559 0.9611 0.9552 0.961 0.9594</span></div><div class='xr-array-data'><pre>array([0.9637632 , 0.9667021 , 0.9645986 , 0.95585877, 0.9610805 ,
-       0.95524615, 0.9609951 , 0.95937735], dtype=float32)</pre></div></div></li><li class='xr-section-item'><input id='section-4cdb02dd-ca70-46a6-a41a-d50069112a34' class='xr-section-summary-in' type='checkbox' checked /><label for='section-4cdb02dd-ca70-46a6-a41a-d50069112a34' class='xr-section-summary' title='Expand/collapse section'>Coordinates: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>time</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>int64</div><div class='xr-var-preview xr-preview'>0 1 2 3 4 5 6 7</div><input id='attrs-d8d20828-4ab3-4304-a7fe-05a5e1ab8bcf' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-d8d20828-4ab3-4304-a7fe-05a5e1ab8bcf' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-e5788db8-a3de-4d3b-ad6b-734fcc041c6a' class='xr-var-data-in' type='checkbox'><label for='data-e5788db8-a3de-4d3b-ad6b-734fcc041c6a' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0, 1, 2, 3, 4, 5, 6, 7])</pre></div></li></ul></div></li></ul></div></div></div></div>
+  * time     (time) int64 64B 0 1 2 3 4 5 6 7</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.DataArray</div><div class='xr-obj-name'>&#x27;speed&#x27;</div><ul class='xr-dim-list'><li><span class='xr-has-index'>time</span>: 8</li></ul></div><ul class='xr-sections'><li class='xr-section-item'><div class='xr-array-wrap'><input id='section-56ad9e35-8959-40eb-aef1-1436e7a33e68' class='xr-array-in' type='checkbox' checked><label for='section-56ad9e35-8959-40eb-aef1-1436e7a33e68' title='Show/hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-array-preview xr-preview'><span>0.9638 0.9667 0.9646 0.9559 0.9611 0.9552 0.961 0.9594</span></div><div class='xr-array-data'><pre>array([0.9637632 , 0.9667021 , 0.9645986 , 0.95585877, 0.9610805 ,
+       0.95524615, 0.9609951 , 0.95937735], dtype=float32)</pre></div></div></li><li class='xr-section-item'><input id='section-a2f73d3f-c878-4623-bd56-5bb35ea79c6d' class='xr-section-summary-in' type='checkbox' checked /><label for='section-a2f73d3f-c878-4623-bd56-5bb35ea79c6d' class='xr-section-summary' title='Expand/collapse section'>Coordinates: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>time</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>int64</div><div class='xr-var-preview xr-preview'>0 1 2 3 4 5 6 7</div><input id='attrs-2b3a63a6-36ad-4374-a130-36908eed117a' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-2b3a63a6-36ad-4374-a130-36908eed117a' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-9b744512-81ca-4eb4-b1c5-9e1b40e9d1f9' class='xr-var-data-in' type='checkbox'><label for='data-9b744512-81ca-4eb4-b1c5-9e1b40e9d1f9' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0, 1, 2, 3, 4, 5, 6, 7])</pre></div></li></ul></div></li></ul></div></div></div></div>
 </div>
 <section id="custom-write-specifications">
 <h2>Custom write specifications<a class="headerlink" href="#custom-write-specifications" title="Link to this heading">#</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">FileSpecsGetter.writer</span></code> is useful when your output convention matches the tutorial helper. If you need a different layout, implement a callable compatible with <code class="docutils literal notranslate"><span class="pre">WriteSpecsGetterProtocol</span></code>.</p>
-<p>Setting <code class="docutils literal notranslate"><span class="pre">dtype</span></code> on each <code class="docutils literal notranslate"><span class="pre">WriteSpecs</span></code> pins the on-disk data type (including byte order): the values are cast right before serialization, so the files always match what the corresponding read getter declares. When <code class="docutils literal notranslate"><span class="pre">dtype</span></code> is omitted, the in-memory dtype and native byte order are written as-is.</p>
+<p>The derived array has the same layout as the inputs; only the filename differs. Declaring a second <code class="docutils literal notranslate"><span class="pre">StepIndexedFiles</span></code> with another <code class="docutils literal notranslate"><span class="pre">pattern</span></code> is enough, and because the regex used for reading is derived from that same pattern, the files can be read back without repeating the convention. When the shipped conventions do not fit, implement a callable compatible with <code class="docutils literal notranslate"><span class="pre">WriteSpecsGetterProtocol</span></code> as described in <a class="reference internal" href="../usage/spec-getter-protocols.html"><span class="std std-doc">Spec getter protocols</span></a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">dtype</span></code> of the <code class="docutils literal notranslate"><span class="pre">Layout</span></code> pins the on-disk data type (including byte order): the values are cast right before serialization, so the files always match what the corresponding reader declares.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">DerivedWriteSpecsGetter</span><span class="p">:</span>
-    <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;derived&quot;</span>
-    <span class="n">base_dims</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">)</span>
-    <span class="n">dtype</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_array</span><span class="p">:</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">time_value</span> <span class="ow">in</span> <span class="n">data_array</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
-            <span class="n">timestep</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time_value</span><span class="p">)</span>
-            <span class="k">yield</span> <span class="n">WriteSpecs</span><span class="p">(</span>
-                <span class="n">filename</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">data_array</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">timestep</span><span class="si">:</span><span class="s2">04</span><span class="si">}</span><span class="s2">.bin&quot;</span><span class="p">,</span>
-                <span class="n">sub_array</span><span class="o">=</span><span class="n">data_array</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">timestep</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span>
-                    <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">base_dims</span><span class="p">,</span> <span class="n">missing_dims</span><span class="o">=</span><span class="s2">&quot;raise&quot;</span>
-                <span class="p">),</span>
-                <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
-            <span class="p">)</span>
-
-
-<span class="n">derived_write_specs_getter</span> <span class="o">=</span> <span class="n">DerivedWriteSpecsGetter</span><span class="p">()</span>
-<span class="n">derived_write_specs_getter</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">output_specs_getter</span> <span class="o">=</span> <span class="n">StepIndexedFiles</span><span class="p">(</span>
+    <span class="n">layout</span><span class="o">=</span><span class="n">Layout</span><span class="p">(</span><span class="n">base_coords</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+    <span class="n">pattern</span><span class="o">=</span><span class="s2">"derived-</span><span class="si">{name}</span><span class="s2">-</span><span class="si">{step:04d}</span><span class="s2">.bin"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">output_specs_getter</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>DerivedWriteSpecsGetter(prefix=&#39;derived&#39;, base_dims=(&#39;x&#39;, &#39;y&#39;, &#39;z&#39;), dtype=&lt;class &#39;numpy.float32&#39;&gt;)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>StepIndexedFiles(layout=Layout(coords={'x': array([0.        , 0.08695652, 0.17391305, 0.26086956, 0.3478261 ,
+       0.4347826 , 0.5217391 , 0.6086956 , 0.6956522 , 0.7826087 ,
+       0.8695652 , 0.95652175, 1.0434783 , 1.1304348 , 1.2173913 ,
+       1.3043479 , 1.3913044 , 1.4782609 , 1.5652174 , 1.6521739 ,
+       1.7391304 , 1.826087  , 1.9130435 , 2.        ], dtype=float32), 'y': array([-1.        , -0.88235295, -0.7647059 , -0.64705884, -0.5294118 ,
+       -0.4117647 , -0.29411766, -0.1764706 , -0.05882353,  0.05882353,
+        0.1764706 ,  0.29411766,  0.4117647 ,  0.5294118 ,  0.64705884,
+        0.7647059 ,  0.88235295,  1.        ], dtype=float32), 'z': array([0.        , 0.13636364, 0.27272728, 0.4090909 , 0.54545456,
+       0.6818182 , 0.8181818 , 0.95454544, 1.0909091 , 1.2272727 ,
+       1.3636364 , 1.5       ], dtype=float32)}, dtype=&lt;class 'numpy.float32'&gt;), pattern=FilenamePattern(template='derived-{name}-{step:04d}.bin'), check_coords=True, time_dim='time', time_step=None)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">speed</span><span class="o">.</span><span class="n">binary_engine</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">derived_write_specs_getter</span><span class="p">,</span> <span class="n">output_directory</span><span class="p">)</span>
-<span class="nb">sorted</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">output_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.bin&quot;</span><span class="p">))[:</span><span class="mi">6</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">speed</span><span class="o">.</span><span class="n">binary_engine</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">output_specs_getter</span><span class="o">.</span><span class="n">writer</span><span class="p">,</span> <span class="n">output_directory</span><span class="p">)</span>
+<span class="nb">sorted</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">output_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">"*.bin"</span><span class="p">))[:</span><span class="mi">6</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;derived-speed-0000.bin&#39;,
- &#39;derived-speed-0001.bin&#39;,
- &#39;derived-speed-0002.bin&#39;,
- &#39;derived-speed-0003.bin&#39;,
- &#39;derived-speed-0004.bin&#39;,
- &#39;derived-speed-0005.bin&#39;]
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>['derived-speed-0000.bin',
+ 'derived-speed-0001.bin',
+ 'derived-speed-0002.bin',
+ 'derived-speed-0003.bin',
+ 'derived-speed-0004.bin',
+ 'derived-speed-0005.bin']
 </pre></div>
 </div>
 </div>
@@ -2662,22 +2703,15 @@ Coordinates:
 <p>Writing triggers the actual per-file materialization of each selected slice. That is often exactly what you want when handing data back to an external solver or post-processing pipeline.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p><code class="docutils literal notranslate"><span class="pre">.binary_engine.to_file(...)</span></code> never writes a file partially. Each <code class="docutils literal notranslate"><span class="pre">sub_array</span></code> is fully loaded into memory (a Dask compute for lazy data) and the whole file is written in a single pass — there is no appending, patching, or resuming. Each file is also written atomically: the bytes go to a unique temporary directory inside the destination and are moved into place with <code class="docutils literal notranslate"><span class="pre">os.replace</span></code> only when complete, so an interrupted write never leaves a truncated file behind. This keeps the on-disk files consistent instead of risking partially-updated, corrupted content, but it means every individual output file must fit in memory. Plan your chunks and the number of output files accordingly, for example one file per time step. If you need streaming or partial writes, use one of the other xarray-supported formats such as NetCDF or Zarr.</p>
+<p><code class="docutils literal notranslate"><span class="pre">.binary_engine.to_file(...)</span></code> never writes a file partially. Each <code class="docutils literal notranslate"><span class="pre">sub_array</span></code> is fully loaded into memory (a Dask compute for lazy data) and the whole file is written in a single pass — there is no appending, patching, or resuming. Each file is also written atomically: the bytes go to a temporary file next to the destination and are moved into place with <code class="docutils literal notranslate"><span class="pre">os.replace</span></code> only when complete, so an interrupted write never leaves a truncated file behind. This keeps the on-disk files consistent instead of risking partially-updated, corrupted content, but it means every individual output file must fit in memory. Plan your chunks and the number of output files accordingly, for example one file per time step. If you need streaming or partial writes, use one of the other xarray-supported formats such as NetCDF or Zarr.</p>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">output_specs_getter</span> <span class="o">=</span> <span class="n">FileSpecsGetter</span><span class="p">(</span>
-    <span class="n">base_coords</span><span class="o">=</span><span class="n">base_coords</span><span class="p">,</span>
-    <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
-    <span class="n">filename_template</span><span class="o">=</span><span class="s2">&quot;derived-</span><span class="si">{name}</span><span class="s2">-</span><span class="si">{digits:04}</span><span class="s2">.bin&quot;</span><span class="p">,</span>
-    <span class="n">filename_regex</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;derived-(?P&lt;name&gt;\w+)-(?P&lt;digits&gt;\d</span><span class="si">{4}</span><span class="s2">)\.bin&quot;</span><span class="p">),</span>
-<span class="p">)</span>
-
-<span class="n">roundtrip_dataset</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
-    <span class="nb">sorted</span><span class="p">(</span><span class="n">output_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;derived-*.bin&quot;</span><span class="p">)),</span>
-    <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;binfile&quot;</span><span class="p">,</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">roundtrip_dataset</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
+    <span class="nb">sorted</span><span class="p">(</span><span class="n">output_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">"derived-*.bin"</span><span class="p">)),</span>
+    <span class="n">engine</span><span class="o">=</span><span class="s2">"binfile"</span><span class="p">,</span>
     <span class="n">read_specs_getter</span><span class="o">=</span><span class="n">output_specs_getter</span><span class="o">.</span><span class="n">reader</span><span class="p">,</span>
-    <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
+    <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">"time"</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
     <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">roundtrip_dataset</span>
@@ -3235,14 +3269,14 @@ Coordinates:
   * z        (z) float32 48B 0.0 0.1364 0.2727 0.4091 ... 1.091 1.227 1.364 1.5
   * time     (time) int64 64B 0 1 2 3 4 5 6 7
 Data variables:
-    speed    (x, y, z, time) float32 166kB dask.array&lt;chunksize=(24, 18, 12, 1), meta=np.ndarray&gt;</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.Dataset</div></div><ul class='xr-sections'><li class='xr-section-item'><input id='section-c52575bd-aef4-41a1-8166-11122195c3d1' class='xr-section-summary-in' type='checkbox' disabled /><label for='section-c52575bd-aef4-41a1-8166-11122195c3d1' class='xr-section-summary'>Dimensions:</label><div class='xr-section-inline-details'><ul class='xr-dim-list'><li><span class='xr-has-index'>x</span>: 24</li><li><span class='xr-has-index'>y</span>: 18</li><li><span class='xr-has-index'>z</span>: 12</li><li><span class='xr-has-index'>time</span>: 8</li></ul></div></li><li class='xr-section-item'><input id='section-153be644-34e4-4ab3-877e-42e04d6b7c93' class='xr-section-summary-in' type='checkbox' checked /><label for='section-153be644-34e4-4ab3-877e-42e04d6b7c93' class='xr-section-summary' title='Expand/collapse section'>Coordinates: <span>(4)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>x</span></div><div class='xr-var-dims'>(x)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.0 0.08696 0.1739 ... 1.913 2.0</div><input id='attrs-1839da01-5e68-4b52-971d-5bb1d8ae3e58' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-1839da01-5e68-4b52-971d-5bb1d8ae3e58' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-a11d61a1-784e-4945-8596-fff8a652af5c' class='xr-var-data-in' type='checkbox'><label for='data-a11d61a1-784e-4945-8596-fff8a652af5c' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0.      , 0.086957, 0.173913, 0.26087 , 0.347826, 0.434783, 0.521739,
+    speed    (x, y, z, time) float32 166kB dask.array&lt;chunksize=(24, 18, 12, 1), meta=np.ndarray&gt;</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.Dataset</div></div><ul class='xr-sections'><li class='xr-section-item'><input id='section-41b77f75-8317-4c34-a5c6-913a70ecb965' class='xr-section-summary-in' type='checkbox' disabled /><label for='section-41b77f75-8317-4c34-a5c6-913a70ecb965' class='xr-section-summary'>Dimensions:</label><div class='xr-section-inline-details'><ul class='xr-dim-list'><li><span class='xr-has-index'>x</span>: 24</li><li><span class='xr-has-index'>y</span>: 18</li><li><span class='xr-has-index'>z</span>: 12</li><li><span class='xr-has-index'>time</span>: 8</li></ul></div></li><li class='xr-section-item'><input id='section-4b955bd4-3b4a-49e4-b1cb-c5676e1d685b' class='xr-section-summary-in' type='checkbox' checked /><label for='section-4b955bd4-3b4a-49e4-b1cb-c5676e1d685b' class='xr-section-summary' title='Expand/collapse section'>Coordinates: <span>(4)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>x</span></div><div class='xr-var-dims'>(x)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.0 0.08696 0.1739 ... 1.913 2.0</div><input id='attrs-ba95e9f4-adbc-46fd-9af2-9000f6e6b87b' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-ba95e9f4-adbc-46fd-9af2-9000f6e6b87b' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-c8666021-bd3e-478c-ab45-810da7c43080' class='xr-var-data-in' type='checkbox'><label for='data-c8666021-bd3e-478c-ab45-810da7c43080' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0.      , 0.086957, 0.173913, 0.26087 , 0.347826, 0.434783, 0.521739,
        0.608696, 0.695652, 0.782609, 0.869565, 0.956522, 1.043478, 1.130435,
        1.217391, 1.304348, 1.391304, 1.478261, 1.565217, 1.652174, 1.73913 ,
-       1.826087, 1.913043, 2.      ], dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>y</span></div><div class='xr-var-dims'>(y)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>-1.0 -0.8824 -0.7647 ... 0.8824 1.0</div><input id='attrs-76fd607c-15fd-4680-b442-73506e68d445' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-76fd607c-15fd-4680-b442-73506e68d445' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-1a40b001-791c-4cbc-8fe3-39b722dfca12' class='xr-var-data-in' type='checkbox'><label for='data-1a40b001-791c-4cbc-8fe3-39b722dfca12' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([-1.      , -0.882353, -0.764706, -0.647059, -0.529412, -0.411765,
+       1.826087, 1.913043, 2.      ], dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>y</span></div><div class='xr-var-dims'>(y)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>-1.0 -0.8824 -0.7647 ... 0.8824 1.0</div><input id='attrs-7ceded3a-0a4b-4b9e-bb67-13525eb65063' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-7ceded3a-0a4b-4b9e-bb67-13525eb65063' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-b988784c-ed63-4931-8aa1-115f1195877a' class='xr-var-data-in' type='checkbox'><label for='data-b988784c-ed63-4931-8aa1-115f1195877a' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([-1.      , -0.882353, -0.764706, -0.647059, -0.529412, -0.411765,
        -0.294118, -0.176471, -0.058824,  0.058824,  0.176471,  0.294118,
         0.411765,  0.529412,  0.647059,  0.764706,  0.882353,  1.      ],
-      dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>z</span></div><div class='xr-var-dims'>(z)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.0 0.1364 0.2727 ... 1.364 1.5</div><input id='attrs-054fdd7d-3a37-47d7-b4c8-953b6416583e' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-054fdd7d-3a37-47d7-b4c8-953b6416583e' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-4363cc38-7cdf-4ba2-aa94-6e496dc0e976' class='xr-var-data-in' type='checkbox'><label for='data-4363cc38-7cdf-4ba2-aa94-6e496dc0e976' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0.      , 0.136364, 0.272727, 0.409091, 0.545455, 0.681818, 0.818182,
-       0.954545, 1.090909, 1.227273, 1.363636, 1.5     ], dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>time</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>int64</div><div class='xr-var-preview xr-preview'>0 1 2 3 4 5 6 7</div><input id='attrs-d310b2ea-f889-4b59-96d1-3ca5d6b8770b' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-d310b2ea-f889-4b59-96d1-3ca5d6b8770b' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-d56f1ebf-c1af-405a-b116-1a44139b8717' class='xr-var-data-in' type='checkbox'><label for='data-d56f1ebf-c1af-405a-b116-1a44139b8717' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0, 1, 2, 3, 4, 5, 6, 7])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-6c6ff19b-96b5-49db-bb15-f19885b7bded' class='xr-section-summary-in' type='checkbox' checked /><label for='section-6c6ff19b-96b5-49db-bb15-f19885b7bded' class='xr-section-summary' title='Expand/collapse section'>Data variables: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span>speed</span></div><div class='xr-var-dims'>(x, y, z, time)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(24, 18, 12, 1), meta=np.ndarray&gt;</div><input id='attrs-21d5b1c1-ea61-430c-afd8-9450c82c73f1' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-21d5b1c1-ea61-430c-afd8-9450c82c73f1' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-1b00d929-8742-4883-b4e4-1ff679afa4f8' class='xr-var-data-in' type='checkbox'><label for='data-1b00d929-8742-4883-b4e4-1ff679afa4f8' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><table>
+      dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>z</span></div><div class='xr-var-dims'>(z)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.0 0.1364 0.2727 ... 1.364 1.5</div><input id='attrs-fa3d7f19-bad2-4bc4-a6ed-160e68158e11' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-fa3d7f19-bad2-4bc4-a6ed-160e68158e11' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-971954bd-2335-4f55-98cb-9b1169798b1b' class='xr-var-data-in' type='checkbox'><label for='data-971954bd-2335-4f55-98cb-9b1169798b1b' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0.      , 0.136364, 0.272727, 0.409091, 0.545455, 0.681818, 0.818182,
+       0.954545, 1.090909, 1.227273, 1.363636, 1.5     ], dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>time</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>int64</div><div class='xr-var-preview xr-preview'>0 1 2 3 4 5 6 7</div><input id='attrs-8bb8d9a4-e367-430b-b7a4-33343576a148' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-8bb8d9a4-e367-430b-b7a4-33343576a148' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-01d8fda3-f6b4-45ec-94ff-0193b0247b97' class='xr-var-data-in' type='checkbox'><label for='data-01d8fda3-f6b4-45ec-94ff-0193b0247b97' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0, 1, 2, 3, 4, 5, 6, 7])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-e8ea38d9-7989-4295-868d-c324656caf1d' class='xr-section-summary-in' type='checkbox' checked /><label for='section-e8ea38d9-7989-4295-868d-c324656caf1d' class='xr-section-summary' title='Expand/collapse section'>Data variables: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span>speed</span></div><div class='xr-var-dims'>(x, y, z, time)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(24, 18, 12, 1), meta=np.ndarray&gt;</div><input id='attrs-ba5a3c27-3c3c-40e8-a552-4e85fc61c388' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-ba5a3c27-3c3c-40e8-a552-4e85fc61c388' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-b9d5d10a-f722-410a-ba4a-b9bfe0c000d9' class='xr-var-data-in' type='checkbox'><label for='data-b9d5d10a-f722-410a-ba4a-b9bfe0c000d9' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><table>
     <tr>
         <td>
             <table style="border-collapse: collapse;">
@@ -3356,15 +3390,15 @@ Data variables:
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">computed_speed</span> <span class="o">=</span> <span class="n">speed</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span><span class="o">.</span><span class="n">to_dataset</span><span class="p">()</span>
 <span class="n">xr</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">roundtrip_dataset</span><span class="o">.</span><span class="n">compute</span><span class="p">(),</span> <span class="n">computed_speed</span><span class="p">)</span>
-<span class="n">computed_speed</span><span class="p">[</span><span class="s2">&quot;speed&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;magma&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">computed_speed</span><span class="p">[</span><span class="s2">"speed"</span><span class="p">]</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><span class="s2">"magma"</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x7f76af7ba510&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x7ff470bd0830&gt;
 </pre></div>
 </div>
-<img alt="../_images/72a21e4cb9f48e33c8fe512a1f915c400c15978a60705844c72a9aea0c7b3fa9.png" src="../_images/72a21e4cb9f48e33c8fe512a1f915c400c15978a60705844c72a9aea0c7b3fa9.png" />
+<img alt="../_images/05c84a3de54121b2dc02d5dfbb92ce0dbb50f180d02ba61fee25d90ec8c0309b.png" src="../_images/05c84a3de54121b2dc02d5dfbb92ce0dbb50f180d02ba61fee25d90ec8c0309b.png" />
 </div>
 </div>
 <p>For general exchange and long-term storage, use xarray’s standard formats when possible: <code class="docutils literal notranslate"><span class="pre">Dataset.to_netcdf(...)</span></code> and <code class="docutils literal notranslate"><span class="pre">Dataset.to_zarr(...)</span></code> preserve metadata and make collaboration easier. Use raw binary output when you need strict compatibility with an external file convention.</p>
@@ -3436,7 +3470,7 @@ Data variables:
     <i class="fa-solid fa-list"></i> Contents
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-write-specifications">Custom write specifications</a></li>
 </ul>
   </nav></div>
@@ -3486,8 +3520,8 @@ By Felipe N. Schuch
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
   </footer>
