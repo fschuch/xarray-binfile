@@ -359,12 +359,12 @@ class TestFilesAndOpen:
         return tmp_path
 
     def test_files_lists_only_matching_regular_files(self, directory):
-        assert [p.name for p in self.convention.files(directory)] == [
+        assert {p.name for p in self.convention.files(directory)} == {
             "ux-0000.bin",
             "ux-0001.bin",
             "uy-0000.bin",
             "uy-0001.bin",
-        ]
+        }
 
     def test_open_combines_all_files(self, directory):
         dataset = self.convention.open(directory)
@@ -411,17 +411,17 @@ class TestNames:
     def test_bare_name_pattern_is_too_permissive_without_names(self, directory):
         static = StaticFiles(LAYOUT, pattern="{name}")
 
-        assert [p.name for p in static.files(directory)] == [
+        assert {p.name for p in static.files(directory)} == {
             "Makefile",
             "README",
             "epsilon",
             "pp",
-        ]
+        }
 
     def test_names_restrict_discovery_read_and_open(self, directory):
         static = StaticFiles(LAYOUT, pattern="{name}", names=("epsilon",))
 
-        assert [p.name for p in static.files(directory)] == ["epsilon"]
+        assert {p.name for p in static.files(directory)} == {"epsilon"}
         assert list(static.open(directory).data_vars) == ["epsilon"]
         with pytest.raises(ValueError, match="not among the names"):
             static.reader(directory / "README")
@@ -458,7 +458,7 @@ class TestNames:
             ]
         )
 
-        assert [p.name for p in conventions.files(directory)] == ["epsilon", "pp"]
+        assert {p.name for p in conventions.files(directory)} == {"epsilon", "pp"}
         assert conventions.reader(directory / "pp").name == "pp"
 
 

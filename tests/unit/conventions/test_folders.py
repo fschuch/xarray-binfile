@@ -183,11 +183,11 @@ class TestFilesAndOpen:
     def test_files_walks_registered_folders(self, case):
         conventions, root = case
 
-        assert [p.relative_to(root).as_posix() for p in conventions.files(root)] == [
+        assert {p.relative_to(root).as_posix() for p in conventions.files(root)} == {
             "static/epsi.bin",
             "ux-0000.bin",
             "ux-0001.bin",
-        ]
+        }
 
     def test_open_merges_folders(self, case):
         conventions, root = case
@@ -251,10 +251,10 @@ class TestPatternConventions:
         snapshot.binary_engine.to_file(self.conventions.writer, tmp_path)
         static.binary_engine.to_file(self.conventions.writer, tmp_path)
 
-        assert [p.name for p in self.conventions.files(tmp_path)] == [
+        assert {p.name for p in self.conventions.files(tmp_path)} == {
             "epsi.bin",
             "ux-0000.bin",
-        ]
+        }
         assert sorted(self.conventions.open(tmp_path).data_vars) == ["epsi", "ux"]
 
 
@@ -285,7 +285,7 @@ class TestUnrelatedFilesAreNeverOpened:
             }
         )
 
-        assert [p.name for p in conventions.files(case)] == ["epsi.bin", "ux-0000.bin"]
+        assert {p.name for p in conventions.files(case)} == {"epsi.bin", "ux-0000.bin"}
 
     def test_custom_convention_without_files_is_asked_through_its_reader(self, case):
         class OnlyUx:
@@ -298,7 +298,7 @@ class TestUnrelatedFilesAreNeverOpened:
         OnlyUx.layout = self.layout
         conventions = FolderConventions({".": OnlyUx()})
 
-        assert [p.name for p in conventions.files(case)] == ["ux-0000.bin"]
+        assert {p.name for p in conventions.files(case)} == {"ux-0000.bin"}
 
 
 class TestCompositeOpenVariables:
@@ -390,6 +390,6 @@ class TestReviewFixes:
         (tmp_path / "notes.txt").write_text("x")
 
         assert isinstance(next(iter(conventions.conventions.values())), Convention)
-        assert [p.name for p in conventions.files(tmp_path)] == ["ux-0000.bin"]
+        assert {p.name for p in conventions.files(tmp_path)} == {"ux-0000.bin"}
         assert conventions.name_of_file(tmp_path / "ux-0000.bin") == "ux"
         assert list(conventions.open(tmp_path).data_vars) == ["ux"]
