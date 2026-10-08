@@ -130,3 +130,90 @@ def test_time_roundtrip_is_exact_with_repr_precision(name, time):
         "name": name,
         "time": time,
     }
+
+
+class TestExactWidth:
+    def test_parse_keeps_digits_in_the_name(self):
+        pattern = FilenamePattern("{name}{step:03d}", exact_width=True)
+
+        assert pattern.parse("phi1000") == {"name": "phi1", "step": 0}
+        assert pattern.parse("ux001") == {"name": "ux", "step": 1}
+
+    def test_default_is_minimum_width(self):
+        assert FilenamePattern("{name}{step:03d}").parse("phi1000") == {
+            "name": "phi",
+            "step": 1000,
+        }
+
+    def test_rejects_wider_steps_at_format_time(self):
+        pattern = FilenamePattern("{name}-{step:03d}.bin", exact_width=True)
+
+        with pytest.raises(ValueError, match="cannot be parsed back"):
+            pattern.format(name="ux", step=1000)
+
+    def test_signed_values_count_the_sign(self):
+        pattern = FilenamePattern("{name}-{step:03d}.bin", exact_width=True)
+
+        assert pattern.parse("ux--05.bin") == {"name": "ux", "step": -5}
+        assert not pattern.matches("ux--005.bin")
+
+    @given(name=NAMES, step=st.integers(min_value=0, max_value=999))
+    def test_roundtrip(self, name, step):
+        pattern = FilenamePattern("{name}{step:03d}", exact_width=True)
+
+        assert pattern.parse(pattern.format(name=name, step=step)) == {
+            "name": name,
+            "step": step,
+        }
+
+
+class TestGlob:
+    @pytest.mark.parametrize(
+        ("template", "fixed", "expected"),
+        [
+            ("{name}-{step:04d}.bin", {}, "*-*.bin"),
+            ("{name}-{step:04d}.bin", {"name": "ux"}, "ux-*.bin"),
+            ("{name}-{step:04d}.bin", {"step": 7}, "*-0007.bin"),
+            ("{name}{step:03d}", {}, "**"),
+            ("{name}.bin", {"name": "epsi"}, "epsi.bin"),
+        ],
+    )
+    def test_glob(self, template, fixed, expected):
+        assert FilenamePattern(template).glob(**fixed) == expected
+
+    def test_glob_rejects_unknown_field(self):
+        with pytest.raises(ValueError, match="Unknown field"):
+            FilenamePattern("{name}.bin").glob(step=1)
+
+    def test_glob_matches_formatted_names(self, tmp_path):
+        pattern = FilenamePattern("{name}-{step:04d}.bin")
+        for name, step in (("ux", 1), ("uy", 2)):
+            (tmp_path / pattern.format(name=name, step=step)).touch()
+        (tmp_path / "epsi.bin").touch()
+
+        assert sorted(p.name for p in tmp_path.glob(pattern.glob())) == [
+            "ux-0001.bin",
+            "uy-0002.bin",
+        ]
+        assert [p.name for p in tmp_path.glob(pattern.glob(name="ux"))] == [
+            "ux-0001.bin"
+        ]
+
+
+class TestFolderPrefix:
+    def test_format_keeps_folder_segments(self):
+        pattern = FilenamePattern("{name}-{step:04d}.bin")
+
+        assert pattern.format(name="geometry/epsi", step=0) == "geometry/epsi-0000.bin"
+        assert pattern.format(name="a/b/c", step=0) == "a/b/c-0000.bin"
+
+    @pytest.mark.parametrize("name", ["../epsi", "./epsi", "/epsi", "a//epsi"])
+    def test_format_rejects_malformed_prefix(self, name):
+        with pytest.raises(ValueError, match="Invalid folder prefix"):
+            FilenamePattern("{name}.bin").format(name=name)
+
+    def test_parse_still_works_on_bare_filenames_only(self):
+        pattern = FilenamePattern("{name}.bin")
+
+        assert not pattern.matches("geometry/epsi.bin")
+        assert pattern.parse("epsi.bin") == {"name": "epsi"}

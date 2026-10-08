@@ -5,12 +5,17 @@ Provides accessors for writing xarray Dataset and DataArray objects to binary fi
 import contextlib
 import os
 import tempfile
+from collections.abc import Callable, Iterable
 from pathlib import Path
 
 import numpy as np
 import xarray as xr
 
-from xarray_binfile.write.file_metadata import WriteSpecsGetterProtocol
+from xarray_binfile.write.file_metadata import WriteSpecs, WriteSpecsGetterProtocol
+
+# Wraps the iterator of write specs, for example ``tqdm`` or
+# ``functools.partial(tqdm, desc="ux")``.
+Progress = Callable[[Iterable[WriteSpecs]], Iterable[WriteSpecs]]
 
 
 @xr.register_dataset_accessor("binary_engine")
@@ -32,6 +37,8 @@ class BinaryEngineDataset:
         self,
         write_specs_getter: WriteSpecsGetterProtocol,
         directory: str | os.PathLike[str] | None = None,
+        *,
+        progress: Progress | None = None,
     ) -> None:
         """
         Writes the dataset to binary files.
@@ -47,9 +54,13 @@ class BinaryEngineDataset:
         Args:
             write_specs_getter: A callable that generates write specifications for the data arrays.
             directory: The directory where the binary files will be written. Defaults to the current working directory.
+            progress: Optional wrapper applied to the write specs of each
+                variable, for example ``tqdm``, to report progress.
         """
         for data_array in self._data_set.data_vars.values():
-            data_array.binary_engine.to_file(write_specs_getter, directory)
+            data_array.binary_engine.to_file(
+                write_specs_getter, directory, progress=progress
+            )
 
 
 @xr.register_dataarray_accessor("binary_engine")
@@ -71,6 +82,8 @@ class BinaryEngineDataArray:
         self,
         write_specs_getter: WriteSpecsGetterProtocol,
         directory: str | os.PathLike[str] | None = None,
+        *,
+        progress: Progress | None = None,
     ) -> None:
         """
         Writes the data array to binary files.
@@ -98,7 +111,9 @@ class BinaryEngineDataArray:
 
         Each file is written with the in-memory dtype and native byte order,
         unless the write specification sets ``dtype``, in which case the
-        values are cast right before serialization.
+        values are cast right before serialization. Bytes are laid out in
+        the memory order declared by ``WriteSpecs.order``: ``"C"`` (last
+        axis fastest, the default) or ``"F"`` (first axis fastest).
 
         A relative ``WriteSpecs.filename`` is resolved against ``directory``,
         which must already exist, and may contain sub-folders (for example
@@ -111,20 +126,30 @@ class BinaryEngineDataArray:
         Args:
             write_specs_getter: A callable that generates write specifications for the data array.
             directory: The base directory for relative filenames. Defaults to the current working directory.
+            progress: Optional wrapper applied to the iterator of write specs
+                before files are written, for example ``tqdm`` or
+                ``functools.partial(tqdm, desc="ux")``, to report progress.
+                It receives the specs lazily, so it must not consume them
+                ahead of iteration.
 
         Raises:
             FileNotFoundError: If a relative filename is used and ``directory`` does not exist.
             ValueError: If a relative filename escapes ``directory``.
         """
         _directory = Path(directory) if directory is not None else Path.cwd()
-        for details in write_specs_getter(self._data_array):
+        specs: Iterable[WriteSpecs] = write_specs_getter(self._data_array)
+        if progress is not None:
+            specs = progress(specs)
+        for details in specs:
             final_file = _resolve_destination(_directory, details.filename)
             new_type = (
                 details.dtype if details.dtype is not None else details.sub_array.dtype
             )
             final_file.parent.mkdir(parents=True, exist_ok=True)
             values = details.sub_array.values.astype(new_type, copy=False)
-            _write_atomically(final_file, values)
+            # ``tofile`` always serializes in C order, so Fortran order is
+            # obtained by flattening first (a view for C-contiguous input).
+            _write_atomically(final_file, values.ravel(order=details.order))
 
 
 def _resolve_destination(directory: Path, filename: str | os.PathLike[str]) -> Path:

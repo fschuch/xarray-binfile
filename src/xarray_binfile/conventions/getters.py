@@ -8,8 +8,9 @@ convention, copy the closest class and change only what differs.
 """
 
 import math
+import os
 from collections import Counter
-from collections.abc import Iterator, Mapping
+from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, ClassVar
@@ -19,7 +20,13 @@ import xarray as xr
 
 from xarray_binfile.conventions.filename_pattern import FilenamePattern
 from xarray_binfile.conventions.layout import Layout
+from xarray_binfile.conventions.stacking import (
+    VariableStack,
+    split_variables,
+    stack_variables,
+)
 from xarray_binfile.read.file_metadata import ReadSpecs
+from xarray_binfile.typing import DTypeLike
 from xarray_binfile.write.file_metadata import WriteSpecs
 
 _STEP_TOLERANCE = 1e-6
@@ -67,6 +74,36 @@ def _require_unique(filenames: list[str]) -> None:
         raise ValueError(error_message)
 
 
+def open_files(
+    paths: Iterable[Path], reader: Any, **open_mfdataset_kwargs: Any
+) -> xr.Dataset:
+    """
+    Open binary files as one lazy dataset with the ``binfile`` engine.
+
+    Thin wrapper over :func:`xarray.open_mfdataset` that fills in the engine
+    and the read specs getter, so conventions can offer an ``open`` method.
+
+    Args:
+        paths: The files to open.
+        reader: The read specs getter to decode them.
+        **open_mfdataset_kwargs: Forwarded to :func:`xarray.open_mfdataset`,
+            for example ``chunks`` or ``parallel``.
+
+    Returns:
+        The lazily opened dataset.
+
+    Raises:
+        FileNotFoundError: If ``paths`` is empty.
+    """
+    paths = sorted(paths)
+    if not paths:
+        error_message = "No file matches the convention; nothing to open."
+        raise FileNotFoundError(error_message)
+    return xr.open_mfdataset(
+        paths, engine="binfile", read_specs_getter=reader, **open_mfdataset_kwargs
+    )
+
+
 @dataclass(frozen=True)
 class _ConventionBase:
     """
@@ -77,11 +114,24 @@ class _ConventionBase:
         pattern: Filename pattern, as a :class:`FilenamePattern` or template string.
         check_coords: Whether :meth:`writer` also requires coordinate values to
             match ``layout`` (dimensions and sizes are always checked).
+        stacks: Dimensions that are not stored in the files but encoded in
+            the variable names, as :class:`VariableStack` declarations. For
+            example ``VariableStack("i", "{name}{i}", values=("x", "y", "z"))``
+            writes a velocity array ``u`` as ``ux``, ``uy`` and ``uz``, and
+            ``VariableStack("n", "{name}{n:d}", values=range(1, 10))`` writes
+            ``phi`` as ``phi1``, ``phi2``, ... On write, arrays are split in
+            the order given, before the file split; on read, :meth:`stack`
+            (called by :meth:`open` by default) rebuilds the stacked arrays.
+        name_of: Optional hook returning the name to write an array under,
+            in place of ``data_array.name``; for example
+            ``lambda da: da.attrs["file_name"]``.
     """
 
     layout: Layout
     pattern: FilenamePattern | str
     check_coords: bool = True
+    stacks: Sequence[VariableStack] = ()
+    name_of: Callable[[xr.DataArray], str] | None = None
 
     _required_fields: ClassVar[frozenset[str]] = frozenset({"name"})
 
@@ -95,6 +145,7 @@ class _ConventionBase:
         if isinstance(self.pattern, str):
             object.__setattr__(self, "pattern", FilenamePattern(self.pattern))
         assert isinstance(self.pattern, FilenamePattern)
+        object.__setattr__(self, "stacks", tuple(self.stacks))
         missing = self._required_fields - set(self.pattern.fields)
         if missing:
             error_message = (
@@ -107,6 +158,108 @@ class _ConventionBase:
     def _pattern(self) -> FilenamePattern:
         assert isinstance(self.pattern, FilenamePattern)
         return self.pattern
+
+    def _named(self, data_array: xr.DataArray) -> xr.DataArray:
+        """
+        Apply the ``name_of`` hook, returning an array that carries its output name.
+
+        Args:
+            data_array: The array about to be written.
+
+        Returns:
+            The same array, renamed when ``name_of`` is set.
+
+        Raises:
+            ValueError: If the array ends up without a name.
+        """
+        if self.name_of is not None:
+            data_array = data_array.rename(self.name_of(data_array))
+        _require_name(data_array)
+        return data_array
+
+    def split(self, data_array: xr.DataArray) -> Iterator[xr.DataArray]:
+        """
+        Split ``data_array`` along every declared stacked dimension it carries.
+
+        Args:
+            data_array: A named array.
+
+        Yields:
+            One named array per combination of stacked values, in the order
+            of ``stacks`` and of their values.
+        """
+        yield from split_variables(data_array, self.stacks)
+
+    def stack(self, dataset: xr.Dataset) -> xr.Dataset:
+        """
+        Rebuild the stacked arrays declared in ``stacks`` from their split variables.
+
+        Args:
+            dataset: A dataset as returned by the ``binfile`` engine.
+
+        Returns:
+            The dataset with ``ux``, ``uy``, ``uz`` replaced by ``u`` and so on.
+        """
+        return stack_variables(dataset, self.stacks)
+
+    def files(self, directory: str | os.PathLike[str]) -> list[Path]:
+        """
+        List the files in ``directory`` that follow the convention.
+
+        Args:
+            directory: The folder to scan (not recursively).
+
+        Returns:
+            The matching paths, sorted.
+        """
+        folder = Path(directory)
+        return sorted(
+            path
+            for path in folder.iterdir()
+            if path.is_file() and self._pattern.matches(path.name)
+        )
+
+    def open(
+        self,
+        directory: str | os.PathLike[str],
+        *,
+        variables: Iterable[str] | None = None,
+        stack: bool = True,
+        **open_mfdataset_kwargs: Any,
+    ) -> xr.Dataset:
+        """
+        Open every file in ``directory`` that follows the convention as one lazy dataset.
+
+        Args:
+            directory: The folder holding the files (not scanned recursively).
+            variables: Optional names to keep, as found on disk (``"ux"``,
+                not ``"u"``); other files are not opened.
+            stack: Whether to rebuild the arrays declared in ``stacks``.
+            **open_mfdataset_kwargs: Forwarded to :func:`xarray.open_mfdataset`,
+                for example ``chunks={"time": 1}`` or ``parallel=True``.
+
+        Returns:
+            The lazily opened dataset, combined by coordinates.
+
+        Raises:
+            FileNotFoundError: If no file matches.
+        """
+        paths = self.files(directory)
+        if variables is not None:
+            wanted = set(variables)
+            paths = [
+                path
+                for path in paths
+                if self._pattern.parse(path.name)["name"] in wanted
+            ]
+        dataset = open_files(paths, self.reader, **open_mfdataset_kwargs)
+        return self.stack(dataset) if stack else dataset
+
+    def reader(self, path: Path) -> ReadSpecs:  # no cov
+        raise NotImplementedError
+
+    def writer(self, data_array: xr.DataArray) -> Iterator[WriteSpecs]:  # no cov
+        raise NotImplementedError
 
 
 @dataclass(frozen=True)
@@ -133,6 +286,8 @@ class StaticFiles(_ConventionBase):
         pattern: Filename pattern declaring ``{name}``. Defaults to ``"{name}.bin"``.
         check_coords: Whether :meth:`writer` also requires coordinate values to
             match ``layout``.
+        stacks: Dimensions encoded in the variable names, as :class:`VariableStack` declarations.
+        name_of: Optional hook returning the name to write an array under.
     """
 
     pattern: FilenamePattern | str = "{name}.bin"
@@ -156,28 +311,36 @@ class StaticFiles(_ConventionBase):
             dtype=self.layout.dtype,
             coords=dict(self.layout.coords),
             name=str(fields["name"]),
+            order=self.layout.order,
+            coord_attrs=self.layout.coord_attrs,
         )
 
     def writer(self, data_array: xr.DataArray) -> Iterator[WriteSpecs]:
         """
-        Yield the single write spec for ``data_array``.
+        Yield the write specs for ``data_array``, one per stacked value.
 
         Args:
-            data_array: The array to write, holding exactly the layout dimensions.
+            data_array: The array to write, holding exactly the layout
+                dimensions plus any stacked dimension.
 
         Yields:
-            One write spec.
+            One write spec per output file.
 
         Raises:
             LayoutMismatchError: If the array does not fit ``layout``.
             ValueError: If the array has no name.
         """
+        for piece in self.split(self._named(data_array)):
+            yield from self._write_one(piece)
+
+    def _write_one(self, data_array: xr.DataArray) -> Iterator[WriteSpecs]:
         name = _require_name(data_array)
         self.layout.validate(data_array, check_coords=self.check_coords)
         yield WriteSpecs(
             filename=self._pattern.format(name=name),
             sub_array=self.layout.transpose(data_array),
             dtype=self.layout.dtype,
+            order=self.layout.order,
         )
 
 
@@ -191,10 +354,17 @@ class _SplitAlongDimension(_ConventionBase):
         pattern: Filename pattern.
         check_coords: Whether :meth:`writer` also requires coordinate values to
             match ``layout``.
+        stacks: Dimensions encoded in the variable names, as :class:`VariableStack` declarations.
+        name_of: Optional hook returning the name to write an array under.
         time_dim: Name of the dimension split across files.
+        time_dtype: Optional dtype for the ``time_dim`` coordinate on read,
+            for example ``np.float32`` to match single-precision data. When
+            ``None`` the natural type is kept (``int64`` steps, ``float64``
+            times).
     """
 
     time_dim: str = "time"
+    time_dtype: DTypeLike | None = None
 
     def _time_from_fields(self, fields: Mapping[str, Any]) -> Any:
         raise NotImplementedError  # no cov
@@ -219,27 +389,31 @@ class _SplitAlongDimension(_ConventionBase):
             ValueError: If the filename does not follow ``pattern``.
         """
         fields = self._pattern.parse(path.name)
-        time = np.atleast_1d(self._time_from_fields(fields))
+        time = np.atleast_1d(
+            np.asarray(self._time_from_fields(fields), dtype=self.time_dtype)
+        )
         return ReadSpecs(
             filepath=path.resolve(),
             dtype=self.layout.dtype,
             coords=dict(self.layout.coords) | {self.time_dim: time},
             name=str(fields["name"]),
+            order=self.layout.order,
+            coord_attrs=self.layout.coord_attrs,
         )
 
     def writer(self, data_array: xr.DataArray) -> Iterator[WriteSpecs]:
         """
-        Yield one write spec per value along ``time_dim``.
+        Yield one write spec per value along ``time_dim`` (and per stacked value).
 
-        All filenames are computed before the first spec is yielded, so
-        collisions are reported before any file is written.
+        All filenames of a slice are computed before its first spec is
+        yielded, so collisions are reported before any file is written.
 
         Args:
             data_array: The array to write, holding the layout dimensions plus
-                ``time_dim``.
+                ``time_dim`` and any stacked dimension.
 
         Yields:
-            One write spec per value of ``time_dim``, in on-disk dimension order.
+            One write spec per output file, in on-disk dimension order.
 
         Raises:
             LayoutMismatchError: If the array does not fit ``layout``.
@@ -247,11 +421,19 @@ class _SplitAlongDimension(_ConventionBase):
                 name cannot be encoded in a filename the reader can parse, or
                 if two values map to one file.
         """
+        for piece in self.split(self._named(data_array)):
+            yield from self._write_one(piece)
+
+    def _write_one(self, data_array: xr.DataArray) -> Iterator[WriteSpecs]:
         name = _require_name(data_array)
         self.layout.validate(
             data_array, extra_dims=(self.time_dim,), check_coords=self.check_coords
         )
-        values = data_array[self.time_dim].values
+        values = (
+            data_array[self.time_dim].values
+            if self.time_dim in data_array.coords
+            else np.arange(data_array.sizes[self.time_dim])
+        )
         filenames = [
             self._pattern.format(name=name, **self._fields_from_time(value))
             for value in values
@@ -261,9 +443,10 @@ class _SplitAlongDimension(_ConventionBase):
             yield WriteSpecs(
                 filename=filename,
                 sub_array=self.layout.transpose(
-                    data_array.isel({self.time_dim: index})
+                    data_array.isel({self.time_dim: index}, drop=True)
                 ),
                 dtype=self.layout.dtype,
+                order=self.layout.order,
             )
 
 
@@ -302,7 +485,10 @@ class StepIndexedFiles(_SplitAlongDimension):
             Defaults to ``"{name}-{step:04d}.bin"``.
         check_coords: Whether :meth:`writer` also requires coordinate values to
             match ``layout``.
+        stacks: Dimensions encoded in the variable names, as :class:`VariableStack` declarations.
+        name_of: Optional hook returning the name to write an array under.
         time_dim: Name of the dimension split across files. Defaults to ``"time"``.
+        time_dtype: Optional dtype for the ``time`` coordinate on read.
         time_step: Interval between consecutive steps. When ``None`` the
             ``time`` coordinate is the integer step itself.
     """
@@ -361,7 +547,10 @@ class TimeStampedFiles(_SplitAlongDimension):
             Defaults to ``"{name}-{time:.3f}.bin"``.
         check_coords: Whether :meth:`writer` also requires coordinate values to
             match ``layout``.
+        stacks: Dimensions encoded in the variable names, as :class:`VariableStack` declarations.
+        name_of: Optional hook returning the name to write an array under.
         time_dim: Name of the dimension split across files. Defaults to ``"time"``.
+        time_dtype: Optional dtype for the ``time`` coordinate on read.
     """
 
     pattern: FilenamePattern | str = "{name}-{time:.3f}.bin"

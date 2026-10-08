@@ -11,7 +11,11 @@ from xarray_binfile.conventions import (
     StaticFiles,
     StepIndexedFiles,
     TimeStampedFiles,
+    VariableStack,
 )
+
+VELOCITY = VariableStack("i", "{name}{i}", values=("x", "y", "z"))
+SCALARS = VariableStack("n", "{name}{n:d}", values=range(10))
 
 LAYOUT = Layout({"x": np.arange(3), "y": np.arange(2)}, dtype="<f4")
 
@@ -204,3 +208,187 @@ class TestStaticFiles:
 
         with pytest.raises(LayoutMismatchError, match="Dimension mismatch"):
             next(specs)
+
+
+class TestStacks:
+    convention = StepIndexedFiles(LAYOUT, stacks=[VELOCITY, SCALARS])
+
+    def test_writer_splits_velocity_components(self):
+        u = xr.concat([_array([0, 1])] * 3, dim="i").assign_coords(i=["x", "y", "z"])
+        u = u.rename("u")
+
+        assert [s.filename for s in self.convention.writer(u)] == [
+            "ux-0000.bin",
+            "ux-0001.bin",
+            "uy-0000.bin",
+            "uy-0001.bin",
+            "uz-0000.bin",
+            "uz-0001.bin",
+        ]
+
+    def test_writer_splits_nested_dimensions_in_declaration_order(self):
+        base = _array([0])
+        phi = xr.concat([base, base], dim="n").assign_coords(n=[1, 2])
+        both = xr.concat([phi, phi], dim="i").assign_coords(i=["x", "y"]).rename("u")
+
+        assert [s.filename for s in self.convention.writer(both)] == [
+            "ux1-0000.bin",
+            "ux2-0000.bin",
+            "uy1-0000.bin",
+            "uy2-0000.bin",
+        ]
+
+    def test_writer_uses_position_when_split_dim_has_no_coordinate(self):
+        u = xr.concat([_array([0])] * 2, dim="n").rename("phi")
+
+        assert [s.filename for s in self.convention.writer(u)] == [
+            "phi0-0000.bin",
+            "phi1-0000.bin",
+        ]
+
+    def test_writer_without_split_dim_is_unchanged(self):
+        assert [s.filename for s in self.convention.writer(_array([3]))] == [
+            "ux-0003.bin"
+        ]
+
+    def test_slices_drop_the_split_coordinate(self):
+        u = xr.concat([_array([0])] * 2, dim="i").assign_coords(i=["x", "y"])
+        specs = list(self.convention.writer(u.rename("u")))
+
+        assert all("i" not in s.sub_array.coords for s in specs)
+        assert all(s.sub_array.dims == ("x", "y") for s in specs)
+
+    def test_writer_refuses_values_outside_the_stack(self):
+        u = xr.concat([_array([0])] * 2, dim="i").assign_coords(i=["x", "w"])
+
+        with pytest.raises(ValueError, match=r"\['w'\] on 'i' are not listed"):
+            list(self.convention.writer(u.rename("u")))
+
+    def test_stacks_are_frozen_as_a_tuple(self):
+        assert self.convention.stacks == (VELOCITY, SCALARS)
+
+    def test_static_files_split_too(self):
+        static = StaticFiles(LAYOUT, stacks=[VELOCITY])
+        u = (
+            xr.concat([_array([0]).isel(time=0, drop=True)] * 2, dim="i")
+            .assign_coords(i=["x", "y"])
+            .rename("u")
+        )
+
+        assert [s.filename for s in static.writer(u)] == ["ux.bin", "uy.bin"]
+
+
+class TestNameOf:
+    def test_writer_takes_name_from_hook(self):
+        convention = StepIndexedFiles(LAYOUT, name_of=lambda da: da.attrs["file_name"])
+        array = _array([0]).rename("vorticity").assign_attrs(file_name="w3")
+
+        assert [s.filename for s in convention.writer(array)] == ["w3-0000.bin"]
+
+    def test_hook_applies_before_split(self):
+        convention = StepIndexedFiles(LAYOUT, stacks=[VELOCITY], name_of=lambda da: "u")
+        u = xr.concat([_array([0])] * 2, dim="i").assign_coords(i=["x", "y"])
+
+        assert [s.filename for s in convention.writer(u.rename("anything"))] == [
+            "ux-0000.bin",
+            "uy-0000.bin",
+        ]
+
+
+class TestTimeDtype:
+    def test_reader_casts_time(self):
+        convention = StepIndexedFiles(LAYOUT, time_step=0.5, time_dtype=np.float32)
+
+        time = convention.reader(pathlib.Path("ux-0003.bin")).coords["time"]
+
+        assert time.dtype == np.float32
+        np.testing.assert_allclose(time, [1.5])
+
+    def test_time_stamped_casts_too(self):
+        convention = TimeStampedFiles(LAYOUT, time_dtype="<f4")
+
+        assert convention.reader(pathlib.Path("ux-0.250.bin")).coords[
+            "time"
+        ].dtype == np.dtype("<f4")
+
+
+class TestLayoutPassthrough:
+    layout = Layout(
+        {"x": np.arange(3), "y": np.arange(2)},
+        dtype="<f4",
+        order="F",
+        coord_attrs={"x": {"units": "m"}},
+    )
+
+    def test_reader_forwards_order_and_coord_attrs(self):
+        specs = StepIndexedFiles(self.layout).reader(pathlib.Path("ux-0001.bin"))
+
+        assert specs.order == "F"
+        assert specs.coord_attrs == {"x": {"units": "m"}}
+
+    def test_writer_forwards_order(self):
+        specs = list(StepIndexedFiles(self.layout).writer(_array([0])))
+        static = list(
+            StaticFiles(self.layout).writer(_array([0]).isel(time=0, drop=True))
+        )
+
+        assert specs[0].order == "F"
+        assert static[0].order == "F"
+
+    def test_defaults_are_c_order_without_attrs(self):
+        specs = StepIndexedFiles(LAYOUT).reader(pathlib.Path("ux-0001.bin"))
+
+        assert specs.order == "C"
+        assert specs.coord_attrs is None
+
+
+class TestFilesAndOpen:
+    convention = StepIndexedFiles(LAYOUT)
+
+    @pytest.fixture
+    def directory(self, tmp_path):
+        import xarray_binfile  # noqa: F401  (registers the accessors)
+
+        for name in ("ux", "uy"):
+            _array([0, 1]).rename(name).binary_engine.to_file(
+                self.convention.writer, tmp_path
+            )
+        (tmp_path / "epsi.bin").write_bytes(b"\0" * 24)
+        (tmp_path / "notes.txt").write_text("ignored")
+        (tmp_path / "sub").mkdir()
+        return tmp_path
+
+    def test_files_lists_only_matching_regular_files(self, directory):
+        assert [p.name for p in self.convention.files(directory)] == [
+            "ux-0000.bin",
+            "ux-0001.bin",
+            "uy-0000.bin",
+            "uy-0001.bin",
+        ]
+
+    def test_open_combines_all_files(self, directory):
+        dataset = self.convention.open(directory)
+
+        assert sorted(dataset.data_vars) == ["ux", "uy"]
+        assert dataset["ux"].dims == ("x", "y", "time")
+        assert dataset["time"].values.tolist() == [0, 1]
+
+    def test_open_filters_variables_and_forwards_kwargs(self, directory):
+        dataset = self.convention.open(directory, variables=["uy"], chunks={"time": 1})
+
+        assert list(dataset.data_vars) == ["uy"]
+        assert dataset["uy"].chunks is not None
+
+    def test_open_raises_when_nothing_matches(self, tmp_path):
+        with pytest.raises(FileNotFoundError, match="No file matches"):
+            self.convention.open(tmp_path)
+
+    def test_open_stacks_by_default(self, directory):
+        convention = StepIndexedFiles(LAYOUT, stacks=[VELOCITY])
+
+        stacked = convention.open(directory)
+        raw = convention.open(directory, stack=False)
+
+        assert sorted(stacked.data_vars) == ["u"]
+        assert stacked["i"].values.tolist() == ["x", "y"]
+        assert sorted(raw.data_vars) == ["ux", "uy"]

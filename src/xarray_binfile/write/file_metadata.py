@@ -7,7 +7,7 @@ from typing import NamedTuple, Protocol
 
 import xarray as xr
 
-from xarray_binfile.typing import DTypeLike
+from xarray_binfile.typing import DTypeLike, MemoryOrder
 
 
 class WriteSpecs(NamedTuple):
@@ -29,11 +29,16 @@ class WriteSpecs(NamedTuple):
             before serialization. When ``None``, the in-memory dtype and
             native byte order are written as-is, so make sure they match what
             your read specs getter declares.
+        order: Memory layout of the file: ``"C"`` (default, last axis of
+            ``sub_array`` varies fastest) or ``"F"`` (first axis varies
+            fastest, as Fortran programs expect). Must match the ``order``
+            declared by the paired read specs.
     """
 
     filename: str
     sub_array: xr.DataArray
     dtype: DTypeLike | None = None
+    order: MemoryOrder = "C"
 
 
 class WriteSpecsGetterProtocol(Protocol):

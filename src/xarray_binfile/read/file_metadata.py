@@ -2,12 +2,13 @@
 Defines metadata structures and protocols for reading binary files.
 """
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
 from typing import Protocol
 
-from xarray_binfile.typing import AttributesLike, CoordsLike, DTypeLike
+from xarray_binfile.typing import AttributesLike, CoordsLike, DTypeLike, MemoryOrder
 
 
 @dataclass(frozen=True)
@@ -24,6 +25,13 @@ class ReadSpecs:
         - ``shape`` is inferred from coordinate lengths.
         - ``dtype`` should be explicit about byte order when portability matters
           (for example ``"<f4"`` for little-endian float32).
+        - ``order`` tells which axis varies fastest on disk. NumPy's
+          ``tofile`` and C programs write ``"C"`` order (last axis fastest);
+          Fortran programs, including 2DECOMP&FFT and Xcompact3d, write
+          ``"F"`` order (first axis fastest). Both describe the same bytes,
+          so a file written in ``"F"`` order with dims ``(x, y, z)`` can also
+          be read in ``"C"`` order with dims ``(z, y, x)``; ``order`` just
+          lets you keep the dimension names in their natural order.
 
     Attributes:
         filepath: Path to the binary file.
@@ -31,6 +39,9 @@ class ReadSpecs:
         coords: Coordinates of the data in the binary file.
         name: Name of the dataset or variable.
         attrs: Additional attributes for the dataset or variable.
+        order: Memory layout of the file, ``"C"`` (default) or ``"F"``.
+        coord_attrs: Optional attributes attached to each coordinate, keyed
+            by coordinate name (for example ``{"x": {"units": "m"}}``).
     """
 
     filepath: Path
@@ -38,6 +49,8 @@ class ReadSpecs:
     coords: CoordsLike
     name: str
     attrs: AttributesLike | None = None
+    order: MemoryOrder = "C"
+    coord_attrs: Mapping[str, AttributesLike] | None = None
 
     @cached_property
     def shape(self) -> tuple[int, ...]:
