@@ -31,4 +31,5 @@ This section points to the main libraries and references that complement xarray-
 ## Domain workflows
 
 - [Xcompact3d](https://xcompact3d.readthedocs.io/)
+- [xcompact3d-toolbox](https://github.com/fschuch/xcompact3d-toolbox), the post-processing toolbox where xarray-binfile originated and which now depends on it
 - [2DECOMP&FFT](https://2decomp.org/)
