@@ -146,9 +146,12 @@ class BinaryEngineDataArray:
                 details.dtype if details.dtype is not None else details.sub_array.dtype
             )
             final_file.parent.mkdir(parents=True, exist_ok=True)
-            values = details.sub_array.values.astype(new_type, copy=False)
             # ``tofile`` always serializes in C order, so Fortran order is
-            # obtained by flattening first (a view for C-contiguous input).
+            # obtained by flattening first. ``astype`` lays the data out in the
+            # target order, so a cast and a reorder cost a single copy.
+            values = details.sub_array.values.astype(
+                new_type, order=details.order, copy=False
+            )
             _write_atomically(final_file, values.ravel(order=details.order))
 
 

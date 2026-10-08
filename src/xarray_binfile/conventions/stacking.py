@@ -14,12 +14,27 @@ import re
 import string
 from collections.abc import Collection, Iterator, Mapping, Sequence
 from dataclasses import dataclass
+from functools import cached_property
 from typing import Any
 
 import numpy as np
 import xarray as xr
 
-from xarray_binfile.conventions.filename_pattern import FilenamePattern
+
+def coordinate_or_index(data_array: xr.DataArray, dim: str) -> np.ndarray:
+    """
+    The values along ``dim``: its coordinate, or positions when it has none.
+
+    Args:
+        data_array: The array.
+        dim: A dimension of the array.
+
+    Returns:
+        The coordinate values, or ``arange(size)``.
+    """
+    if dim in data_array.coords:
+        return np.asarray(data_array[dim].values)
+    return np.arange(data_array.sizes[dim])
 
 
 def _template_fields(template: str) -> set[str]:
@@ -59,8 +74,8 @@ class VariableStack:
     Attributes:
         dim: Name of the stacked dimension (``"i"``).
         template: ``str.format`` template building a variable name from
-            ``{name}`` and ``{dim}`` (``"{name}{i}"``, ``"{name}{n:d}"``). It
-            is parsed with :class:`FilenamePattern`, so integer values can use
+            ``{name}`` and ``{dim}`` (``"{name}{i}"``, ``"{name}{n:d}"``).
+            Format specifications apply both ways, so integer values can use
             zero-fill (``"{name}{n:02d}"``).
         values: The values the dimension may take, in the order the stacked
             coordinate should follow (``("x", "y", "z")``, ``range(1, 10)``).
@@ -105,17 +120,8 @@ class VariableStack:
         if self.names is not None:
             object.__setattr__(self, "names", frozenset(self.names))
 
-    @property
-    def pattern(self) -> FilenamePattern:
-        """
-        The template as a :class:`FilenamePattern`, for formatting variable names.
-
-        Returns:
-            The pattern.
-        """
-        return FilenamePattern(self.template)
-
-    def _matchers(self) -> list[tuple[Any, re.Pattern[str]]]:
+    @cached_property
+    def _matchers(self) -> tuple[tuple[Any, re.Pattern[str]], ...]:
         """
         One regular expression per allowed value, with the value spelled out.
 
@@ -126,17 +132,18 @@ class VariableStack:
         Returns:
             Pairs of value and compiled pattern capturing ``name``.
         """
+        parsed = list(string.Formatter().parse(self.template))
         matchers = []
         for value in self.values:
             parts = []
-            for literal, field_name, spec, _ in string.Formatter().parse(self.template):
+            for literal, field_name, spec, _ in parsed:
                 parts.append(re.escape(literal))
                 if field_name == "name":
                     parts.append(r"(?P<name>\w+)")
                 elif field_name == self.dim:
                     parts.append(re.escape(format(value, spec or "")))
             matchers.append((value, re.compile("".join(parts))))
-        return matchers
+        return tuple(matchers)
 
     def split(self, data_array: xr.DataArray) -> Iterator[xr.DataArray]:
         """
@@ -165,14 +172,7 @@ class VariableStack:
                 f"{self.template!r} needs a name."
             )
             raise ValueError(error_message)
-        coordinate = (
-            data_array[self.dim].values
-            if self.dim in data_array.coords
-            else np.arange(data_array.sizes[self.dim])
-        )
-        values = [
-            value.item() if hasattr(value, "item") else value for value in coordinate
-        ]
+        values = coordinate_or_index(data_array, self.dim).tolist()
         unknown = [value for value in values if value not in self.values]
         if unknown:
             error_message = (
@@ -203,10 +203,9 @@ class VariableStack:
         Returns:
             A new dataset where each group is replaced by its stacked array.
         """
-        matchers = self._matchers()
         groups: dict[str, dict[Any, str]] = {}
         for variable in map(str, dataset.data_vars):
-            for value, matcher in matchers:
+            for value, matcher in self._matchers:
                 match = matcher.fullmatch(variable)
                 if match is None:
                     continue
@@ -215,21 +214,22 @@ class VariableStack:
                     groups.setdefault(name, {})[value] = variable
                 break
 
-        result = dataset
+        to_drop: list[str] = []
+        stacked: dict[str, xr.DataArray] = {}
         for name, members in groups.items():
             if self.names is None and len(members) < 2:
                 # Without an explicit list of names, a lone match such as
                 # ``vorticity`` (``vorticit`` + ``y``) is not a split field.
                 continue
             found = [value for value in self.values if value in members]
-            stacked = xr.concat(
+            stacked[name] = xr.concat(
                 [dataset[members[value]] for value in found],
                 dim=xr.DataArray(
                     found, dims=self.dim, name=self.dim, attrs=dict(self.attrs or {})
                 ),
             )
-            result = result.drop_vars(list(members.values())).assign({name: stacked})
-        return result
+            to_drop.extend(members.values())
+        return dataset.drop_vars(to_drop).assign(stacked)
 
 
 def split_variables(

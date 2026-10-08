@@ -3,15 +3,16 @@ Compose several conventions, by the folder their files live in or by filename.
 """
 
 import os
-from collections.abc import Iterable, Iterator, Mapping, Sequence
+from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
 from dataclasses import dataclass
+from functools import partial
 from itertools import chain
 from pathlib import Path, PurePosixPath
 from typing import Any
 
 import xarray as xr
 
-from xarray_binfile.conventions.getters import open_files
+from xarray_binfile.conventions.getters import accepts_file, open_convention, scan_files
 from xarray_binfile.conventions.layout import LayoutMismatchError
 from xarray_binfile.conventions.protocol import ConventionProtocol
 from xarray_binfile.read.file_metadata import ReadSpecs
@@ -79,27 +80,7 @@ def _single_acceptor(
     return accepted[0]
 
 
-def _select_variables(
-    paths: Iterable[Path], reader: Any, variables: Iterable[str] | None
-) -> list[Path]:
-    """
-    Keep the files whose decoded variable name is wanted.
-
-    Args:
-        paths: Candidate files.
-        reader: The read specs getter, used only to parse the filename.
-        variables: Wanted names, or ``None`` to keep everything.
-
-    Returns:
-        The selected paths.
-    """
-    if variables is None:
-        return list(paths)
-    wanted = set(variables)
-    return [path for path in paths if reader(path).name in wanted]
-
-
-def _stack_with(conventions: Any, dataset: xr.Dataset) -> xr.Dataset:
+def _stack_with(conventions: Iterable[Any], dataset: xr.Dataset) -> xr.Dataset:
     """
     Apply the ``stack`` method of every member convention that has one.
 
@@ -116,32 +97,25 @@ def _stack_with(conventions: Any, dataset: xr.Dataset) -> xr.Dataset:
     return dataset
 
 
-def _files_of(convention: Any, directory: Path) -> list[Path]:
+def _longest(
+    folders: Iterable[str], predicate: Callable[[tuple[str, ...]], bool]
+) -> str | None:
     """
-    List the files of ``convention`` inside ``directory``, when it can tell.
+    The most specific registered folder whose parts satisfy ``predicate``.
 
     Args:
-        convention: A convention, ideally exposing ``files(directory)``.
-        directory: The folder to scan.
+        folders: Registered folder keys.
+        predicate: Test on the folder's path parts.
 
     Returns:
-        The matching paths. A convention without a ``files`` method is asked
-        through its ``reader``, which only parses the filename: files it
-        rejects with ``ValueError`` are skipped, so unrelated files (notes,
-        XDMF indexes, backups) are never opened.
+        The longest matching folder, or ``None``.
     """
-    if hasattr(convention, "files"):
-        return list(convention.files(directory))
-    found: list[Path] = []
-    for path in sorted(directory.iterdir()):
-        if not path.is_file():
-            continue
-        try:
-            convention.reader(path)
-        except ValueError:
-            continue
-        found.append(path)
-    return found
+    matches = [
+        (len(parts), folder)
+        for folder in folders
+        if predicate(parts := Path(folder).parts)
+    ]
+    return max(matches)[1] if matches else None
 
 
 @dataclass(frozen=True)
@@ -171,14 +145,15 @@ class FolderConventions:
     conventions: Mapping[str, ConventionProtocol]
 
     def _folder_of(self, path: Path) -> str:
-        parts = path.parent.parts
         # Most specific (longest) folder wins, so "snapshots/3d" is preferred
         # over "3d" regardless of the order the conventions were registered in.
-        matches = [
-            folder for folder in self.conventions if _is_inside(parts, Path(folder))
-        ]
-        if matches:
-            return max(matches, key=lambda folder: len(Path(folder).parts))
+        parts = path.parent.parts
+        folder = _longest(
+            self.conventions,
+            lambda folder_parts: _is_inside(parts, Path(*folder_parts)),
+        )
+        if folder is not None:
+            return folder
         error_message = (
             f"No convention registered for the folder of {path}. Known folders: "
             f"{sorted(self.conventions)}."
@@ -197,15 +172,12 @@ class FolderConventions:
             when there is none (the root does not count).
         """
         parts = name.parent.parts
-        matches = [
-            folder
-            for folder in self.conventions
-            if Path(folder).parts
-            and parts[: len(Path(folder).parts)] == Path(folder).parts
-        ]
-        if not matches:
-            return None
-        return max(matches, key=lambda folder: len(Path(folder).parts))
+        return _longest(
+            self.conventions,
+            lambda folder_parts: (
+                bool(folder_parts) and parts[: len(folder_parts)] == folder_parts
+            ),
+        )
 
     def reader(self, path: Path) -> ReadSpecs:
         """
@@ -237,13 +209,11 @@ class FolderConventions:
             LayoutMismatchError: If no convention or more than one convention
                 accepts the array.
         """
-        name = PurePosixPath(str(data_array.name)) if data_array.name else None
-        folder = self._folder_for_name(name) if name is not None else None
-        if name is not None and folder is not None:
-            relative = name.relative_to(PurePosixPath(folder))
+        name = PurePosixPath(str(data_array.name or ""))
+        if folder := self._folder_for_name(name):
+            relative = name.relative_to(PurePosixPath(folder)).as_posix()
             folder, specs = _single_acceptor(
-                {folder: self.conventions[folder]},
-                data_array.rename(relative.as_posix()),
+                {folder: self.conventions[folder]}, data_array.rename(relative)
             )
         else:
             folder, specs = _single_acceptor(self.conventions, data_array)
@@ -271,12 +241,12 @@ class FolderConventions:
             The matching paths, sorted. Folders that do not exist are skipped.
         """
         root = Path(directory)
-        found: list[Path] = []
+        found: set[Path] = set()
         for folder, convention in self.conventions.items():
             target = root / folder
             if target.is_dir():
-                found.extend(_files_of(convention, target))
-        return sorted(set(found))
+                found.update(scan_files(target, partial(accepts_file, convention)))
+        return sorted(found)
 
     def stack(self, dataset: xr.Dataset) -> xr.Dataset:
         """
@@ -318,9 +288,9 @@ class FolderConventions:
         Raises:
             FileNotFoundError: If no file matches.
         """
-        paths = _select_variables(self.files(directory), self.reader, variables)
-        dataset = open_files(paths, self.reader, **open_mfdataset_kwargs)
-        return self.stack(dataset) if stack else dataset
+        return open_convention(
+            self, directory, variables=variables, stack=stack, **open_mfdataset_kwargs
+        )
 
 
 @dataclass(frozen=True)
@@ -394,11 +364,12 @@ class PatternConventions:
         Returns:
             The matching paths, sorted.
         """
-        folder = Path(directory)
-        found: set[Path] = set()
-        for convention in self.conventions:
-            found.update(_files_of(convention, folder))
-        return sorted(found)
+        return scan_files(
+            directory,
+            lambda path: any(
+                accepts_file(convention, path) for convention in self.conventions
+            ),
+        )
 
     def stack(self, dataset: xr.Dataset) -> xr.Dataset:
         """
@@ -436,6 +407,6 @@ class PatternConventions:
         Raises:
             FileNotFoundError: If no file matches.
         """
-        paths = _select_variables(self.files(directory), self.reader, variables)
-        dataset = open_files(paths, self.reader, **open_mfdataset_kwargs)
-        return self.stack(dataset) if stack else dataset
+        return open_convention(
+            self, directory, variables=variables, stack=stack, **open_mfdataset_kwargs
+        )

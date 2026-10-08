@@ -25,6 +25,9 @@ from xarray_binfile.conventions.stacking import (
     split_variables,
     stack_variables,
 )
+from xarray_binfile.conventions.stacking import (
+    coordinate_or_index as _coordinate_or_index,
+)
 from xarray_binfile.read.file_metadata import ReadSpecs
 from xarray_binfile.typing import DTypeLike
 from xarray_binfile.write.file_metadata import WriteSpecs
@@ -102,6 +105,109 @@ def open_files(
     return xr.open_mfdataset(
         paths, engine="binfile", read_specs_getter=reader, **open_mfdataset_kwargs
     )
+
+
+def scan_files(
+    directory: str | os.PathLike[str], accepts: Callable[[Path], bool]
+) -> list[Path]:
+    """
+    List the regular files in ``directory`` that ``accepts`` approves of.
+
+    The cheap name test runs before the ``is_file`` stat, so unrelated files
+    (notes, XDMF indexes, backups) cost nothing more than a regex match.
+
+    Args:
+        directory: The folder to scan (not recursively).
+        accepts: Predicate on the candidate path, usually a filename check.
+
+    Returns:
+        The accepted paths, sorted.
+    """
+    with os.scandir(directory) as entries:
+        return sorted(
+            Path(entry.path)
+            for entry in entries
+            if accepts(Path(entry.path)) and entry.is_file()
+        )
+
+
+def accepts_file(convention: Any, path: Path) -> bool:
+    """
+    Tell whether ``convention`` can decode ``path``, without reading it.
+
+    Shipped conventions answer from the filename alone; any other object
+    following the protocol is asked through its ``reader``.
+
+    Args:
+        convention: A convention.
+        path: The candidate file.
+
+    Returns:
+        True if the convention accepts the file.
+    """
+    if isinstance(convention, _ConventionBase):
+        return convention._accepts(path)
+    try:
+        convention.reader(path)
+    except ValueError:
+        return False
+    return True
+
+
+def select_variables(
+    paths: Iterable[Path], reader: Any, variables: Iterable[str] | None
+) -> list[Path]:
+    """
+    Keep the files whose decoded variable name is wanted.
+
+    Args:
+        paths: Candidate files.
+        reader: The read specs getter, used only to decode the name.
+        variables: Wanted names, or ``None`` to keep everything.
+
+    Returns:
+        The selected paths.
+    """
+    if variables is None:
+        return list(paths)
+    wanted = set(variables)
+    return [path for path in paths if reader(path).name in wanted]
+
+
+def open_convention(
+    convention: Any,
+    directory: str | os.PathLike[str],
+    *,
+    variables: Iterable[str] | None = None,
+    stack: bool = True,
+    **open_mfdataset_kwargs: Any,
+) -> xr.Dataset:
+    """
+    Open every file of ``convention`` in ``directory`` as one lazy dataset.
+
+    This is the single implementation behind the ``open`` method of the
+    shipped conventions and composites: list the files, keep the wanted
+    variables, open them with the ``binfile`` engine and rebuild the stacked
+    arrays.
+
+    Args:
+        convention: A convention exposing ``files``, ``reader`` and ``stack``.
+        directory: The folder holding the files.
+        variables: Optional names to keep, as found on disk (``"ux"``, not
+            ``"u"``); other files are not opened.
+        stack: Whether to rebuild the arrays declared by the stacks.
+        **open_mfdataset_kwargs: Forwarded to :func:`xarray.open_mfdataset`,
+            for example ``chunks={"time": 1}`` or ``parallel=True``.
+
+    Returns:
+        The lazily opened dataset, combined by coordinates.
+
+    Raises:
+        FileNotFoundError: If no file matches.
+    """
+    paths = select_variables(convention.files(directory), convention.reader, variables)
+    dataset = open_files(paths, convention.reader, **open_mfdataset_kwargs)
+    return convention.stack(dataset) if stack else dataset
 
 
 @dataclass(frozen=True)
@@ -183,13 +289,23 @@ class _ConventionBase:
                 name is not listed in ``names``.
         """
         fields = self._pattern.parse(path.name)
-        if self.names is not None and fields["name"] not in self.names:
-            error_message = (
-                f"Variable {fields['name']!r} of {path.name} is not among the "
-                f"names accepted by this convention: {list(self.names)}."
-            )
-            raise ValueError(error_message)
+        self._check_name(fields["name"], ValueError)
         return fields
+
+    def _check_name(self, name: str, error: type[Exception]) -> None:
+        """
+        Raise ``error`` when ``name`` is not among the accepted ``names``.
+
+        Args:
+            name: A bare variable name (no folder prefix).
+            error: The exception class to raise.
+        """
+        if self.names is not None and name not in self.names:
+            error_message = (
+                f"Variable {name!r} is not among the names accepted by this "
+                f"convention: {sorted(self.names)}."
+            )
+            raise error(error_message)
 
     def _accepts(self, path: Path) -> bool:
         """
@@ -223,12 +339,7 @@ class _ConventionBase:
         if self.name_of is not None:
             data_array = data_array.rename(self.name_of(data_array))
         name = _require_name(data_array)
-        if self.names is not None and name.rpartition("/")[2] not in self.names:
-            error_message = (
-                f"Variable {name!r} is not among the names accepted by this "
-                f"convention: {list(self.names)}."
-            )
-            raise LayoutMismatchError(error_message)
+        self._check_name(name.rpartition("/")[2], LayoutMismatchError)
         return data_array
 
     def split(self, data_array: xr.DataArray) -> Iterator[xr.DataArray]:
@@ -266,10 +377,7 @@ class _ConventionBase:
         Returns:
             The matching paths, sorted.
         """
-        folder = Path(directory)
-        return sorted(
-            path for path in folder.iterdir() if path.is_file() and self._accepts(path)
-        )
+        return scan_files(directory, self._accepts)
 
     def open(
         self,
@@ -296,17 +404,70 @@ class _ConventionBase:
         Raises:
             FileNotFoundError: If no file matches.
         """
-        paths = self.files(directory)
-        if variables is not None:
-            wanted = set(variables)
-            paths = [path for path in paths if self._parse(path)["name"] in wanted]
-        dataset = open_files(paths, self.reader, **open_mfdataset_kwargs)
-        return self.stack(dataset) if stack else dataset
+        return open_convention(
+            self, directory, variables=variables, stack=stack, **open_mfdataset_kwargs
+        )
 
-    def reader(self, path: Path) -> ReadSpecs:  # no cov
-        raise NotImplementedError
+    def _extra_coords(self, fields: Mapping[str, Any]) -> dict[str, Any]:
+        """
+        Coordinates decoded from the filename, added on top of the layout.
 
-    def writer(self, data_array: xr.DataArray) -> Iterator[WriteSpecs]:  # no cov
+        Args:
+            fields: The parsed filename fields.
+
+        Returns:
+            Extra single-value coordinates (none for static files).
+        """
+        return {}
+
+    def reader(self, path: Path) -> ReadSpecs:
+        """
+        Build read specs for one file: the layout plus whatever the filename encodes.
+
+        Args:
+            path: Path to the binary file.
+
+        Returns:
+            The metadata required to decode ``path``.
+
+        Raises:
+            ValueError: If the filename does not follow ``pattern`` or its
+                name is not listed in ``names``.
+        """
+        fields = self._parse(path)
+        return ReadSpecs(
+            filepath=path.resolve(),
+            dtype=self.layout.dtype,
+            coords=dict(self.layout.coords) | self._extra_coords(fields),
+            name=fields["name"],
+            order=self.layout.order,
+            coord_attrs=self.layout.coord_attrs,
+        )
+
+    def writer(self, data_array: xr.DataArray) -> Iterator[WriteSpecs]:
+        """
+        Yield the write specs for ``data_array``.
+
+        The array is renamed through ``name_of``, split along every stacked
+        dimension it carries, and each piece goes through :meth:`_write_one`.
+
+        Args:
+            data_array: The array to write, holding the layout dimensions plus
+                any stacked dimension (and the split dimension for time series).
+
+        Yields:
+            One write spec per output file, in on-disk dimension order.
+
+        Raises:
+            LayoutMismatchError: If the array does not fit ``layout``.
+            ValueError: If the array has no name, if a coordinate value or the
+                name cannot be encoded in a filename the reader can parse, or
+                if two values map to one file.
+        """
+        for piece in self.split(self._named(data_array)):
+            yield from self._write_one(piece)
+
+    def _write_one(self, data_array: xr.DataArray) -> Iterator[WriteSpecs]:  # no cov
         raise NotImplementedError
 
 
@@ -330,64 +491,17 @@ class StaticFiles(_ConventionBase):
         ('epsi', ('x', 'y'))
 
     Attributes:
-        layout: Dimension order, coordinates and dtype of each file.
         pattern: Filename pattern declaring ``{name}``. Defaults to ``"{name}.bin"``.
-        check_coords: Whether :meth:`writer` also requires coordinate values to
-            match ``layout``.
-        stacks: Dimensions encoded in the variable names, as :class:`VariableStack` declarations.
-        name_of: Optional hook returning the name to write an array under.
-        names: Optional variable names the convention accepts.
+            The other attributes are shared with every shipped convention: ``layout``,
+            ``check_coords``, ``stacks``, ``name_of`` and ``names``.
     """
 
     pattern: FilenamePattern | str = "{name}.bin"
 
-    def reader(self, path: Path) -> ReadSpecs:
-        """
-        Build read specs for one static file.
-
-        Args:
-            path: Path to the binary file.
-
-        Returns:
-            The metadata required to decode ``path``.
-
-        Raises:
-            ValueError: If the filename does not follow ``pattern`` or its
-                name is not listed in ``names``.
-        """
-        fields = self._parse(path)
-        return ReadSpecs(
-            filepath=path.resolve(),
-            dtype=self.layout.dtype,
-            coords=dict(self.layout.coords),
-            name=str(fields["name"]),
-            order=self.layout.order,
-            coord_attrs=self.layout.coord_attrs,
-        )
-
-    def writer(self, data_array: xr.DataArray) -> Iterator[WriteSpecs]:
-        """
-        Yield the write specs for ``data_array``, one per stacked value.
-
-        Args:
-            data_array: The array to write, holding exactly the layout
-                dimensions plus any stacked dimension.
-
-        Yields:
-            One write spec per output file.
-
-        Raises:
-            LayoutMismatchError: If the array does not fit ``layout``.
-            ValueError: If the array has no name.
-        """
-        for piece in self.split(self._named(data_array)):
-            yield from self._write_one(piece)
-
     def _write_one(self, data_array: xr.DataArray) -> Iterator[WriteSpecs]:
-        name = _require_name(data_array)
         self.layout.validate(data_array, check_coords=self.check_coords)
         yield WriteSpecs(
-            filename=self._pattern.format(name=name),
+            filename=self._pattern.format(name=str(data_array.name)),
             sub_array=self.layout.transpose(data_array),
             dtype=self.layout.dtype,
             order=self.layout.order,
@@ -400,13 +514,6 @@ class _SplitAlongDimension(_ConventionBase):
     Base for conventions writing one file per value of ``time_dim``.
 
     Attributes:
-        layout: Dimension order, coordinates and dtype of each file.
-        pattern: Filename pattern.
-        check_coords: Whether :meth:`writer` also requires coordinate values to
-            match ``layout``.
-        stacks: Dimensions encoded in the variable names, as :class:`VariableStack` declarations.
-        name_of: Optional hook returning the name to write an array under.
-        names: Optional variable names the convention accepts.
         time_dim: Name of the dimension split across files.
         time_dtype: Optional dtype for the ``time_dim`` coordinate on read,
             for example ``np.float32`` to match single-precision data. When
@@ -423,69 +530,27 @@ class _SplitAlongDimension(_ConventionBase):
     def _fields_from_time(self, value: Any) -> dict[str, Any]:
         raise NotImplementedError  # no cov
 
-    def reader(self, path: Path) -> ReadSpecs:
+    def _extra_coords(self, fields: Mapping[str, Any]) -> dict[str, Any]:
         """
-        Build read specs for one file of the sequence.
-
-        The layout coordinates are extended with a single-value ``time_dim``
-        coordinate decoded from the filename.
+        The single-value ``time_dim`` coordinate decoded from the filename.
 
         Args:
-            path: Path to the binary file.
+            fields: The parsed filename fields.
 
         Returns:
-            The metadata required to decode ``path``.
-
-        Raises:
-            ValueError: If the filename does not follow ``pattern`` or its
-                name is not listed in ``names``.
+            ``{time_dim: array([time])}``.
         """
-        fields = self._parse(path)
-        time = np.atleast_1d(
-            np.asarray(self._time_from_fields(fields), dtype=self.time_dtype)
-        )
-        return ReadSpecs(
-            filepath=path.resolve(),
-            dtype=self.layout.dtype,
-            coords=dict(self.layout.coords) | {self.time_dim: time},
-            name=str(fields["name"]),
-            order=self.layout.order,
-            coord_attrs=self.layout.coord_attrs,
-        )
-
-    def writer(self, data_array: xr.DataArray) -> Iterator[WriteSpecs]:
-        """
-        Yield one write spec per value along ``time_dim`` (and per stacked value).
-
-        All filenames of a slice are computed before its first spec is
-        yielded, so collisions are reported before any file is written.
-
-        Args:
-            data_array: The array to write, holding the layout dimensions plus
-                ``time_dim`` and any stacked dimension.
-
-        Yields:
-            One write spec per output file, in on-disk dimension order.
-
-        Raises:
-            LayoutMismatchError: If the array does not fit ``layout``.
-            ValueError: If the array has no name, if a coordinate value or the
-                name cannot be encoded in a filename the reader can parse, or
-                if two values map to one file.
-        """
-        for piece in self.split(self._named(data_array)):
-            yield from self._write_one(piece)
+        time = np.asarray(self._time_from_fields(fields), dtype=self.time_dtype)
+        return {self.time_dim: np.atleast_1d(time)}
 
     def _write_one(self, data_array: xr.DataArray) -> Iterator[WriteSpecs]:
-        name = _require_name(data_array)
+        # All filenames of a slice are computed before its first spec is
+        # yielded, so collisions are reported before any file is written.
+        name = str(data_array.name)
         self.layout.validate(
             data_array, extra_dims=(self.time_dim,), check_coords=self.check_coords
         )
-        values = (
-            data_array[self.time_dim].values
-            if self.time_dim in data_array.coords
-            else np.arange(data_array.sizes[self.time_dim])
-        )
+        values = _coordinate_or_index(data_array, self.time_dim)
         filenames = [
             self._pattern.format(name=name, **self._fields_from_time(value))
             for value in values
@@ -532,14 +597,8 @@ class StepIndexedFiles(_SplitAlongDimension):
         ['ux-0002.bin', 'ux-0003.bin']
 
     Attributes:
-        layout: Dimension order, coordinates and dtype of each file.
         pattern: Filename pattern declaring ``{name}`` and ``{step}``.
             Defaults to ``"{name}-{step:04d}.bin"``.
-        check_coords: Whether :meth:`writer` also requires coordinate values to
-            match ``layout``.
-        stacks: Dimensions encoded in the variable names, as :class:`VariableStack` declarations.
-        name_of: Optional hook returning the name to write an array under.
-        names: Optional variable names the convention accepts.
         time_dim: Name of the dimension split across files. Defaults to ``"time"``.
         time_dtype: Optional dtype for the ``time`` coordinate on read.
         time_step: Interval between consecutive steps. When ``None`` the
@@ -595,14 +654,8 @@ class TimeStampedFiles(_SplitAlongDimension):
         array([0.25])
 
     Attributes:
-        layout: Dimension order, coordinates and dtype of each file.
         pattern: Filename pattern declaring ``{name}`` and ``{time}``.
             Defaults to ``"{name}-{time:.3f}.bin"``.
-        check_coords: Whether :meth:`writer` also requires coordinate values to
-            match ``layout``.
-        stacks: Dimensions encoded in the variable names, as :class:`VariableStack` declarations.
-        name_of: Optional hook returning the name to write an array under.
-        names: Optional variable names the convention accepts.
         time_dim: Name of the dimension split across files. Defaults to ``"time"``.
         time_dtype: Optional dtype for the ``time`` coordinate on read.
     """

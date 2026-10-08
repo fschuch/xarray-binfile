@@ -45,9 +45,8 @@ def _int_regex(width: int, *, exact_width: bool = False) -> str:
     """
     if not width:
         return rf"{_SIGN}\d+"
-    if exact_width:
-        return rf"(?:\d{{{width}}}|[-+]\d{{{max(width - 1, 1)}}})"
-    return rf"(?:\d{{{width},}}|[-+]\d{{{max(width - 1, 1)},}})"
+    bound = "" if exact_width else ","
+    return rf"(?:\d{{{width}{bound}}}|[-+]\d{{{max(width - 1, 1)}{bound}}})"
 
 
 def _float_regex(kind: str, precision: str | None) -> str:
