@@ -150,7 +150,7 @@ opened = convention.open(output_dir)          # stacks by default
 raw = convention.open(output_dir, stack=False)  # ux, uy, uz as on disk
 ```
 
-`values` is required because templates without a separator match almost any name (`pp` fits `"{name}{i}"` as `p` + `p`); it also fixes the order of the stacked coordinate, and writing a coordinate value that is not listed raises. The same declarations work on their own through `VariableStack.stack`, `stack_variables` and `split_variables`. See the [stacked variables tutorial](../tutorials/stacked-variables.ipynb).
+`values` is required because templates without a separator match almost any name (`pp` fits `"{name}{i}"` as `p` + `p`); it also fixes the order of the stacked coordinate, and writing a coordinate value that is not listed raises. On read each value is matched literally, so `vortx` is `vort` + `x`, and `names` (any collection, kept as a `frozenset`) says which base names to reassemble; without it, a group needs at least two components, so a lone `vorticity` is not read as `vorticit` + `y`. Writing always splits an array carrying the dimension, whatever its name. The same declarations work on their own through `VariableStack.stack`, `stack_variables` and `split_variables`. See the [stacked variables tutorial](../tutorials/stacked-variables.ipynb).
 
 ### Mixed conventions in one folder
 

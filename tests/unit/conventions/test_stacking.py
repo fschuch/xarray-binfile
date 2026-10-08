@@ -147,3 +147,38 @@ def test_stack_attaches_attrs_to_the_new_coordinate(dataset):
 
     assert stacked["i"].attrs == {"long_name": "component"}
     assert VELOCITY.stack(dataset)["i"].attrs == {}
+
+
+class TestLongNames:
+    """Adjacent string fields: the value must be matched literally, not lazily."""
+
+    def test_stacks_multi_letter_base_names(self):
+        ds = xr.Dataset(
+            {
+                name: ("x", np.zeros(2))
+                for name in ("vortx", "vorty", "vortz", "vorticity")
+            }
+        )
+
+        stacked = VariableStack("i", "{name}{i}", values=("x", "y", "z")).stack(ds)
+
+        assert sorted(stacked.data_vars) == ["vort", "vorticity"]
+        assert stacked["i"].values.tolist() == ["x", "y", "z"]
+
+    def test_stacks_zero_filled_integers(self):
+        ds = xr.Dataset(
+            {name: ("x", np.zeros(2)) for name in ("phi01", "phi02", "phi1")}
+        )
+
+        stacked = VariableStack("n", "{name}{n:02d}", values=range(1, 10)).stack(ds)
+
+        assert sorted(stacked.data_vars) == ["phi", "phi1"]
+        assert stacked["n"].values.tolist() == [1, 2]
+
+    def test_names_accept_any_collection_and_are_a_frozenset(self):
+        stack = VariableStack("i", "{name}{i}", values=("x", "y"), names={"u", "vort"})
+
+        assert stack.names == frozenset({"u", "vort"})
+        assert VariableStack(
+            "i", "{name}{i}", values=("x",), names=["u"]
+        ).names == frozenset({"u"})

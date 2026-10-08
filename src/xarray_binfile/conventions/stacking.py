@@ -10,8 +10,9 @@ slices on write, and to :meth:`~VariableStack.stack` the variables back into
 one array on read.
 """
 
+import re
 import string
-from collections.abc import Iterator, Mapping, Sequence
+from collections.abc import Collection, Iterator, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
 
@@ -67,8 +68,11 @@ class VariableStack:
             file written can be stacked back. Required because templates
             without a separator match almost any name (``pp`` fits
             ``"{name}{i}"`` as ``p`` + ``p``).
-        names: Optional base names to restrict stacking to (``("u",)``).
-            When ``None``, every group of matching variables is stacked.
+        names: Optional base names to restrict stacking to (``{"u"}``), any
+            collection, kept as a ``frozenset``. When ``None``, every group of
+            at least two matching variables is stacked (a lone ``vorticity``
+            is not read as ``vorticit`` + ``y``); listed names are stacked even
+            from a single component.
         attrs: Optional attributes attached to the ``dim`` coordinate when
             stacking (for example ``{"long_name": "velocity component"}``).
     """
@@ -76,7 +80,7 @@ class VariableStack:
     dim: str
     template: str
     values: Sequence[Any]
-    names: Sequence[str] | None = None
+    names: Collection[str] | None = None
     attrs: Mapping[str, Any] | None = None
 
     def __post_init__(self) -> None:
@@ -99,17 +103,40 @@ class VariableStack:
             raise ValueError(error_message)
         object.__setattr__(self, "values", values)
         if self.names is not None:
-            object.__setattr__(self, "names", tuple(self.names))
+            object.__setattr__(self, "names", frozenset(self.names))
 
     @property
     def pattern(self) -> FilenamePattern:
         """
-        The template as a :class:`FilenamePattern`, for parsing variable names.
+        The template as a :class:`FilenamePattern`, for formatting variable names.
 
         Returns:
             The pattern.
         """
         return FilenamePattern(self.template)
+
+    def _matchers(self) -> list[tuple[Any, re.Pattern[str]]]:
+        """
+        One regular expression per allowed value, with the value spelled out.
+
+        ``{name}`` and ``{dim}`` are usually adjacent (``"{name}{i}"``), so a
+        generic pattern cannot tell where the name ends; matching the value
+        literally (``vort`` + ``x``) removes the ambiguity.
+
+        Returns:
+            Pairs of value and compiled pattern capturing ``name``.
+        """
+        matchers = []
+        for value in self.values:
+            parts = []
+            for literal, field_name, spec, _ in string.Formatter().parse(self.template):
+                parts.append(re.escape(literal))
+                if field_name == "name":
+                    parts.append(r"(?P<name>\w+)")
+                elif field_name == self.dim:
+                    parts.append(re.escape(format(value, spec or "")))
+            matchers.append((value, re.compile("".join(parts))))
+        return matchers
 
     def split(self, data_array: xr.DataArray) -> Iterator[xr.DataArray]:
         """
@@ -176,21 +203,24 @@ class VariableStack:
         Returns:
             A new dataset where each group is replaced by its stacked array.
         """
-        pattern = self.pattern
+        matchers = self._matchers()
         groups: dict[str, dict[Any, str]] = {}
         for variable in map(str, dataset.data_vars):
-            if not pattern.matches(variable):
-                continue
-            fields = pattern.parse(variable)
-            name, value = str(fields["name"]), fields[self.dim]
-            if value not in self.values:
-                continue
-            if self.names is not None and name not in self.names:
-                continue
-            groups.setdefault(name, {})[value] = variable
+            for value, matcher in matchers:
+                match = matcher.fullmatch(variable)
+                if match is None:
+                    continue
+                name = match.group("name")
+                if self.names is None or name in self.names:
+                    groups.setdefault(name, {})[value] = variable
+                break
 
         result = dataset
         for name, members in groups.items():
+            if self.names is None and len(members) < 2:
+                # Without an explicit list of names, a lone match such as
+                # ``vorticity`` (``vorticit`` + ``y``) is not a split field.
+                continue
             found = [value for value in self.values if value in members]
             stacked = xr.concat(
                 [dataset[members[value]] for value in found],
