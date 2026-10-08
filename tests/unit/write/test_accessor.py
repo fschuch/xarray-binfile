@@ -196,3 +196,34 @@ def test_to_file_cleans_temporary_file_when_move_fails(
         data_array.binary_engine.to_file(whole_array_writer, tmp_path)
 
     assert list(tmp_path.iterdir()) == []
+
+
+def fortran_writer(data_array: xr.DataArray):
+    yield WriteSpecs(filename=f"{data_array.name}.bin", sub_array=data_array, order="F")
+
+
+def test_to_file_writes_fortran_order(tmp_path, data_array):
+    data_array.binary_engine.to_file(fortran_writer, tmp_path)
+
+    written = np.fromfile(tmp_path / "ux.bin", dtype=np.float64)
+    np.testing.assert_array_equal(written, data_array.values.ravel(order="F"))
+    np.testing.assert_array_equal(
+        written.reshape(data_array.shape, order="F"), data_array.values
+    )
+
+
+def test_to_file_reports_progress(tmp_path, data_array):
+    seen = []
+
+    def progress(specs):
+        for spec in specs:
+            seen.append(spec.filename)
+            yield spec
+
+    data_array.binary_engine.to_file(whole_array_writer, tmp_path, progress=progress)
+    data_array.to_dataset().binary_engine.to_file(
+        whole_array_writer, tmp_path, progress=progress
+    )
+
+    assert seen == ["ux.bin", "ux.bin"]
+    assert (tmp_path / "ux.bin").exists()

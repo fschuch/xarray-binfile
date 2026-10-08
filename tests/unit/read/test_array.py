@@ -176,3 +176,85 @@ class TestArrayBenchmark:
 
         result = benchmark(helper)
         assert np.array_equal(result, write_array)
+
+
+class TestMemoryOrder:
+    @pytest.fixture
+    def fortran_file(self, tmp_path):
+        values = np.arange(24, dtype=np.float32).reshape(2, 3, 4)
+        file_path = tmp_path / "ux.bin"
+        np.asfortranarray(values).ravel(order="F").tofile(file_path)
+        return file_path, values
+
+    def _specs(self, file_path, order):
+        return ReadSpecs(
+            filepath=file_path,
+            dtype=np.float32,
+            coords={"x": range(2), "y": range(3), "z": range(4)},
+            name="ux",
+            order=order,
+        )
+
+    def test_whole_read_honours_fortran_order(self, fortran_file):
+        file_path, values = fortran_file
+        dataset = BinaryEngineBackendArray(
+            self._specs(file_path, "F")
+        ).get_xarray_dataset()
+
+        np.testing.assert_array_equal(dataset["ux"].values, values)
+
+    def test_sliced_read_honours_fortran_order(self, fortran_file):
+        file_path, values = fortran_file
+        dataset = BinaryEngineBackendArray(
+            self._specs(file_path, "F")
+        ).get_xarray_dataset()
+
+        np.testing.assert_array_equal(
+            dataset["ux"].isel(x=1, z=slice(1, 3)).values, values[1, :, 1:3]
+        )
+
+    def test_c_order_reads_the_same_bytes_with_reversed_dims(self, fortran_file):
+        file_path, values = fortran_file
+        specs = ReadSpecs(
+            filepath=file_path,
+            dtype=np.float32,
+            coords={"z": range(4), "y": range(3), "x": range(2)},
+            name="ux",
+        )
+        dataset = BinaryEngineBackendArray(specs).get_xarray_dataset()
+
+        np.testing.assert_array_equal(dataset["ux"].transpose("x", "y", "z"), values)
+
+
+def test_coord_attrs_are_attached(tmp_path):
+    file_path = tmp_path / "ux.bin"
+    np.zeros((2, 3), dtype=np.float32).tofile(file_path)
+    specs = ReadSpecs(
+        filepath=file_path,
+        dtype=np.float32,
+        coords={"x": range(2), "y": range(3)},
+        name="ux",
+        coord_attrs={"x": {"units": "m", "long_name": "streamwise"}},
+    )
+
+    dataset = BinaryEngineBackendArray(specs).get_xarray_dataset()
+
+    assert dataset["x"].attrs == {"units": "m", "long_name": "streamwise"}
+    assert dataset["y"].attrs == {}
+
+
+def test_coord_attrs_ignore_coordinates_the_file_does_not_have(tmp_path):
+    file_path = tmp_path / "epsi.bin"
+    np.zeros((2, 3), dtype=np.float32).tofile(file_path)
+    specs = ReadSpecs(
+        filepath=file_path,
+        dtype=np.float32,
+        coords={"x": range(2), "y": range(3)},
+        name="epsi",
+        coord_attrs={"x": {"units": "m"}, "time": {"units": "s"}},
+    )
+
+    dataset = BinaryEngineBackendArray(specs).get_xarray_dataset()
+
+    assert dataset["x"].attrs == {"units": "m"}
+    assert "time" not in dataset.coords

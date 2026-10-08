@@ -141,7 +141,7 @@ class BinaryEngineBackendArray(BackendArray):
         """
         return np.fromfile(
             file, dtype=self.metadata.dtype, count=np.prod(self.metadata.shape)
-        ).reshape(self.metadata.shape)
+        ).reshape(self.metadata.shape, order=self.metadata.order)
 
     def _wrap_numpy_memmap(
         self, file, key: tuple[slice | int, ...]
@@ -161,7 +161,7 @@ class BinaryEngineBackendArray(BackendArray):
             dtype=self.metadata.dtype,
             mode="r",
             shape=self.metadata.shape,
-            order="C",
+            order=self.metadata.order,
         )
         return np.asarray(memory_map[key])  # ensure we actually read the data
 
@@ -189,7 +189,7 @@ class BinaryEngineBackendArray(BackendArray):
         Returns:
             The Xarray Dataset representation of the backend array.
         """
-        return xr.Dataset(
+        dataset = xr.Dataset(
             data_vars={
                 self.metadata.name: (
                     self.metadata.dims,
@@ -199,3 +199,7 @@ class BinaryEngineBackendArray(BackendArray):
             coords=self.metadata.coords,
             attrs=self.metadata.attrs,
         )
+        for coord, attrs in (self.metadata.coord_attrs or {}).items():
+            if coord in dataset.coords:
+                dataset[coord].attrs.update(attrs)
+        return dataset

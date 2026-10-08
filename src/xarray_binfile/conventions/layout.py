@@ -9,7 +9,7 @@ from functools import cached_property
 import numpy as np
 import xarray as xr
 
-from xarray_binfile.typing import ArrayLike, DTypeLike
+from xarray_binfile.typing import ArrayLike, AttributesLike, DTypeLike, MemoryOrder
 
 
 class LayoutMismatchError(ValueError):
@@ -27,13 +27,26 @@ class Layout:
     do not match them instead of guessing.
 
     Attributes:
-        coords: Mapping of dimension name to coordinate values, in on-disk order.
+        coords: Mapping of dimension name to coordinate values, in the order
+            the dimensions are declared. Which of them varies fastest on disk
+            is set by ``order``.
         dtype: On-disk data type. Be explicit about byte order when files move
             between machines (for example ``"<f4"``).
+        order: Memory layout of each file. ``"C"`` (default) means the last
+            dimension in ``coords`` varies fastest, as NumPy's ``tofile`` and
+            C programs write. ``"F"`` means the first dimension varies
+            fastest, as Fortran programs (2DECOMP&FFT, Xcompact3d) write.
+            ``Layout({"x": x, "y": y, "z": z}, order="F")`` describes the
+            same bytes as ``Layout({"z": z, "y": y, "x": x})``; pick the one
+            that keeps your dimension names in their natural order.
+        coord_attrs: Optional attributes attached to each coordinate on read,
+            keyed by dimension name (for example ``{"x": {"units": "m"}}``).
     """
 
     coords: Mapping[str, ArrayLike]
     dtype: DTypeLike = np.float64
+    order: MemoryOrder = "C"
+    coord_attrs: Mapping[str, AttributesLike] | None = None
 
     @cached_property
     def dims(self) -> tuple[str, ...]:
