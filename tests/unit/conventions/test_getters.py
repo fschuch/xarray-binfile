@@ -460,3 +460,37 @@ class TestNames:
 
         assert [p.name for p in conventions.files(directory)] == ["epsilon", "pp"]
         assert conventions.reader(directory / "pp").name == "pp"
+
+
+class TestReviewFixes:
+    def test_names_must_be_a_collection_not_a_str(self):
+        with pytest.raises(TypeError, match="collection of names"):
+            StepIndexedFiles(LAYOUT, names="ux")
+
+    def test_name_of_file_parses_without_building_specs(self, monkeypatch):
+        convention = StepIndexedFiles(LAYOUT)
+        monkeypatch.setattr(
+            type(convention), "reader", lambda *a: pytest.fail("reader called")
+        )
+
+        assert convention.name_of_file(pathlib.Path("ux-0007.bin")) == "ux"
+
+    def test_open_selects_variables_without_calling_reader_twice(
+        self, tmp_path, monkeypatch
+    ):
+        import xarray_binfile  # noqa: F401  (registers the accessors)
+
+        convention = StepIndexedFiles(LAYOUT)
+        for name in ("ux", "uy"):
+            _array([0]).rename(name).binary_engine.to_file(convention.writer, tmp_path)
+        calls = []
+        original = type(convention).reader
+        monkeypatch.setattr(
+            type(convention),
+            "reader",
+            lambda self, path: calls.append(path) or original(self, path),
+        )
+
+        convention.open(tmp_path, variables=["uy"])
+
+        assert [p.name for p in calls] == ["uy-0000.bin"]

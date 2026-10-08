@@ -84,12 +84,15 @@ class VariableStack:
             without a separator match almost any name (``pp`` fits
             ``"{name}{i}"`` as ``p`` + ``p``).
         names: Optional base names to restrict stacking to (``{"u"}``), any
-            collection, kept as a ``frozenset``. When ``None``, every group of
-            at least two matching variables is stacked (a lone ``vorticity``
-            is not read as ``vorticit`` + ``y``); listed names are stacked even
-            from a single component.
+            collection (not a bare string), kept as a ``frozenset``. When
+            ``None``, every group of at least ``min_components`` matching
+            variables is stacked.
         attrs: Optional attributes attached to the ``dim`` coordinate when
             stacking (for example ``{"long_name": "velocity component"}``).
+        min_components: How many components a group needs before it is
+            stacked. Defaults to 1 when ``names`` lists the fields explicitly
+            and to 2 otherwise, so that a lone ``vorticity`` is not read as
+            ``vorticit`` + ``y`` when guessing.
     """
 
     dim: str
@@ -97,6 +100,7 @@ class VariableStack:
     values: Sequence[Any]
     names: Collection[str] | None = None
     attrs: Mapping[str, Any] | None = None
+    min_components: int | None = None
 
     def __post_init__(self) -> None:
         """
@@ -105,6 +109,7 @@ class VariableStack:
         Raises:
             ValueError: If ``template`` does not declare exactly ``{name}``
                 and ``{dim}``, or if ``values`` is empty.
+            TypeError: If ``names`` is a bare string.
         """
         if _template_fields(self.template) != {"name", self.dim}:
             error_message = (
@@ -117,8 +122,17 @@ class VariableStack:
             error_message = f"VariableStack for {self.dim!r} needs at least one value."
             raise ValueError(error_message)
         object.__setattr__(self, "values", values)
+        if isinstance(self.names, str):
+            error_message = (
+                f"names must be a collection of names, not the string {self.names!r}."
+            )
+            raise TypeError(error_message)
         if self.names is not None:
             object.__setattr__(self, "names", frozenset(self.names))
+        if self.min_components is None:
+            object.__setattr__(
+                self, "min_components", 1 if self.names is not None else 2
+            )
 
     @cached_property
     def _matchers(self) -> tuple[tuple[Any, re.Pattern[str]], ...]:
@@ -202,6 +216,10 @@ class VariableStack:
 
         Returns:
             A new dataset where each group is replaced by its stacked array.
+
+        Raises:
+            ValueError: If a group's base name is already a variable of the
+                dataset, which would silently overwrite it.
         """
         groups: dict[str, dict[Any, str]] = {}
         for variable in map(str, dataset.data_vars):
@@ -217,10 +235,15 @@ class VariableStack:
         to_drop: list[str] = []
         stacked: dict[str, xr.DataArray] = {}
         for name, members in groups.items():
-            if self.names is None and len(members) < 2:
-                # Without an explicit list of names, a lone match such as
-                # ``vorticity`` (``vorticit`` + ``y``) is not a split field.
+            if len(members) < (self.min_components or 0):
                 continue
+            if name in dataset.variables:
+                error_message = (
+                    f"Cannot stack {sorted(members.values())} into {name!r}: a variable "
+                    f"{name!r} already exists in the dataset. Rename it, restrict "
+                    "``names``, or open with stack=False."
+                )
+                raise ValueError(error_message)
             found = [value for value in self.values if value in members]
             stacked[name] = xr.concat(
                 [dataset[members[value]] for value in found],

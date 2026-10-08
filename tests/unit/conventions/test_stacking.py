@@ -182,3 +182,31 @@ class TestLongNames:
         assert VariableStack(
             "i", "{name}{i}", values=("x",), names=["u"]
         ).names == frozenset({"u"})
+
+
+class TestReviewFixes:
+    def test_stack_refuses_to_overwrite_an_existing_variable(self):
+        ds = xr.Dataset({name: ("x", np.zeros(2)) for name in ("pp", "ppx", "ppy")})
+
+        with pytest.raises(ValueError, match="'pp' already exists"):
+            VariableStack("i", "{name}{i}", values=("x", "y", "z")).stack(ds)
+
+    def test_names_must_be_a_collection_not_a_str(self):
+        with pytest.raises(TypeError, match="collection of names"):
+            VariableStack("i", "{name}{i}", values=("x",), names="vort")
+
+    def test_min_components_is_explicit(self, dataset):
+        single = dataset[["ux"]]
+        guessing = VariableStack("i", "{name}{i}", values=("x", "y", "z"))
+        eager = VariableStack(
+            "i", "{name}{i}", values=("x", "y", "z"), min_components=1
+        )
+
+        assert guessing.min_components == 2
+        assert VELOCITY.min_components == 2
+        assert (
+            VariableStack("i", "{name}{i}", values=("x",), names={"u"}).min_components
+            == 1
+        )
+        assert sorted(guessing.stack(single).data_vars) == ["ux"]
+        assert sorted(eager.stack(single).data_vars) == ["u"]

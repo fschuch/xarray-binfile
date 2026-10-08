@@ -5,6 +5,7 @@ Start from the convention closest to your project's naming scheme, or copy one
 and adapt it when none fits.
 """
 
+from xarray_binfile.conventions.base import Convention
 from xarray_binfile.conventions.filename_pattern import FilenamePattern
 from xarray_binfile.conventions.folders import FolderConventions, PatternConventions
 from xarray_binfile.conventions.getters import (
@@ -21,6 +22,7 @@ from xarray_binfile.conventions.stacking import (
 )
 
 __all__ = [
+    "Convention",
     "ConventionProtocol",
     "FilenamePattern",
     "FolderConventions",

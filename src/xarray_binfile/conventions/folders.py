@@ -5,14 +5,12 @@ Compose several conventions, by the folder their files live in or by filename.
 import os
 from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
 from dataclasses import dataclass
-from functools import partial
 from itertools import chain
 from pathlib import Path, PurePosixPath
-from typing import Any
 
 import xarray as xr
 
-from xarray_binfile.conventions.getters import accepts_file, open_convention, scan_files
+from xarray_binfile.conventions.base import Convention, scan_files
 from xarray_binfile.conventions.layout import LayoutMismatchError
 from xarray_binfile.conventions.protocol import ConventionProtocol
 from xarray_binfile.read.file_metadata import ReadSpecs
@@ -44,6 +42,10 @@ def _single_acceptor(
     """
     Offer ``data_array`` to every convention and require exactly one to accept it.
 
+    A convention that accepts the array but has nothing to write (an empty
+    split dimension) does not make the choice ambiguous: it is used only when
+    no other convention produces files.
+
     Args:
         candidates: Conventions keyed by a label used in error messages.
         data_array: The array to write.
@@ -55,7 +57,8 @@ def _single_acceptor(
         LayoutMismatchError: If no convention or more than one convention
             accepts the array.
     """
-    accepted: list[tuple[str, Iterator[WriteSpecs]]] = []
+    producing: list[tuple[str, Iterator[WriteSpecs]]] = []
+    empty: list[tuple[str, Iterator[WriteSpecs]]] = []
     rejections: list[str] = []
     for label, convention in candidates.items():
         specs = iter(convention.writer(data_array))
@@ -64,37 +67,20 @@ def _single_acceptor(
         except LayoutMismatchError as err:
             rejections.append(f"{label!r}: {err}")
         except StopIteration:
-            accepted.append((label, iter(())))
+            empty.append((label, iter(())))
         else:
-            accepted.append((label, chain([first], specs)))
-    if len(accepted) != 1:
-        status = (
-            "No convention accepts" if not accepted else "Several conventions accept"
-        )
-        error_message = (
-            f"{status} the array {data_array.name!r} with dims "
-            f"{tuple(data_array.dims)}. Accepted by: "
-            f"{[label for label, _ in accepted]}. Rejected by: {rejections}."
-        )
-        raise LayoutMismatchError(error_message)
-    return accepted[0]
-
-
-def _stack_with(conventions: Iterable[Any], dataset: xr.Dataset) -> xr.Dataset:
-    """
-    Apply the ``stack`` method of every member convention that has one.
-
-    Args:
-        conventions: The member conventions.
-        dataset: The dataset to stack.
-
-    Returns:
-        The stacked dataset.
-    """
-    for convention in conventions:
-        if hasattr(convention, "stack"):
-            dataset = convention.stack(dataset)
-    return dataset
+            producing.append((label, chain([first], specs)))
+    if len(producing) == 1:
+        return producing[0]
+    if not producing and empty:
+        return empty[0]
+    status = "No convention accepts" if not producing else "Several conventions accept"
+    error_message = (
+        f"{status} the array {data_array.name!r} with dims "
+        f"{tuple(data_array.dims)}. Accepted by: "
+        f"{[label for label, _ in producing]}. Rejected by: {rejections}."
+    )
+    raise LayoutMismatchError(error_message)
 
 
 def _longest(
@@ -119,7 +105,7 @@ def _longest(
 
 
 @dataclass(frozen=True)
-class FolderConventions:
+class FolderConventions(Convention):
     """
     Dispatch to one convention per sub-folder.
 
@@ -143,6 +129,16 @@ class FolderConventions:
     """
 
     conventions: Mapping[str, ConventionProtocol]
+
+    def __post_init__(self) -> None:
+        """Give every member the :class:`Convention` defaults."""
+        adapted = {
+            folder: Convention.adapt(c) for folder, c in self.conventions.items()
+        }
+        object.__setattr__(self, "conventions", adapted)
+
+    def _member(self, folder: str) -> Convention:
+        return Convention.adapt(self.conventions[folder])
 
     def _folder_of(self, path: Path) -> str:
         # Most specific (longest) folder wins, so "snapshots/3d" is preferred
@@ -192,7 +188,23 @@ class FolderConventions:
         Raises:
             ValueError: If no convention is registered for the file's folder.
         """
-        return self.conventions[self._folder_of(path)].reader(path)
+        return self._member(self._folder_of(path)).reader(path)
+
+    def name_of_file(self, path: Path) -> str:
+        """
+        The variable name of ``path``, decoded by the convention of its folder.
+
+        Args:
+            path: Path to the binary file.
+
+        Returns:
+            The decoded name.
+
+        Raises:
+            ValueError: If no convention is registered for the file's folder,
+                or if that convention rejects the file.
+        """
+        return self._member(self._folder_of(path)).name_of_file(path)
 
     def writer(self, data_array: xr.DataArray) -> Iterator[WriteSpecs]:
         """
@@ -209,7 +221,7 @@ class FolderConventions:
             LayoutMismatchError: If no convention or more than one convention
                 accepts the array.
         """
-        name = PurePosixPath(str(data_array.name or ""))
+        name = PurePosixPath("" if data_array.name is None else str(data_array.name))
         if folder := self._folder_for_name(name):
             relative = name.relative_to(PurePosixPath(folder)).as_posix()
             folder, specs = _single_acceptor(
@@ -242,10 +254,10 @@ class FolderConventions:
         """
         root = Path(directory)
         found: set[Path] = set()
-        for folder, convention in self.conventions.items():
+        for folder in self.conventions:
             target = root / folder
             if target.is_dir():
-                found.update(scan_files(target, partial(accepts_file, convention)))
+                found.update(scan_files(target, self._member(folder).accepts))
         return sorted(found)
 
     def stack(self, dataset: xr.Dataset) -> xr.Dataset:
@@ -258,43 +270,13 @@ class FolderConventions:
         Returns:
             The stacked dataset.
         """
-        return _stack_with(self.conventions.values(), dataset)
-
-    def open(
-        self,
-        directory: str | os.PathLike[str],
-        *,
-        variables: Iterable[str] | None = None,
-        stack: bool = True,
-        **open_mfdataset_kwargs: Any,
-    ) -> xr.Dataset:
-        """
-        Open every file of every registered folder as one lazy dataset.
-
-        Files are combined by coordinates, so the folders must hold variables
-        that fit together in one dataset (for example the same mesh in each).
-        Open folders separately when their layouts conflict.
-
-        Args:
-            directory: The dataset root.
-            variables: Optional names to keep, as found on disk; other files
-                are not opened.
-            stack: Whether to rebuild the arrays declared by the members' stacks.
-            **open_mfdataset_kwargs: Forwarded to :func:`xarray.open_mfdataset`.
-
-        Returns:
-            The lazily opened dataset.
-
-        Raises:
-            FileNotFoundError: If no file matches.
-        """
-        return open_convention(
-            self, directory, variables=variables, stack=stack, **open_mfdataset_kwargs
-        )
+        for folder in self.conventions:
+            dataset = self._member(folder).stack(dataset)
+        return dataset
 
 
 @dataclass(frozen=True)
-class PatternConventions:
+class PatternConventions(Convention):
     """
     Dispatch to the first convention whose filename pattern matches.
 
@@ -310,6 +292,37 @@ class PatternConventions:
     """
 
     conventions: Sequence[ConventionProtocol]
+
+    def __post_init__(self) -> None:
+        """Give every member the :class:`Convention` defaults."""
+        members = tuple(Convention.adapt(c) for c in self.conventions)
+        object.__setattr__(self, "conventions", members)
+
+    @property
+    def _members(self) -> tuple[Convention, ...]:
+        return tuple(Convention.adapt(c) for c in self.conventions)
+
+    def name_of_file(self, path: Path) -> str:
+        """
+        The variable name of ``path``, from the first member accepting it.
+
+        Args:
+            path: Path to the binary file.
+
+        Returns:
+            The decoded name.
+
+        Raises:
+            ValueError: If no member accepts the file.
+        """
+        errors: list[str] = []
+        for member in self._members:
+            try:
+                return member.name_of_file(path)
+            except ValueError as err:
+                errors.append(str(err))
+        error_message = f"No convention accepts the file {path}: {errors}"
+        raise ValueError(error_message)
 
     def reader(self, path: Path) -> ReadSpecs:
         """
@@ -364,12 +377,8 @@ class PatternConventions:
         Returns:
             The matching paths, sorted.
         """
-        return scan_files(
-            directory,
-            lambda path: any(
-                accepts_file(convention, path) for convention in self.conventions
-            ),
-        )
+        members = self._members
+        return scan_files(directory, lambda path: any(m.accepts(path) for m in members))
 
     def stack(self, dataset: xr.Dataset) -> xr.Dataset:
         """
@@ -381,32 +390,6 @@ class PatternConventions:
         Returns:
             The stacked dataset.
         """
-        return _stack_with(self.conventions, dataset)
-
-    def open(
-        self,
-        directory: str | os.PathLike[str],
-        *,
-        variables: Iterable[str] | None = None,
-        stack: bool = True,
-        **open_mfdataset_kwargs: Any,
-    ) -> xr.Dataset:
-        """
-        Open every file in ``directory`` accepted by the conventions as one lazy dataset.
-
-        Args:
-            directory: The folder holding the files.
-            variables: Optional names to keep, as found on disk; other files
-                are not opened.
-            stack: Whether to rebuild the arrays declared by the members' stacks.
-            **open_mfdataset_kwargs: Forwarded to :func:`xarray.open_mfdataset`.
-
-        Returns:
-            The lazily opened dataset.
-
-        Raises:
-            FileNotFoundError: If no file matches.
-        """
-        return open_convention(
-            self, directory, variables=variables, stack=stack, **open_mfdataset_kwargs
-        )
+        for member in self._members:
+            dataset = member.stack(dataset)
+        return dataset

@@ -8,9 +8,8 @@ convention, copy the closest class and change only what differs.
 """
 
 import math
-import os
 from collections import Counter
-from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
+from collections.abc import Callable, Collection, Iterator, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, ClassVar
@@ -18,6 +17,7 @@ from typing import Any, ClassVar
 import numpy as np
 import xarray as xr
 
+from xarray_binfile.conventions.base import Convention
 from xarray_binfile.conventions.filename_pattern import FilenamePattern
 from xarray_binfile.conventions.layout import Layout, LayoutMismatchError
 from xarray_binfile.conventions.stacking import (
@@ -77,141 +77,8 @@ def _require_unique(filenames: list[str]) -> None:
         raise ValueError(error_message)
 
 
-def open_files(
-    paths: Iterable[Path], reader: Any, **open_mfdataset_kwargs: Any
-) -> xr.Dataset:
-    """
-    Open binary files as one lazy dataset with the ``binfile`` engine.
-
-    Thin wrapper over :func:`xarray.open_mfdataset` that fills in the engine
-    and the read specs getter, so conventions can offer an ``open`` method.
-
-    Args:
-        paths: The files to open.
-        reader: The read specs getter to decode them.
-        **open_mfdataset_kwargs: Forwarded to :func:`xarray.open_mfdataset`,
-            for example ``chunks`` or ``parallel``.
-
-    Returns:
-        The lazily opened dataset.
-
-    Raises:
-        FileNotFoundError: If ``paths`` is empty.
-    """
-    paths = sorted(paths)
-    if not paths:
-        error_message = "No file matches the convention; nothing to open."
-        raise FileNotFoundError(error_message)
-    return xr.open_mfdataset(
-        paths, engine="binfile", read_specs_getter=reader, **open_mfdataset_kwargs
-    )
-
-
-def scan_files(
-    directory: str | os.PathLike[str], accepts: Callable[[Path], bool]
-) -> list[Path]:
-    """
-    List the regular files in ``directory`` that ``accepts`` approves of.
-
-    The cheap name test runs before the ``is_file`` stat, so unrelated files
-    (notes, XDMF indexes, backups) cost nothing more than a regex match.
-
-    Args:
-        directory: The folder to scan (not recursively).
-        accepts: Predicate on the candidate path, usually a filename check.
-
-    Returns:
-        The accepted paths, sorted.
-    """
-    with os.scandir(directory) as entries:
-        return sorted(
-            Path(entry.path)
-            for entry in entries
-            if accepts(Path(entry.path)) and entry.is_file()
-        )
-
-
-def accepts_file(convention: Any, path: Path) -> bool:
-    """
-    Tell whether ``convention`` can decode ``path``, without reading it.
-
-    Shipped conventions answer from the filename alone; any other object
-    following the protocol is asked through its ``reader``.
-
-    Args:
-        convention: A convention.
-        path: The candidate file.
-
-    Returns:
-        True if the convention accepts the file.
-    """
-    if isinstance(convention, _ConventionBase):
-        return convention._accepts(path)
-    try:
-        convention.reader(path)
-    except ValueError:
-        return False
-    return True
-
-
-def select_variables(
-    paths: Iterable[Path], reader: Any, variables: Iterable[str] | None
-) -> list[Path]:
-    """
-    Keep the files whose decoded variable name is wanted.
-
-    Args:
-        paths: Candidate files.
-        reader: The read specs getter, used only to decode the name.
-        variables: Wanted names, or ``None`` to keep everything.
-
-    Returns:
-        The selected paths.
-    """
-    if variables is None:
-        return list(paths)
-    wanted = set(variables)
-    return [path for path in paths if reader(path).name in wanted]
-
-
-def open_convention(
-    convention: Any,
-    directory: str | os.PathLike[str],
-    *,
-    variables: Iterable[str] | None = None,
-    stack: bool = True,
-    **open_mfdataset_kwargs: Any,
-) -> xr.Dataset:
-    """
-    Open every file of ``convention`` in ``directory`` as one lazy dataset.
-
-    This is the single implementation behind the ``open`` method of the
-    shipped conventions and composites: list the files, keep the wanted
-    variables, open them with the ``binfile`` engine and rebuild the stacked
-    arrays.
-
-    Args:
-        convention: A convention exposing ``files``, ``reader`` and ``stack``.
-        directory: The folder holding the files.
-        variables: Optional names to keep, as found on disk (``"ux"``, not
-            ``"u"``); other files are not opened.
-        stack: Whether to rebuild the arrays declared by the stacks.
-        **open_mfdataset_kwargs: Forwarded to :func:`xarray.open_mfdataset`,
-            for example ``chunks={"time": 1}`` or ``parallel=True``.
-
-    Returns:
-        The lazily opened dataset, combined by coordinates.
-
-    Raises:
-        FileNotFoundError: If no file matches.
-    """
-    paths = select_variables(convention.files(directory), convention.reader, variables)
-    dataset = open_files(paths, convention.reader, **open_mfdataset_kwargs)
-    return convention.stack(dataset) if stack else dataset
-
-
 @dataclass(frozen=True)
-class _ConventionBase:
+class _ConventionBase(Convention):
     """
     Shared plumbing for the shipped conventions.
 
@@ -244,7 +111,7 @@ class _ConventionBase:
     check_coords: bool = True
     stacks: Sequence[VariableStack] = ()
     name_of: Callable[[xr.DataArray], str] | None = None
-    names: Sequence[str] | None = None
+    names: Collection[str] | None = None
 
     _required_fields: ClassVar[frozenset[str]] = frozenset({"name"})
 
@@ -259,8 +126,13 @@ class _ConventionBase:
             object.__setattr__(self, "pattern", FilenamePattern(self.pattern))
         assert isinstance(self.pattern, FilenamePattern)
         object.__setattr__(self, "stacks", tuple(self.stacks))
+        if isinstance(self.names, str):
+            error_message = (
+                f"names must be a collection of names, not the string {self.names!r}."
+            )
+            raise TypeError(error_message)
         if self.names is not None:
-            object.__setattr__(self, "names", tuple(self.names))
+            object.__setattr__(self, "names", frozenset(self.names))
         missing = self._required_fields - set(self.pattern.fields)
         if missing:
             error_message = (
@@ -307,21 +179,21 @@ class _ConventionBase:
             )
             raise error(error_message)
 
-    def _accepts(self, path: Path) -> bool:
+    def name_of_file(self, path: Path) -> str:
         """
-        Tell whether a file follows the convention, without reading it.
+        The variable name encoded in the filename, from the pattern alone.
 
         Args:
-            path: The file to test.
+            path: A binary file.
 
         Returns:
-            True if the name matches ``pattern`` and, when set, ``names``.
+            The decoded name.
+
+        Raises:
+            ValueError: If the filename does not follow ``pattern`` or its
+                name is not listed in ``names``.
         """
-        try:
-            self._parse(path)
-        except ValueError:
-            return False
-        return True
+        return self._parse(path)["name"]
 
     def _named(self, data_array: xr.DataArray) -> xr.DataArray:
         """
@@ -366,47 +238,6 @@ class _ConventionBase:
             The dataset with ``ux``, ``uy``, ``uz`` replaced by ``u`` and so on.
         """
         return stack_variables(dataset, self.stacks)
-
-    def files(self, directory: str | os.PathLike[str]) -> list[Path]:
-        """
-        List the files in ``directory`` that follow the convention.
-
-        Args:
-            directory: The folder to scan (not recursively).
-
-        Returns:
-            The matching paths, sorted.
-        """
-        return scan_files(directory, self._accepts)
-
-    def open(
-        self,
-        directory: str | os.PathLike[str],
-        *,
-        variables: Iterable[str] | None = None,
-        stack: bool = True,
-        **open_mfdataset_kwargs: Any,
-    ) -> xr.Dataset:
-        """
-        Open every file in ``directory`` that follows the convention as one lazy dataset.
-
-        Args:
-            directory: The folder holding the files (not scanned recursively).
-            variables: Optional names to keep, as found on disk (``"ux"``,
-                not ``"u"``); other files are not opened.
-            stack: Whether to rebuild the arrays declared in ``stacks``.
-            **open_mfdataset_kwargs: Forwarded to :func:`xarray.open_mfdataset`,
-                for example ``chunks={"time": 1}`` or ``parallel=True``.
-
-        Returns:
-            The lazily opened dataset, combined by coordinates.
-
-        Raises:
-            FileNotFoundError: If no file matches.
-        """
-        return open_convention(
-            self, directory, variables=variables, stack=stack, **open_mfdataset_kwargs
-        )
 
     def _extra_coords(self, fields: Mapping[str, Any]) -> dict[str, Any]:
         """

@@ -341,3 +341,55 @@ class TestCompositeOpenVariables:
 
         with pytest.raises(FileNotFoundError, match="No file matches"):
             conventions.open(root, variables=["pp"])
+
+
+class TestReviewFixes:
+    layout = Layout({"x": X, "y": Y, "z": Z})
+
+    def test_numeric_zero_is_a_valid_name(self):
+        conventions = FolderConventions(
+            {".": StaticFiles(self.layout, pattern="{name}.bin")}
+        )
+        array = xr.DataArray(
+            np.zeros((3, 2, 4)), coords={"x": X, "y": Y, "z": Z}, name=0
+        )
+
+        assert [s.filename for s in conventions.writer(array)] == ["0.bin"]
+
+    def test_empty_writer_does_not_make_the_write_ambiguous(self):
+        conventions = FolderConventions(
+            {
+                "a": StepIndexedFiles(self.layout),
+                "b": StepIndexedFiles(self.layout, pattern="{name}.{step:d}"),
+            }
+        )
+        empty = xr.DataArray(
+            np.zeros((0, 3, 2, 4)),
+            coords={"time": [], "x": X, "y": Y, "z": Z},
+            name="ux",
+        )
+
+        assert list(conventions.writer(empty)) == []
+
+    def test_bare_reader_writer_objects_are_adapted(self, tmp_path):
+        import xarray_binfile  # noqa: F401  (registers the accessors)
+        from xarray_binfile.conventions import Convention
+
+        inner = StepIndexedFiles(self.layout)
+
+        class Bare:
+            reader = staticmethod(inner.reader)
+            writer = staticmethod(inner.writer)
+
+        conventions = FolderConventions({".": Bare()})
+        xr.DataArray(
+            np.zeros((1, 3, 2, 4)),
+            coords={"time": [0], "x": X, "y": Y, "z": Z},
+            name="ux",
+        ).binary_engine.to_file(conventions.writer, tmp_path)
+        (tmp_path / "notes.txt").write_text("x")
+
+        assert isinstance(next(iter(conventions.conventions.values())), Convention)
+        assert [p.name for p in conventions.files(tmp_path)] == ["ux-0000.bin"]
+        assert conventions.name_of_file(tmp_path / "ux-0000.bin") == "ux"
+        assert list(conventions.open(tmp_path).data_vars) == ["ux"]
