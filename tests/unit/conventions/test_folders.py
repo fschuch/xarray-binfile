@@ -299,3 +299,45 @@ class TestUnrelatedFilesAreNeverOpened:
         conventions = FolderConventions({".": OnlyUx()})
 
         assert [p.name for p in conventions.files(case)] == ["ux-0000.bin"]
+
+
+class TestCompositeOpenVariables:
+    layout = Layout({"x": X, "y": Y, "z": Z})
+
+    @pytest.fixture
+    def case(self, tmp_path):
+        import xarray_binfile  # noqa: F401  (registers the accessors)
+
+        conventions = PatternConventions(
+            [StepIndexedFiles(self.layout), StaticFiles(self.layout)]
+        )
+        for name in ("ux", "uy"):
+            xr.DataArray(
+                np.zeros((1, 3, 2, 4)),
+                coords={"time": [0], "x": X, "y": Y, "z": Z},
+                name=name,
+            ).binary_engine.to_file(conventions.writer, tmp_path)
+        xr.DataArray(
+            np.ones((3, 2, 4)), coords={"x": X, "y": Y, "z": Z}, name="epsi"
+        ).binary_engine.to_file(conventions.writer, tmp_path)
+        return conventions, tmp_path
+
+    def test_pattern_conventions_open_filters_variables(self, case):
+        conventions, root = case
+
+        assert sorted(conventions.open(root, variables=["uy", "epsi"]).data_vars) == [
+            "epsi",
+            "uy",
+        ]
+
+    def test_folder_conventions_open_filters_variables(self, case):
+        conventions, root = case
+        folders = FolderConventions({".": conventions})
+
+        assert list(folders.open(root, variables=["ux"]).data_vars) == ["ux"]
+
+    def test_open_with_no_matching_variable_raises(self, case):
+        conventions, root = case
+
+        with pytest.raises(FileNotFoundError, match="No file matches"):
+            conventions.open(root, variables=["pp"])

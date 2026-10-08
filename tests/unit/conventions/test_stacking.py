@@ -136,3 +136,14 @@ def test_rejects_templates_without_name_and_dim(template):
 def test_rejects_empty_values():
     with pytest.raises(ValueError, match="at least one value"):
         VariableStack("i", "{name}{i}", values=[])
+
+
+def test_stack_attaches_attrs_to_the_new_coordinate(dataset):
+    stack = VariableStack(
+        "i", "{name}{i}", values=("x", "y", "z"), attrs={"long_name": "component"}
+    )
+
+    stacked = stack.stack(dataset)
+
+    assert stacked["i"].attrs == {"long_name": "component"}
+    assert VELOCITY.stack(dataset)["i"].attrs == {}

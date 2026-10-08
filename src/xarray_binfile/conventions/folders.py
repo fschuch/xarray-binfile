@@ -3,7 +3,7 @@ Compose several conventions, by the folder their files live in or by filename.
 """
 
 import os
-from collections.abc import Iterator, Mapping, Sequence
+from collections.abc import Iterable, Iterator, Mapping, Sequence
 from dataclasses import dataclass
 from itertools import chain
 from pathlib import Path, PurePosixPath
@@ -77,6 +77,26 @@ def _single_acceptor(
         )
         raise LayoutMismatchError(error_message)
     return accepted[0]
+
+
+def _select_variables(
+    paths: Iterable[Path], reader: Any, variables: Iterable[str] | None
+) -> list[Path]:
+    """
+    Keep the files whose decoded variable name is wanted.
+
+    Args:
+        paths: Candidate files.
+        reader: The read specs getter, used only to parse the filename.
+        variables: Wanted names, or ``None`` to keep everything.
+
+    Returns:
+        The selected paths.
+    """
+    if variables is None:
+        return list(paths)
+    wanted = set(variables)
+    return [path for path in paths if reader(path).name in wanted]
 
 
 def _stack_with(conventions: Any, dataset: xr.Dataset) -> xr.Dataset:
@@ -274,6 +294,7 @@ class FolderConventions:
         self,
         directory: str | os.PathLike[str],
         *,
+        variables: Iterable[str] | None = None,
         stack: bool = True,
         **open_mfdataset_kwargs: Any,
     ) -> xr.Dataset:
@@ -286,6 +307,8 @@ class FolderConventions:
 
         Args:
             directory: The dataset root.
+            variables: Optional names to keep, as found on disk; other files
+                are not opened.
             stack: Whether to rebuild the arrays declared by the members' stacks.
             **open_mfdataset_kwargs: Forwarded to :func:`xarray.open_mfdataset`.
 
@@ -295,9 +318,8 @@ class FolderConventions:
         Raises:
             FileNotFoundError: If no file matches.
         """
-        dataset = open_files(
-            self.files(directory), self.reader, **open_mfdataset_kwargs
-        )
+        paths = _select_variables(self.files(directory), self.reader, variables)
+        dataset = open_files(paths, self.reader, **open_mfdataset_kwargs)
         return self.stack(dataset) if stack else dataset
 
 
@@ -394,6 +416,7 @@ class PatternConventions:
         self,
         directory: str | os.PathLike[str],
         *,
+        variables: Iterable[str] | None = None,
         stack: bool = True,
         **open_mfdataset_kwargs: Any,
     ) -> xr.Dataset:
@@ -402,6 +425,8 @@ class PatternConventions:
 
         Args:
             directory: The folder holding the files.
+            variables: Optional names to keep, as found on disk; other files
+                are not opened.
             stack: Whether to rebuild the arrays declared by the members' stacks.
             **open_mfdataset_kwargs: Forwarded to :func:`xarray.open_mfdataset`.
 
@@ -411,7 +436,6 @@ class PatternConventions:
         Raises:
             FileNotFoundError: If no file matches.
         """
-        dataset = open_files(
-            self.files(directory), self.reader, **open_mfdataset_kwargs
-        )
+        paths = _select_variables(self.files(directory), self.reader, variables)
+        dataset = open_files(paths, self.reader, **open_mfdataset_kwargs)
         return self.stack(dataset) if stack else dataset

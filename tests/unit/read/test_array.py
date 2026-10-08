@@ -241,3 +241,20 @@ def test_coord_attrs_are_attached(tmp_path):
 
     assert dataset["x"].attrs == {"units": "m", "long_name": "streamwise"}
     assert dataset["y"].attrs == {}
+
+
+def test_coord_attrs_ignore_coordinates_the_file_does_not_have(tmp_path):
+    file_path = tmp_path / "epsi.bin"
+    np.zeros((2, 3), dtype=np.float32).tofile(file_path)
+    specs = ReadSpecs(
+        filepath=file_path,
+        dtype=np.float32,
+        coords={"x": range(2), "y": range(3)},
+        name="epsi",
+        coord_attrs={"x": {"units": "m"}, "time": {"units": "s"}},
+    )
+
+    dataset = BinaryEngineBackendArray(specs).get_xarray_dataset()
+
+    assert dataset["x"].attrs == {"units": "m"}
+    assert "time" not in dataset.coords

@@ -11,7 +11,7 @@ one array on read.
 """
 
 import string
-from collections.abc import Iterator, Sequence
+from collections.abc import Iterator, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
 
@@ -69,12 +69,15 @@ class VariableStack:
             ``"{name}{i}"`` as ``p`` + ``p``).
         names: Optional base names to restrict stacking to (``("u",)``).
             When ``None``, every group of matching variables is stacked.
+        attrs: Optional attributes attached to the ``dim`` coordinate when
+            stacking (for example ``{"long_name": "velocity component"}``).
     """
 
     dim: str
     template: str
     values: Sequence[Any]
     names: Sequence[str] | None = None
+    attrs: Mapping[str, Any] | None = None
 
     def __post_init__(self) -> None:
         """
@@ -191,7 +194,9 @@ class VariableStack:
             found = [value for value in self.values if value in members]
             stacked = xr.concat(
                 [dataset[members[value]] for value in found],
-                dim=xr.DataArray(found, dims=self.dim, name=self.dim),
+                dim=xr.DataArray(
+                    found, dims=self.dim, name=self.dim, attrs=dict(self.attrs or {})
+                ),
             )
             result = result.drop_vars(list(members.values())).assign({name: stacked})
         return result

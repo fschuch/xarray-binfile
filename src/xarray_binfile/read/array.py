@@ -200,5 +200,6 @@ class BinaryEngineBackendArray(BackendArray):
             attrs=self.metadata.attrs,
         )
         for coord, attrs in (self.metadata.coord_attrs or {}).items():
-            dataset[coord].attrs.update(attrs)
+            if coord in dataset.coords:
+                dataset[coord].attrs.update(attrs)
         return dataset
