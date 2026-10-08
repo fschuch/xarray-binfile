@@ -51,9 +51,7 @@ def open_files(
     )
 
 
-def scan_files(
-    directory: str | os.PathLike[str], accepts: Any
-) -> list[Path]:
+def scan_files(directory: str | os.PathLike[str], accepts: Any) -> list[Path]:
     """
     List the regular files in ``directory`` that ``accepts`` approves of.
 
