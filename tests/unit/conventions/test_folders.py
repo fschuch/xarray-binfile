@@ -256,3 +256,46 @@ class TestPatternConventions:
             "ux-0000.bin",
         ]
         assert sorted(self.conventions.open(tmp_path).data_vars) == ["epsi", "ux"]
+
+
+class TestUnrelatedFilesAreNeverOpened:
+    layout = Layout({"x": X, "y": Y, "z": Z})
+
+    @pytest.fixture
+    def case(self, tmp_path):
+        for name in ("ux-0000.bin", "epsi.bin"):
+            (tmp_path / name).write_bytes(b"\0" * 8 * 24)
+        for extra in (
+            "snapshots.xdmf",
+            "notes.txt",
+            "input.i3d",
+            ".DS_Store",
+            ".ux-0000.bin.tmp123.binary_engine",
+            "ux-0000.bin.bak",
+        ):
+            (tmp_path / extra).write_bytes(b"\0" * 8)
+        return tmp_path
+
+    def test_composed_conventions_skip_them(self, case):
+        conventions = FolderConventions(
+            {
+                ".": PatternConventions(
+                    [StepIndexedFiles(self.layout), StaticFiles(self.layout)]
+                )
+            }
+        )
+
+        assert [p.name for p in conventions.files(case)] == ["epsi.bin", "ux-0000.bin"]
+
+    def test_custom_convention_without_files_is_asked_through_its_reader(self, case):
+        class OnlyUx:
+            def reader(self, path):
+                return StepIndexedFiles(self.__class__.layout).reader(path)
+
+            def writer(self, data_array):  # no cov
+                raise NotImplementedError
+
+        OnlyUx.layout = self.layout
+        conventions = FolderConventions({".": OnlyUx()})
+
+        assert [p.name for p in conventions.files(case)] == ["ux-0000.bin"]

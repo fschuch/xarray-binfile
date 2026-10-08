@@ -105,12 +105,23 @@ def _files_of(convention: Any, directory: Path) -> list[Path]:
         directory: The folder to scan.
 
     Returns:
-        The matching paths, or every regular file when the convention has no
-        ``files`` method.
+        The matching paths. A convention without a ``files`` method is asked
+        through its ``reader``, which only parses the filename: files it
+        rejects with ``ValueError`` are skipped, so unrelated files (notes,
+        XDMF indexes, backups) are never opened.
     """
     if hasattr(convention, "files"):
         return list(convention.files(directory))
-    return sorted(path for path in directory.iterdir() if path.is_file())
+    found: list[Path] = []
+    for path in sorted(directory.iterdir()):
+        if not path.is_file():
+            continue
+        try:
+            convention.reader(path)
+        except ValueError:
+            continue
+        found.append(path)
+    return found
 
 
 @dataclass(frozen=True)

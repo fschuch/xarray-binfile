@@ -69,7 +69,7 @@ class TestSplit:
 
     def test_split_uses_position_without_coordinate(self):
         phi = xr.DataArray(np.zeros((2, 3)), dims=("n", "x"), name="phi")
-        zero_based = VariableStack("n", "{name}{n:d}", values=range(0, 10))
+        zero_based = VariableStack("n", "{name}{n:d}", values=range(10))
 
         assert [p.name for p in zero_based.split(phi)] == ["phi0", "phi1"]
 
@@ -79,7 +79,9 @@ class TestSplit:
         assert [p.name for p in VELOCITY.split(pp)] == ["pp"]
 
     def test_split_rejects_unlisted_values(self):
-        u = xr.DataArray(np.zeros((1, 3)), coords={"i": ["w"]}, dims=("i", "x"), name="u")
+        u = xr.DataArray(
+            np.zeros((1, 3)), coords={"i": ["w"]}, dims=("i", "x"), name="u"
+        )
 
         with pytest.raises(ValueError, match="not listed"):
             list(VELOCITY.split(u))
@@ -110,7 +112,9 @@ def test_roundtrip_with_a_convention(tmp_path):
     import xarray_binfile  # noqa: F401  (registers the accessors)
     from xarray_binfile.conventions import Layout, StepIndexedFiles
 
-    convention = StepIndexedFiles(Layout({"x": np.arange(3)}, dtype="<f4"), stacks=[VELOCITY])
+    convention = StepIndexedFiles(
+        Layout({"x": np.arange(3)}, dtype="<f4"), stacks=[VELOCITY]
+    )
     u = xr.DataArray(
         np.arange(12, dtype="<f4").reshape(2, 3, 2),
         coords={"i": ["x", "y"], "x": np.arange(3), "time": [0, 1]},

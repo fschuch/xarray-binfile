@@ -140,7 +140,9 @@ class VariableStack:
             if self.dim in data_array.coords
             else np.arange(data_array.sizes[self.dim])
         )
-        values = [value.item() if hasattr(value, "item") else value for value in coordinate]
+        values = [
+            value.item() if hasattr(value, "item") else value for value in coordinate
+        ]
         unknown = [value for value in values if value not in self.values]
         if unknown:
             error_message = (

@@ -73,9 +73,15 @@ def test_roundtrip(tmp_path: pathlib.Path):
 
     case.binary_engine.to_file(CONVENTION.writer, tmp_path)
 
-    assert sorted(p.relative_to(tmp_path).as_posix() for p in tmp_path.rglob("*.bin")) == [
+    assert sorted(
+        p.relative_to(tmp_path).as_posix() for p in tmp_path.rglob("*.bin")
+    ) == [
         "geometry/epsilon.bin",
-        *[f"{n}-{s:03d}.bin" for n in ("phi1", "phi2", "pp", "ux", "uy", "uz") for s in range(3)],
+        *[
+            f"{n}-{s:03d}.bin"
+            for n in ("phi1", "phi2", "pp", "ux", "uy", "uz")
+            for s in range(3)
+        ],
     ]
 
     # Files are Fortran-ordered: x varies fastest, as the solver would write.

@@ -71,7 +71,8 @@ The module `xarray_binfile.conventions` provides small, ready-to-use implementat
 
 Every shipped convention also offers:
 
-- `files(directory)`: the files in a folder that follow its pattern, and `open(directory, ...)`: those files as one lazy dataset through `xarray.open_mfdataset`, with `variables=[...]` to open a subset and any other keyword (`chunks`, `parallel`) forwarded
+- `files(directory)`: the files in a folder that follow its pattern, and `open(directory, ...)`: those files as one lazy dataset through `xarray.open_mfdataset`, with `variables=[...]` to open a subset and any other keyword (`chunks`, `parallel`) forwarded. Discovery is driven by the anchored pattern only, so unrelated files in the data folder (an XDMF index, notes, backups, hidden files, the temporary files of an interrupted write) are never opened
+- `names`: the variable names the convention accepts. When the pattern alone is too permissive, for example a bare `"{name}"` template for extension-less files that would also match `README` or `Makefile`, `names=("epsilon",)` restricts reading, discovery and writing to the listed variables, and lets a `PatternConventions` move on to the next member
 - `stacks`: dimensions encoded in the variable names, see [Stacked variables](#stacked-variables)
 - `name_of`: a hook returning the name to write an array under, in place of `data_array.name` (for example `lambda da: da.attrs["file_name"]`)
 - `time_dtype` (time-series conventions): the dtype of the `time` coordinate on read, for example `np.float32` to match single-precision data

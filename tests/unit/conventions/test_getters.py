@@ -392,3 +392,71 @@ class TestFilesAndOpen:
         assert sorted(stacked.data_vars) == ["u"]
         assert stacked["i"].values.tolist() == ["x", "y"]
         assert sorted(raw.data_vars) == ["ux", "uy"]
+
+
+class TestNames:
+    @pytest.fixture
+    def directory(self, tmp_path):
+        import xarray_binfile  # noqa: F401  (registers the accessors)
+
+        static = StaticFiles(LAYOUT, pattern="{name}")
+        for name in ("epsilon", "pp"):
+            _array([0]).isel(time=0, drop=True).rename(name).binary_engine.to_file(
+                static.writer, tmp_path
+            )
+        for extra in ("README", "Makefile", "snapshots.xdmf", "notes.txt", ".DS_Store"):
+            (tmp_path / extra).write_bytes(b"\0" * 8)
+        return tmp_path
+
+    def test_bare_name_pattern_is_too_permissive_without_names(self, directory):
+        static = StaticFiles(LAYOUT, pattern="{name}")
+
+        assert [p.name for p in static.files(directory)] == [
+            "Makefile",
+            "README",
+            "epsilon",
+            "pp",
+        ]
+
+    def test_names_restrict_discovery_read_and_open(self, directory):
+        static = StaticFiles(LAYOUT, pattern="{name}", names=("epsilon",))
+
+        assert [p.name for p in static.files(directory)] == ["epsilon"]
+        assert list(static.open(directory).data_vars) == ["epsilon"]
+        with pytest.raises(ValueError, match="not among the names"):
+            static.reader(directory / "README")
+
+    def test_names_restrict_the_writer(self):
+        static = StaticFiles(LAYOUT, names=("epsilon",))
+        array = _array([0]).isel(time=0, drop=True)
+
+        assert [s.filename for s in static.writer(array.rename("epsilon"))] == [
+            "epsilon.bin"
+        ]
+        assert [
+            s.filename for s in static.writer(array.rename("geometry/epsilon"))
+        ] == ["geometry/epsilon.bin"]
+        with pytest.raises(LayoutMismatchError, match="not among the names"):
+            next(static.writer(array.rename("pp")))
+
+    def test_names_work_for_time_series_too(self, tmp_path):
+        convention = StepIndexedFiles(LAYOUT, names=("ux",))
+
+        assert convention.reader(pathlib.Path("ux-0001.bin")).name == "ux"
+        with pytest.raises(ValueError, match="not among the names"):
+            convention.reader(pathlib.Path("uy-0001.bin"))
+        with pytest.raises(LayoutMismatchError, match="not among the names"):
+            next(convention.writer(_array([0]).rename("uy")))
+
+    def test_names_let_pattern_conventions_skip_to_the_next_member(self, directory):
+        from xarray_binfile.conventions import PatternConventions
+
+        conventions = PatternConventions(
+            [
+                StaticFiles(LAYOUT, pattern="{name}", names=("epsilon",)),
+                StaticFiles(LAYOUT, pattern="{name}", names=("pp",)),
+            ]
+        )
+
+        assert [p.name for p in conventions.files(directory)] == ["epsilon", "pp"]
+        assert conventions.reader(directory / "pp").name == "pp"
