@@ -235,6 +235,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../usage/spec-getter-protocols.html">Spec Getter Protocols for Read and Write</a></li>
 <li class="toctree-l1"><a class="reference internal" href="read.html">Read Binary Files Lazily With Xarray and Dask</a></li>
 <li class="toctree-l1"><a class="reference internal" href="write.html">Write Derived Results Back To Raw Binary Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stacked-variables.html">Stack And Split Variables Across Files</a></li>
 <li class="toctree-l1"><a class="reference internal" href="parallel-and-larger-than-memory.html">Parallel And Larger-Than-Memory Workflows</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Benchmark On Your Own Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Practical Examples: Batch Conversion, Probes, and Plots</a></li>
@@ -438,7 +439,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>PosixPath('/tmp/tmps_pl1m_k')
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>PosixPath('/tmp/tmplg5tlpno')
 </pre></div>
 </div>
 </div>
@@ -456,7 +457,7 @@
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>platform: Linux-6.17.0-1022-azure-x86_64-with-glibc2.39
-python: 3.13.15
+python: 3.13.16
 logical CPU cores: 4
 </pre></div>
 </div>
@@ -585,36 +586,36 @@ logical CPU cores: 4
       <td>float32</td>
       <td>24</td>
       <td>1.27</td>
-      <td>0.1108</td>
-      <td>0.1114</td>
-      <td>11.4</td>
+      <td>0.1172</td>
+      <td>0.1206</td>
+      <td>10.8</td>
     </tr>
     <tr>
       <th>1</th>
       <td>float32</td>
       <td>40</td>
       <td>5.86</td>
-      <td>0.1126</td>
-      <td>0.1132</td>
-      <td>52.0</td>
+      <td>0.1182</td>
+      <td>0.1194</td>
+      <td>49.6</td>
     </tr>
     <tr>
       <th>2</th>
       <td>float64</td>
       <td>24</td>
       <td>2.53</td>
-      <td>0.1108</td>
-      <td>0.1112</td>
-      <td>22.8</td>
+      <td>0.1144</td>
+      <td>0.1171</td>
+      <td>22.1</td>
     </tr>
     <tr>
       <th>3</th>
       <td>float64</td>
       <td>40</td>
       <td>11.72</td>
-      <td>0.1129</td>
-      <td>0.1135</td>
-      <td>103.8</td>
+      <td>0.1193</td>
+      <td>0.1199</td>
+      <td>98.2</td>
     </tr>
   </tbody>
 </table>

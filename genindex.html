@@ -230,6 +230,7 @@
 <li class="toctree-l1"><a class="reference internal" href="usage/spec-getter-protocols.html">Spec Getter Protocols for Read and Write</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/read.html">Read Binary Files Lazily With Xarray and Dask</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/write.html">Write Derived Results Back To Raw Binary Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/stacked-variables.html">Stack And Split Variables Across Files</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/parallel-and-larger-than-memory.html">Parallel And Larger-Than-Memory Workflows</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/benchmarking.html">Benchmark On Your Own Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/examples.html">Practical Examples: Batch Conversion, Probes, and Plots</a></li>
@@ -344,12 +345,15 @@
 
 <div class="genindex-jumpbox">
  <a href="#_"><strong>_</strong></a>
+ | <a href="#A"><strong>A</strong></a>
  | <a href="#B"><strong>B</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
  | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
  | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
@@ -371,14 +375,30 @@
         <li><a href="references/api-reference.html#xarray_binfile.write.WriteSpecsGetterProtocol.__call__">(xarray_binfile.write.WriteSpecsGetterProtocol method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="references/api-reference.html#xarray_binfile.conventions.FilenamePattern.__post_init__">__post_init__() (xarray_binfile.conventions.FilenamePattern method)</a>
 
       <ul>
+        <li><a href="references/api-reference.html#xarray_binfile.conventions.FolderConventions.__post_init__">(xarray_binfile.conventions.FolderConventions method)</a>
+</li>
+        <li><a href="references/api-reference.html#xarray_binfile.conventions.PatternConventions.__post_init__">(xarray_binfile.conventions.PatternConventions method)</a>
+</li>
+        <li><a href="references/api-reference.html#xarray_binfile.conventions.VariableStack.__post_init__">(xarray_binfile.conventions.VariableStack method)</a>
+</li>
         <li><a href="references/api-reference.html#xarray_binfile.tutorial.FileSpecsGetter.__post_init__">(xarray_binfile.tutorial.FileSpecsGetter method)</a>
 </li>
       </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="A">A</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.Convention.accepts">accepts() (xarray_binfile.conventions.Convention method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.Convention.adapt">adapt() (xarray_binfile.conventions.Convention class method)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -396,6 +416,10 @@
 
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.Convention">Convention (class in xarray_binfile.conventions)</a>
+</li>
+  </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="references/api-reference.html#xarray_binfile.conventions.ConventionProtocol">ConventionProtocol (class in xarray_binfile.conventions)</a>
 </li>
@@ -433,6 +457,14 @@
 </li>
       <li><a href="references/api-reference.html#xarray_binfile.conventions.FilenamePattern">FilenamePattern (class in xarray_binfile.conventions)</a>
 </li>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.Convention.files">files() (xarray_binfile.conventions.Convention method)</a>
+
+      <ul>
+        <li><a href="references/api-reference.html#xarray_binfile.conventions.FolderConventions.files">(xarray_binfile.conventions.FolderConventions method)</a>
+</li>
+        <li><a href="references/api-reference.html#xarray_binfile.conventions.PatternConventions.files">(xarray_binfile.conventions.PatternConventions method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="references/api-reference.html#xarray_binfile.tutorial.FileSpecsGetter">FileSpecsGetter (class in xarray_binfile.tutorial)</a>
@@ -440,6 +472,14 @@
       <li><a href="references/api-reference.html#xarray_binfile.conventions.FolderConventions">FolderConventions (class in xarray_binfile.conventions)</a>
 </li>
       <li><a href="references/api-reference.html#xarray_binfile.conventions.FilenamePattern.format">format() (xarray_binfile.conventions.FilenamePattern method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.FilenamePattern.glob">glob() (xarray_binfile.conventions.FilenamePattern method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -477,10 +517,30 @@
   </ul></td>
 </tr></table>
 
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.Convention.name_of_file">name_of_file() (xarray_binfile.conventions.Convention method)</a>
+
+      <ul>
+        <li><a href="references/api-reference.html#xarray_binfile.conventions.FolderConventions.name_of_file">(xarray_binfile.conventions.FolderConventions method)</a>
+</li>
+        <li><a href="references/api-reference.html#xarray_binfile.conventions.PatternConventions.name_of_file">(xarray_binfile.conventions.PatternConventions method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.Convention.open">open() (xarray_binfile.conventions.Convention method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="references/api-reference.html#xarray_binfile.read.RawBinaryEntrypoint.open_dataset">open_dataset() (xarray_binfile.read.RawBinaryEntrypoint method)</a>
+</li>
+      <li><a href="references/api-reference.html#xarray_binfile.write.WriteSpecs.order">order (xarray_binfile.write.WriteSpecs attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -489,6 +549,10 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="references/api-reference.html#xarray_binfile.conventions.FilenamePattern.parse">parse() (xarray_binfile.conventions.FilenamePattern method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.PatternConventions">PatternConventions (class in xarray_binfile.conventions)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -503,7 +567,7 @@
       <li><a href="references/api-reference.html#xarray_binfile.conventions.FolderConventions.reader">reader() (xarray_binfile.conventions.FolderConventions method)</a>
 
       <ul>
-        <li><a href="references/api-reference.html#xarray_binfile.conventions.StaticFiles.reader">(xarray_binfile.conventions.StaticFiles method)</a>
+        <li><a href="references/api-reference.html#xarray_binfile.conventions.PatternConventions.reader">(xarray_binfile.conventions.PatternConventions method)</a>
 </li>
         <li><a href="references/api-reference.html#xarray_binfile.tutorial.FileSpecsGetter.reader">(xarray_binfile.tutorial.FileSpecsGetter method)</a>
 </li>
@@ -526,8 +590,24 @@
         <li><a href="references/api-reference.html#xarray_binfile.read.ReadSpecs.shape">(xarray_binfile.read.ReadSpecs property)</a>
 </li>
       </ul></li>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.VariableStack.split">split() (xarray_binfile.conventions.VariableStack method)</a>
+</li>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.split_variables">split_variables() (in module xarray_binfile.conventions)</a>
+</li>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.Convention.stack">stack() (xarray_binfile.conventions.Convention method)</a>
+
+      <ul>
+        <li><a href="references/api-reference.html#xarray_binfile.conventions.FolderConventions.stack">(xarray_binfile.conventions.FolderConventions method)</a>
+</li>
+        <li><a href="references/api-reference.html#xarray_binfile.conventions.PatternConventions.stack">(xarray_binfile.conventions.PatternConventions method)</a>
+</li>
+        <li><a href="references/api-reference.html#xarray_binfile.conventions.VariableStack.stack">(xarray_binfile.conventions.VariableStack method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.stack_variables">stack_variables() (in module xarray_binfile.conventions)</a>
+</li>
       <li><a href="references/api-reference.html#xarray_binfile.conventions.StaticFiles">StaticFiles (class in xarray_binfile.conventions)</a>
 </li>
       <li><a href="references/api-reference.html#xarray_binfile.conventions.StepIndexedFiles">StepIndexedFiles (class in xarray_binfile.conventions)</a>
@@ -561,6 +641,10 @@
       <li><a href="references/api-reference.html#xarray_binfile.conventions.Layout.validate">validate() (xarray_binfile.conventions.Layout method)</a>
 </li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="references/api-reference.html#xarray_binfile.conventions.VariableStack">VariableStack (class in xarray_binfile.conventions)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="W">W</h2>
@@ -571,7 +655,7 @@
       <li><a href="references/api-reference.html#xarray_binfile.conventions.FolderConventions.writer">writer() (xarray_binfile.conventions.FolderConventions method)</a>
 
       <ul>
-        <li><a href="references/api-reference.html#xarray_binfile.conventions.StaticFiles.writer">(xarray_binfile.conventions.StaticFiles method)</a>
+        <li><a href="references/api-reference.html#xarray_binfile.conventions.PatternConventions.writer">(xarray_binfile.conventions.PatternConventions method)</a>
 </li>
         <li><a href="references/api-reference.html#xarray_binfile.tutorial.FileSpecsGetter.writer">(xarray_binfile.tutorial.FileSpecsGetter method)</a>
 </li>

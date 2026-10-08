@@ -1,0 +1,2911 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Stack And Split Variables Across Files &#8212; Xarray-binfile</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'tutorials/stacked-variables';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Parallel And Larger-Than-Memory Workflows" href="parallel-and-larger-than-memory.html" />
+    <link rel="prev" title="Write Derived Results Back To Raw Binary Files" href="write.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Xarray-binfile - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Xarray-binfile - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fschuch/xarray-binfile/releases" title="Releases" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="https://img.shields.io/github/v/release/fschuch/xarray-binfile?style=social" class="icon-link-image" alt="Releases"/></a>
+        </li>
+</ul></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/installation.html">Installation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Usage</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../usage/spec-getter-protocols.html">Spec Getter Protocols for Read and Write</a></li>
+<li class="toctree-l1"><a class="reference internal" href="read.html">Read Binary Files Lazily With Xarray and Dask</a></li>
+<li class="toctree-l1"><a class="reference internal" href="write.html">Write Derived Results Back To Raw Binary Files</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Stack And Split Variables Across Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parallel-and-larger-than-memory.html">Parallel And Larger-Than-Memory Workflows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmark On Your Own Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Practical Examples: Batch Conversion, Probes, and Plots</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">References</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../references/further-reading.html">Further Reading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references/api-reference.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references/how-to-contribute.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references/what-is-new.html">What’s New</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/tutorials/stacked-variables.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Stack And Split Variables Across Files</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#declare-the-stacks">Declare the stacks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attach-them-to-a-convention">Attach them to a convention</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-a-dataset-with-stacked-arrays">Build a dataset with stacked arrays</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#split-on-write">Split on write</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stack-on-read">Stack on read</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#opt-out-or-stack-by-hand">Opt out, or stack by hand</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#guard-rails">Guard rails</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="stack-and-split-variables-across-files">
+<h1>Stack And Split Variables Across Files<a class="headerlink" href="#stack-and-split-variables-across-files" title="Link to this heading">#</a></h1>
+<p>Many solvers store a vector field as one file per component (<code class="docutils literal notranslate"><span class="pre">ux-0001.bin</span></code>, <code class="docutils literal notranslate"><span class="pre">uy-0001.bin</span></code>, <code class="docutils literal notranslate"><span class="pre">uz-0001.bin</span></code>) and a set of scalar fractions as numbered variables (<code class="docutils literal notranslate"><span class="pre">phi1-0001.bin</span></code>, <code class="docutils literal notranslate"><span class="pre">phi2-0001.bin</span></code>). In memory, you would rather work with one array <code class="docutils literal notranslate"><span class="pre">u</span></code> carrying a component dimension <code class="docutils literal notranslate"><span class="pre">i</span></code>, and one array <code class="docutils literal notranslate"><span class="pre">phi</span></code> carrying a fraction dimension <code class="docutils literal notranslate"><span class="pre">n</span></code>.</p>
+<p>xarray-binfile describes that encoding once, with a <code class="docutils literal notranslate"><span class="pre">VariableStack</span></code>, and uses it in both directions:</p>
+<ul class="simple">
+<li><p><strong>split</strong> on write: <code class="docutils literal notranslate"><span class="pre">u</span></code> with <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">=</span> <span class="pre">[&quot;x&quot;,</span> <span class="pre">&quot;y&quot;,</span> <span class="pre">&quot;z&quot;]</span></code> becomes the variables <code class="docutils literal notranslate"><span class="pre">ux</span></code>, <code class="docutils literal notranslate"><span class="pre">uy</span></code> and <code class="docutils literal notranslate"><span class="pre">uz</span></code>, each written to its own files</p></li>
+<li><p><strong>stack</strong> on read: <code class="docutils literal notranslate"><span class="pre">ux</span></code>, <code class="docutils literal notranslate"><span class="pre">uy</span></code> and <code class="docutils literal notranslate"><span class="pre">uz</span></code> found on disk are concatenated back into <code class="docutils literal notranslate"><span class="pre">u</span></code></p></li>
+</ul>
+<p>Nothing about <code class="docutils literal notranslate"><span class="pre">u</span></code>, <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code>, <code class="docutils literal notranslate"><span class="pre">z</span></code> or <code class="docutils literal notranslate"><span class="pre">phi</span></code> is hard-coded in the library: the dimension name, the name template and the allowed values all come from the declaration.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xarray</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xr</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">xarray_binfile</span>  <span class="c1"># noqa: F401  (registers the .binary_engine accessors)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">xarray_binfile.conventions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Layout</span><span class="p">,</span> <span class="n">StepIndexedFiles</span><span class="p">,</span> <span class="n">VariableStack</span>
+
+<span class="n">directory_holder</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span>
+<span class="n">directory</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">directory_holder</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="declare-the-stacks">
+<h2>Declare the stacks<a class="headerlink" href="#declare-the-stacks" title="Link to this heading">#</a></h2>
+<p>A <code class="docutils literal notranslate"><span class="pre">VariableStack</span></code> has three parts:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dim</span></code>: the dimension that lives in the variable names rather than in the files</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">template</span></code>: how a variable name is built from the base <code class="docutils literal notranslate"><span class="pre">{name}</span></code> and the value of <code class="docutils literal notranslate"><span class="pre">dim</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">values</span></code>: the values the dimension may take, in the order the stacked coordinate should follow</p></li>
+</ul>
+<p>The template is parsed with <code class="docutils literal notranslate"><span class="pre">FilenamePattern</span></code>, so integer values can carry zero-fill (<code class="docutils literal notranslate"><span class="pre">&quot;{name}{n:02d}&quot;</span></code>) and are converted back to <code class="docutils literal notranslate"><span class="pre">int</span></code> on read. <code class="docutils literal notranslate"><span class="pre">values</span></code> is required because templates without a separator would otherwise match almost any name: <code class="docutils literal notranslate"><span class="pre">pp</span></code> fits <code class="docutils literal notranslate"><span class="pre">&quot;{name}{i}&quot;</span></code> as <code class="docutils literal notranslate"><span class="pre">p</span></code> + <code class="docutils literal notranslate"><span class="pre">p</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">velocity</span> <span class="o">=</span> <span class="n">VariableStack</span><span class="p">(</span><span class="s2">"i"</span><span class="p">,</span> <span class="s2">"</span><span class="si">{name}{i}</span><span class="s2">"</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">(</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">,</span> <span class="s2">"z"</span><span class="p">))</span>
+<span class="n">scalars</span> <span class="o">=</span> <span class="n">VariableStack</span><span class="p">(</span><span class="s2">"n"</span><span class="p">,</span> <span class="s2">"</span><span class="si">{name}{n:d}</span><span class="s2">"</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s2">"phi"</span><span class="p">,))</span>
+<span class="n">velocity</span><span class="p">,</span> <span class="n">scalars</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(VariableStack(dim='i', template='{name}{i}', values=('x', 'y', 'z'), names=None, attrs=None, min_components=2),
+ VariableStack(dim='n', template='{name}{n:d}', values=(1, 2, 3, 4, 5, 6, 7, 8, 9), names=frozenset({'phi'}), attrs=None, min_components=1))
+</pre></div>
+</div>
+</div>
+</div>
+<p>The optional <code class="docutils literal notranslate"><span class="pre">names</span></code> restricts stacking to given base names. Without it, a vorticity component written as <code class="docutils literal notranslate"><span class="pre">w3</span></code> would be picked up by <code class="docutils literal notranslate"><span class="pre">scalars</span></code> as <code class="docutils literal notranslate"><span class="pre">w</span></code> with <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">=</span> <span class="pre">[3]</span></code>, which is harmless but probably not what you want.</p>
+</section>
+<section id="attach-them-to-a-convention">
+<h2>Attach them to a convention<a class="headerlink" href="#attach-them-to-a-convention" title="Link to this heading">#</a></h2>
+<p>Every shipped convention accepts <code class="docutils literal notranslate"><span class="pre">stacks</span></code>. On write, arrays are split in the order the stacks are listed, before the per-file split along <code class="docutils literal notranslate"><span class="pre">time</span></code>; on read, <code class="docutils literal notranslate"><span class="pre">open</span></code> rebuilds the stacked arrays by default.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">layout</span> <span class="o">=</span> <span class="n">Layout</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">"x"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+        <span class="s2">"y"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+        <span class="s2">"z"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+    <span class="p">},</span>
+    <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">convention</span> <span class="o">=</span> <span class="n">StepIndexedFiles</span><span class="p">(</span>
+    <span class="n">layout</span><span class="p">,</span>
+    <span class="n">pattern</span><span class="o">=</span><span class="s2">"</span><span class="si">{name}</span><span class="s2">-</span><span class="si">{step:03d}</span><span class="s2">.bin"</span><span class="p">,</span>
+    <span class="n">time_step</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+    <span class="n">stacks</span><span class="o">=</span><span class="p">[</span><span class="n">velocity</span><span class="p">,</span> <span class="n">scalars</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">convention</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>StepIndexedFiles(layout=Layout(coords={'x': array([0.        , 0.14285715, 0.2857143 , 0.42857143, 0.5714286 ,
+       0.71428573, 0.85714287, 1.        ], dtype=float32), 'y': array([0. , 0.4, 0.8, 1.2, 1.6, 2. ], dtype=float32), 'z': array([0.        , 0.16666667, 0.33333334, 0.5       ], dtype=float32)}, dtype=&lt;class 'numpy.float32'&gt;, order='C', coord_attrs=None), pattern=FilenamePattern(template='{name}-{step:03d}.bin', exact_width=False), check_coords=True, stacks=(VariableStack(dim='i', template='{name}{i}', values=('x', 'y', 'z'), names=None, attrs=None, min_components=2), VariableStack(dim='n', template='{name}{n:d}', values=(1, 2, 3, 4, 5, 6, 7, 8, 9), names=frozenset({'phi'}), attrs=None, min_components=1)), name_of=None, names=None, time_dim='time', time_dtype=None, time_step=0.25)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="build-a-dataset-with-stacked-arrays">
+<h2>Build a dataset with stacked arrays<a class="headerlink" href="#build-a-dataset-with-stacked-arrays" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">u</span></code> carries <code class="docutils literal notranslate"><span class="pre">i</span></code>, <code class="docutils literal notranslate"><span class="pre">phi</span></code> carries <code class="docutils literal notranslate"><span class="pre">n</span></code>, and <code class="docutils literal notranslate"><span class="pre">pp</span></code> carries neither. All of them share the mesh and the <code class="docutils literal notranslate"><span class="pre">time</span></code> dimension.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.25</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">field</span><span class="p">(</span><span class="o">**</span><span class="n">extra</span><span class="p">):</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">extra</span><span class="p">,</span> <span class="o">**</span><span class="n">layout</span><span class="o">.</span><span class="n">coords</span><span class="p">,</span> <span class="s2">"time"</span><span class="p">:</span> <span class="n">time</span><span class="p">}</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="k">for</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">coords</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">coords</span><span class="o">=</span><span class="n">coords</span><span class="p">)</span>
+
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">"u"</span><span class="p">:</span> <span class="n">field</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="p">[</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">,</span> <span class="s2">"z"</span><span class="p">]),</span>
+        <span class="s2">"phi"</span><span class="p">:</span> <span class="n">field</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
+        <span class="s2">"pp"</span><span class="p">:</span> <span class="n">field</span><span class="p">(),</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+<span class="n">dataset</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div><svg style="position: absolute; width: 0; height: 0; overflow: hidden">
+<defs>
+<symbol id="icon-database" viewBox="0 0 32 32">
+<path d="M16 0c-8.837 0-16 2.239-16 5v4c0 2.761 7.163 5 16 5s16-2.239 16-5v-4c0-2.761-7.163-5-16-5z"></path>
+<path d="M16 17c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
+<path d="M16 26c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
+</symbol>
+<symbol id="icon-file-text2" viewBox="0 0 32 32">
+<path d="M28.681 7.159c-0.694-0.947-1.662-2.053-2.724-3.116s-2.169-2.030-3.116-2.724c-1.612-1.182-2.393-1.319-2.841-1.319h-15.5c-1.378 0-2.5 1.121-2.5 2.5v27c0 1.378 1.122 2.5 2.5 2.5h23c1.378 0 2.5-1.122 2.5-2.5v-19.5c0-0.448-0.137-1.23-1.319-2.841zM24.543 5.457c0.959 0.959 1.712 1.825 2.268 2.543h-4.811v-4.811c0.718 0.556 1.584 1.309 2.543 2.268zM28 29.5c0 0.271-0.229 0.5-0.5 0.5h-23c-0.271 0-0.5-0.229-0.5-0.5v-27c0-0.271 0.229-0.5 0.5-0.5 0 0 15.499-0 15.5 0v7c0 0.552 0.448 1 1 1h7v19.5z"></path>
+<path d="M23 26h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+<path d="M23 22h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+<path d="M23 18h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+</symbol>
+</defs>
+</svg>
+<style>/* CSS stylesheet for displaying xarray objects in notebooks */
+
+:root {
+  --xr-font-color0: var(
+    --jp-content-font-color0,
+    var(--pst-color-text-base rgba(0, 0, 0, 1))
+  );
+  --xr-font-color2: var(
+    --jp-content-font-color2,
+    var(--pst-color-text-base, rgba(0, 0, 0, 0.54))
+  );
+  --xr-font-color3: var(
+    --jp-content-font-color3,
+    var(--pst-color-text-base, rgba(0, 0, 0, 0.38))
+  );
+  --xr-border-color: var(
+    --jp-border-color2,
+    hsl(from var(--pst-color-on-background, white) h s calc(l - 10))
+  );
+  --xr-disabled-color: var(
+    --jp-layout-color3,
+    hsl(from var(--pst-color-on-background, white) h s calc(l - 40))
+  );
+  --xr-background-color: var(
+    --jp-layout-color0,
+    var(--pst-color-on-background, white)
+  );
+  --xr-background-color-row-even: var(
+    --jp-layout-color1,
+    hsl(from var(--pst-color-on-background, white) h s calc(l - 5))
+  );
+  --xr-background-color-row-odd: var(
+    --jp-layout-color2,
+    hsl(from var(--pst-color-on-background, white) h s calc(l - 15))
+  );
+}
+
+html[theme="dark"],
+html[data-theme="dark"],
+body[data-theme="dark"],
+body.vscode-dark {
+  --xr-font-color0: var(
+    --jp-content-font-color0,
+    var(--pst-color-text-base, rgba(255, 255, 255, 1))
+  );
+  --xr-font-color2: var(
+    --jp-content-font-color2,
+    var(--pst-color-text-base, rgba(255, 255, 255, 0.54))
+  );
+  --xr-font-color3: var(
+    --jp-content-font-color3,
+    var(--pst-color-text-base, rgba(255, 255, 255, 0.38))
+  );
+  --xr-border-color: var(
+    --jp-border-color2,
+    hsl(from var(--pst-color-on-background, #111111) h s calc(l + 10))
+  );
+  --xr-disabled-color: var(
+    --jp-layout-color3,
+    hsl(from var(--pst-color-on-background, #111111) h s calc(l + 40))
+  );
+  --xr-background-color: var(
+    --jp-layout-color0,
+    var(--pst-color-on-background, #111111)
+  );
+  --xr-background-color-row-even: var(
+    --jp-layout-color1,
+    hsl(from var(--pst-color-on-background, #111111) h s calc(l + 5))
+  );
+  --xr-background-color-row-odd: var(
+    --jp-layout-color2,
+    hsl(from var(--pst-color-on-background, #111111) h s calc(l + 15))
+  );
+}
+
+.xr-wrap {
+  display: block !important;
+  min-width: 300px;
+  max-width: 700px;
+  line-height: 1.6;
+  padding-bottom: 4px;
+}
+
+.xr-text-repr-fallback {
+  /* fallback to plain text repr when CSS is not injected (untrusted notebook) */
+  display: none;
+}
+
+.xr-header {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.xr-header {
+  border-bottom: solid 1px var(--xr-border-color);
+  margin-bottom: 4px;
+}
+
+.xr-header > div,
+.xr-header > ul {
+  display: inline;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.xr-obj-type,
+.xr-obj-name {
+  margin-left: 2px;
+  margin-right: 10px;
+}
+
+.xr-obj-type,
+.xr-group-box-contents > label {
+  color: var(--xr-font-color2);
+  display: block;
+}
+
+.xr-sections {
+  padding-left: 0 !important;
+  display: grid;
+  grid-template-columns: 150px auto auto 1fr 0 20px 0 20px;
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+
+.xr-section-item {
+  display: contents;
+}
+
+.xr-section-item > input,
+.xr-group-box-contents > input,
+.xr-array-wrap > input {
+  display: block;
+  opacity: 0;
+  height: 0;
+  margin: 0;
+}
+
+.xr-section-item > input + label,
+.xr-var-item > input + label {
+  color: var(--xr-disabled-color);
+}
+
+.xr-section-item > input:enabled + label,
+.xr-var-item > input:enabled + label,
+.xr-array-wrap > input:enabled + label,
+.xr-group-box-contents > input:enabled + label {
+  cursor: pointer;
+  color: var(--xr-font-color2);
+}
+
+.xr-section-item > input:focus-visible + label,
+.xr-var-item > input:focus-visible + label,
+.xr-array-wrap > input:focus-visible + label,
+.xr-group-box-contents > input:focus-visible + label {
+  outline: auto;
+}
+
+.xr-section-item > input:enabled + label:hover,
+.xr-var-item > input:enabled + label:hover,
+.xr-array-wrap > input:enabled + label:hover,
+.xr-group-box-contents > input:enabled + label:hover {
+  color: var(--xr-font-color0);
+}
+
+.xr-section-summary {
+  grid-column: 1;
+  color: var(--xr-font-color2);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.xr-section-summary > em {
+  font-weight: normal;
+}
+
+.xr-span-grid {
+  grid-column-end: -1;
+}
+
+.xr-section-summary > span {
+  display: inline-block;
+  padding-left: 0.3em;
+}
+
+.xr-group-box-contents > input:checked + label > span {
+  display: inline-block;
+  padding-left: 0.6em;
+}
+
+.xr-section-summary-in:disabled + label {
+  color: var(--xr-font-color2);
+}
+
+.xr-section-summary-in + label:before {
+  display: inline-block;
+  content: "►";
+  font-size: 11px;
+  width: 15px;
+  text-align: center;
+}
+
+.xr-section-summary-in:disabled + label:before {
+  color: var(--xr-disabled-color);
+}
+
+.xr-section-summary-in:checked + label:before {
+  content: "▼";
+}
+
+.xr-section-summary-in:checked + label > span {
+  display: none;
+}
+
+.xr-section-summary,
+.xr-section-inline-details,
+.xr-group-box-contents > label {
+  padding-top: 4px;
+}
+
+.xr-section-inline-details {
+  grid-column: 2 / -1;
+}
+
+.xr-section-details {
+  grid-column: 1 / -1;
+  margin-top: 4px;
+  margin-bottom: 5px;
+}
+
+.xr-section-summary-in ~ .xr-section-details {
+  display: none;
+}
+
+.xr-section-summary-in:checked ~ .xr-section-details {
+  display: contents;
+}
+
+.xr-children {
+  display: inline-grid;
+  grid-template-columns: 100%;
+  grid-column: 1 / -1;
+  padding-top: 4px;
+}
+
+.xr-group-box {
+  display: inline-grid;
+  grid-template-columns: 0px 30px auto;
+}
+
+.xr-group-box-vline {
+  grid-column-start: 1;
+  border-right: 0.2em solid;
+  border-color: var(--xr-border-color);
+  width: 0px;
+}
+
+.xr-group-box-hline {
+  grid-column-start: 2;
+  grid-row-start: 1;
+  height: 1em;
+  width: 26px;
+  border-bottom: 0.2em solid;
+  border-color: var(--xr-border-color);
+}
+
+.xr-group-box-contents {
+  grid-column-start: 3;
+  padding-bottom: 4px;
+}
+
+.xr-group-box-contents > label::before {
+  content: "📂";
+  padding-right: 0.3em;
+}
+
+.xr-group-box-contents > input:checked + label::before {
+  content: "📁";
+}
+
+.xr-group-box-contents > input:checked + label {
+  padding-bottom: 0px;
+}
+
+.xr-group-box-contents > input:checked ~ .xr-sections {
+  display: none;
+}
+
+.xr-group-box-contents > input + label > span {
+  display: none;
+}
+
+.xr-group-box-ellipsis {
+  font-size: 1.4em;
+  font-weight: 900;
+  color: var(--xr-font-color2);
+  letter-spacing: 0.15em;
+  cursor: default;
+}
+
+.xr-array-wrap {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 20px auto;
+}
+
+.xr-array-wrap > label {
+  grid-column: 1;
+  vertical-align: top;
+}
+
+.xr-preview {
+  color: var(--xr-font-color3);
+}
+
+.xr-array-preview,
+.xr-array-data {
+  padding: 0 5px !important;
+  grid-column: 2;
+}
+
+.xr-array-data,
+.xr-array-in:checked ~ .xr-array-preview {
+  display: none;
+}
+
+.xr-array-in:checked ~ .xr-array-data,
+.xr-array-preview {
+  display: inline-block;
+}
+
+.xr-dim-list {
+  display: inline-block !important;
+  list-style: none;
+  padding: 0 !important;
+  margin: 0;
+}
+
+.xr-dim-list li {
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+}
+
+.xr-dim-list:before {
+  content: "(";
+}
+
+.xr-dim-list:after {
+  content: ")";
+}
+
+.xr-dim-list li:not(:last-child):after {
+  content: ",";
+  padding-right: 5px;
+}
+
+.xr-has-index {
+  font-weight: bold;
+}
+
+.xr-var-list,
+.xr-var-item {
+  display: contents;
+}
+
+.xr-var-item > div,
+.xr-var-item label,
+.xr-var-item > .xr-var-name span {
+  background-color: var(--xr-background-color-row-even);
+  border-color: var(--xr-background-color-row-odd);
+  margin-bottom: 0;
+  padding-top: 2px;
+}
+
+.xr-var-item > .xr-var-name:hover span {
+  padding-right: 5px;
+}
+
+.xr-var-list > li:nth-child(odd) > div,
+.xr-var-list > li:nth-child(odd) > label,
+.xr-var-list > li:nth-child(odd) > .xr-var-name span {
+  background-color: var(--xr-background-color-row-odd);
+  border-color: var(--xr-background-color-row-even);
+}
+
+.xr-var-name {
+  grid-column: 1;
+}
+
+.xr-var-dims {
+  grid-column: 2;
+}
+
+.xr-var-dtype {
+  grid-column: 3;
+  text-align: right;
+  color: var(--xr-font-color2);
+}
+
+.xr-var-preview {
+  grid-column: 4;
+}
+
+.xr-index-preview {
+  grid-column: 2 / 5;
+  color: var(--xr-font-color2);
+}
+
+.xr-var-name,
+.xr-var-dims,
+.xr-var-dtype,
+.xr-preview,
+.xr-attrs dt {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 10px;
+}
+
+.xr-var-name:hover,
+.xr-var-dims:hover,
+.xr-var-dtype:hover,
+.xr-attrs dt:hover {
+  overflow: visible;
+  width: auto;
+  z-index: 1;
+}
+
+.xr-var-attrs,
+.xr-var-data,
+.xr-index-data {
+  display: none;
+  border-top: 2px dotted var(--xr-background-color);
+  padding-bottom: 20px !important;
+  padding-top: 10px !important;
+}
+
+.xr-var-attrs-in + label,
+.xr-var-data-in + label,
+.xr-index-data-in + label {
+  padding: 0 1px;
+}
+
+.xr-var-attrs-in:checked ~ .xr-var-attrs,
+.xr-var-data-in:checked ~ .xr-var-data,
+.xr-index-data-in:checked ~ .xr-index-data {
+  display: block;
+}
+
+.xr-var-data > table {
+  float: right;
+}
+
+.xr-var-data > pre,
+.xr-index-data > pre,
+.xr-var-data > table > tbody > tr {
+  background-color: transparent !important;
+}
+
+.xr-var-name span,
+.xr-var-data,
+.xr-index-name div,
+.xr-index-data,
+.xr-attrs {
+  padding-left: 25px !important;
+}
+
+.xr-attrs,
+.xr-var-attrs,
+.xr-var-data,
+.xr-index-data {
+  grid-column: 1 / -1;
+}
+
+dl.xr-attrs {
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 125px auto;
+}
+
+.xr-attrs dt,
+.xr-attrs dd {
+  padding: 0;
+  margin: 0;
+  float: left;
+  padding-right: 10px;
+  width: auto;
+}
+
+.xr-attrs dt {
+  font-weight: normal;
+  grid-column: 1;
+}
+
+.xr-attrs dt:hover span {
+  display: inline-block;
+  background: var(--xr-background-color);
+  padding-right: 10px;
+}
+
+.xr-attrs dd {
+  grid-column: 2;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.xr-icon-database,
+.xr-icon-file-text2,
+.xr-no-icon {
+  display: inline-block;
+  vertical-align: middle;
+  width: 1em;
+  height: 1.5em !important;
+  stroke-width: 0;
+  stroke: currentColor;
+  fill: currentColor;
+}
+
+.xr-var-attrs-in:checked + label > .xr-icon-file-text2,
+.xr-var-data-in:checked + label > .xr-icon-database,
+.xr-index-data-in:checked + label > .xr-icon-database {
+  color: var(--xr-font-color0);
+  filter: drop-shadow(1px 1px 5px var(--xr-font-color2));
+  stroke-width: 0.8px;
+}
+</style><pre class='xr-text-repr-fallback'>&lt;xarray.Dataset&gt; Size: 14kB
+Dimensions:  (i: 3, x: 8, y: 6, z: 4, time: 3, n: 2)
+Coordinates:
+  * i        (i) &lt;U1 12B &#x27;x&#x27; &#x27;y&#x27; &#x27;z&#x27;
+  * x        (x) float32 32B 0.0 0.1429 0.2857 0.4286 0.5714 0.7143 0.8571 1.0
+  * y        (y) float32 24B 0.0 0.4 0.8 1.2 1.6 2.0
+  * z        (z) float32 16B 0.0 0.1667 0.3333 0.5
+  * time     (time) float64 24B 0.0 0.25 0.5
+  * n        (n) int64 16B 1 2
+Data variables:
+    u        (i, x, y, z, time) float32 7kB 0.8506 0.637 ... 0.4597 0.1873
+    phi      (n, x, y, z, time) float32 5kB 0.5084 0.8862 ... 0.2276 0.2287
+    pp       (x, y, z, time) float32 2kB 0.8552 0.8612 ... 0.1971 0.9691</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.Dataset</div></div><ul class='xr-sections'><li class='xr-section-item'><input id='section-136c2bd9-b9cb-4f62-93e2-5ff51661b414' class='xr-section-summary-in' type='checkbox' disabled /><label for='section-136c2bd9-b9cb-4f62-93e2-5ff51661b414' class='xr-section-summary'>Dimensions:</label><div class='xr-section-inline-details'><ul class='xr-dim-list'><li><span class='xr-has-index'>i</span>: 3</li><li><span class='xr-has-index'>x</span>: 8</li><li><span class='xr-has-index'>y</span>: 6</li><li><span class='xr-has-index'>z</span>: 4</li><li><span class='xr-has-index'>time</span>: 3</li><li><span class='xr-has-index'>n</span>: 2</li></ul></div></li><li class='xr-section-item'><input id='section-f28c4289-ed40-4559-a9a6-c8ab97555c37' class='xr-section-summary-in' type='checkbox' checked /><label for='section-f28c4289-ed40-4559-a9a6-c8ab97555c37' class='xr-section-summary' title='Expand/collapse section'>Coordinates: <span>(6)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>i</span></div><div class='xr-var-dims'>(i)</div><div class='xr-var-dtype'>&lt;U1</div><div class='xr-var-preview xr-preview'>&#x27;x&#x27; &#x27;y&#x27; &#x27;z&#x27;</div><input id='attrs-560c82c0-c4f5-45f1-9d4f-eca9da03b3fd' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-560c82c0-c4f5-45f1-9d4f-eca9da03b3fd' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-a28cba34-b768-4b68-b64d-4de41ec238bf' class='xr-var-data-in' type='checkbox'><label for='data-a28cba34-b768-4b68-b64d-4de41ec238bf' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([&#x27;x&#x27;, &#x27;y&#x27;, &#x27;z&#x27;], dtype=&#x27;&lt;U1&#x27;)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>x</span></div><div class='xr-var-dims'>(x)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.0 0.1429 0.2857 ... 0.8571 1.0</div><input id='attrs-26e2891b-4cbd-442a-8ad0-351f01faf86a' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-26e2891b-4cbd-442a-8ad0-351f01faf86a' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-f3265b0a-3e16-46c8-9549-2b32244f2c36' class='xr-var-data-in' type='checkbox'><label for='data-f3265b0a-3e16-46c8-9549-2b32244f2c36' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0.      , 0.142857, 0.285714, 0.428571, 0.571429, 0.714286, 0.857143,
+       1.      ], dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>y</span></div><div class='xr-var-dims'>(y)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.0 0.4 0.8 1.2 1.6 2.0</div><input id='attrs-ffa833fd-3650-4fa1-b8a7-2305abd07655' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-ffa833fd-3650-4fa1-b8a7-2305abd07655' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-bfa18d0f-acaf-42f6-9ea7-f7fba655ce66' class='xr-var-data-in' type='checkbox'><label for='data-bfa18d0f-acaf-42f6-9ea7-f7fba655ce66' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0. , 0.4, 0.8, 1.2, 1.6, 2. ], dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>z</span></div><div class='xr-var-dims'>(z)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.0 0.1667 0.3333 0.5</div><input id='attrs-1dda8bdc-cdb5-43b0-afe5-bda67973d877' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-1dda8bdc-cdb5-43b0-afe5-bda67973d877' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-1d280e75-e686-4894-895f-59c2c3a1446b' class='xr-var-data-in' type='checkbox'><label for='data-1d280e75-e686-4894-895f-59c2c3a1446b' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0.      , 0.166667, 0.333333, 0.5     ], dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>time</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>0.0 0.25 0.5</div><input id='attrs-33aa8146-cf87-4306-bace-7141cfe11528' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-33aa8146-cf87-4306-bace-7141cfe11528' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-55d93f84-cd9d-4dc8-bb91-6974a21f76a6' class='xr-var-data-in' type='checkbox'><label for='data-55d93f84-cd9d-4dc8-bb91-6974a21f76a6' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0.  , 0.25, 0.5 ])</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>n</span></div><div class='xr-var-dims'>(n)</div><div class='xr-var-dtype'>int64</div><div class='xr-var-preview xr-preview'>1 2</div><input id='attrs-d3e388cc-2c28-473f-9d94-c1d0de8f6e48' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-d3e388cc-2c28-473f-9d94-c1d0de8f6e48' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-3756f522-6ab9-49c4-aa27-28a90866f770' class='xr-var-data-in' type='checkbox'><label for='data-3756f522-6ab9-49c4-aa27-28a90866f770' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([1, 2])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-427b718e-f9d9-4dde-9421-223115c23256' class='xr-section-summary-in' type='checkbox' checked /><label for='section-427b718e-f9d9-4dde-9421-223115c23256' class='xr-section-summary' title='Expand/collapse section'>Data variables: <span>(3)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span>u</span></div><div class='xr-var-dims'>(i, x, y, z, time)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.8506 0.637 ... 0.4597 0.1873</div><input id='attrs-34bea233-4b16-4e36-a95d-a22eaa4d4e58' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-34bea233-4b16-4e36-a95d-a22eaa4d4e58' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-c47d32be-eb84-4220-8737-8806c8af532b' class='xr-var-data-in' type='checkbox'><label for='data-c47d32be-eb84-4220-8737-8806c8af532b' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([[[[[8.50624204e-01, 6.36961639e-01, 5.11136472e-01],
+          [2.69786656e-01, 3.07829380e-01, 4.09734845e-02],
+          [7.52401352e-02, 1.65275931e-02, 1.75267279e-01],
+          [8.13270211e-01, 6.49415731e-01, 9.12755549e-01]],
+
+         [[5.03626943e-01, 6.06635749e-01, 9.70742822e-01],
+          [7.29496539e-01, 6.32270753e-01, 5.43624938e-01],
+          [5.59917390e-01, 9.35072422e-01, 2.77347028e-01],
+          [8.15853536e-01, 6.70876503e-01, 2.73847580e-03]],
+
+         [[3.94149125e-01, 8.57404232e-01, 5.54314911e-01],
+          [3.35855484e-02, 7.64889896e-01, 7.29655445e-01],
+          [8.46575201e-01, 1.75655603e-01, 8.92867446e-02],
+          [8.63178909e-01, 2.21019387e-02, 5.41461170e-01]],
+
+         [[8.03996325e-02, 2.99711883e-01, 4.81061339e-01],
+          [4.22687173e-01, 4.03238475e-01, 2.83196568e-02],
+          [5.35261631e-03, 1.24283254e-01, 8.28427076e-03],
+          [6.70624375e-01, 5.25617719e-01, 6.47189498e-01]],
+
+...
+         [[6.61732912e-01, 4.79375660e-01, 2.24387825e-01],
+          [5.49079895e-01, 7.63084352e-01, 2.93408215e-01],
+          [4.40114796e-01, 4.56578493e-01, 6.67237222e-01],
+          [4.57125902e-02, 6.34769857e-01, 8.09519589e-01]],
+
+         [[5.57058454e-02, 9.07498896e-01, 6.05899274e-01],
+          [7.52647519e-01, 3.32724333e-01, 4.95622218e-01],
+          [7.38730907e-01, 8.43784332e-01, 5.99456966e-01],
+          [3.82083654e-03, 5.43327391e-01, 6.65957391e-01]],
+
+         [[2.81248093e-01, 7.67385900e-01, 7.75219083e-01],
+          [3.26656222e-01, 2.83804834e-01, 8.56571674e-01],
+          [6.89728141e-01, 1.89960003e-04, 2.69553125e-01],
+          [6.32120192e-01, 6.23469949e-01, 3.01023960e-01]],
+
+         [[9.02236044e-01, 6.28627896e-01, 3.34908307e-01],
+          [2.51358628e-01, 3.82574022e-01, 2.09779859e-01],
+          [3.80482793e-01, 6.26160383e-01, 7.90119350e-01],
+          [4.96934772e-01, 4.59661722e-01, 1.87280655e-01]]]]],
+      shape=(3, 8, 6, 4, 3), dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>phi</span></div><div class='xr-var-dims'>(n, x, y, z, time)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.5084 0.8862 ... 0.2276 0.2287</div><input id='attrs-7cfc5e64-e1a6-4212-9299-433156487767' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-7cfc5e64-e1a6-4212-9299-433156487767' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-4fd905f0-d6da-4975-8c32-8330366aefa7' class='xr-var-data-in' type='checkbox'><label for='data-4fd905f0-d6da-4975-8c32-8330366aefa7' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([[[[[5.08425653e-01, 8.86174917e-01, 6.62316322e-01],
+          [8.82386625e-01, 5.16516864e-01, 5.49568355e-01],
+          [1.07183933e-01, 7.06095994e-01, 9.03154612e-01],
+          [4.51386690e-01, 5.69089413e-01, 8.01443338e-01]],
+
+         [[3.42321634e-01, 8.33856225e-01, 3.45405400e-01],
+          [7.64159679e-01, 7.74195194e-01, 2.43148804e-01],
+          [6.79735243e-01, 2.44884491e-02, 7.52507329e-01],
+          [6.58253074e-01, 3.46835852e-02, 4.11257684e-01]],
+
+         [[8.57542396e-01, 8.94260824e-01, 3.59573364e-01],
+          [8.59847486e-01, 8.81065786e-01, 5.33752084e-01],
+          [1.31923556e-01, 3.77444148e-01, 6.64455175e-01],
+          [7.12989509e-01, 9.99253273e-01, 7.09369659e-01]],
+
+         [[6.48034871e-01, 6.82282865e-01, 7.55468547e-01],
+          [8.42424035e-01, 9.99519050e-01, 5.77318549e-01],
+          [2.27716923e-01, 5.16043425e-01, 8.80188584e-01],
+          [5.16908109e-01, 9.69653130e-01, 8.88980627e-01]],
+
+...
+         [[5.14967501e-01, 8.62819314e-01, 3.55849266e-02],
+          [9.47278261e-01, 7.20950007e-01, 6.49547040e-01],
+          [3.57497573e-01, 3.68532062e-01, 4.28755999e-01],
+          [5.86892068e-01, 7.62419164e-01, 1.57882094e-01]],
+
+         [[8.42347085e-01, 9.96186137e-01, 6.76909208e-01],
+          [7.22219944e-01, 8.20992351e-01, 3.39556694e-01],
+          [3.47889364e-01, 9.18874681e-01, 1.19106174e-01],
+          [7.12390840e-01, 8.02808821e-01, 3.33124518e-01]],
+
+         [[3.52576554e-01, 9.29384470e-01, 1.94150627e-01],
+          [3.24341834e-01, 7.13669062e-01, 3.19961011e-01],
+          [7.27710128e-01, 2.97246575e-02, 3.63908172e-01],
+          [7.00908065e-01, 9.17465687e-01, 1.08001530e-01]],
+
+         [[5.36318421e-01, 4.86721992e-02, 1.93207502e-01],
+          [6.56067729e-01, 5.06712914e-01, 9.68355179e-01],
+          [8.21312010e-01, 6.41762614e-02, 8.47010434e-01],
+          [7.59846747e-01, 2.27595031e-01, 2.28660464e-01]]]]],
+      shape=(2, 8, 6, 4, 3), dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>pp</span></div><div class='xr-var-dims'>(x, y, z, time)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.8552 0.8612 ... 0.1971 0.9691</div><input id='attrs-f7e2926b-6e2d-43e3-a700-031167aa6105' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-f7e2926b-6e2d-43e3-a700-031167aa6105' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-916c19e8-9554-490a-a7d3-74a9f8dda214' class='xr-var-data-in' type='checkbox'><label for='data-916c19e8-9554-490a-a7d3-74a9f8dda214' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([[[[0.855205  , 0.861233  , 0.00251073],
+         [0.01214427, 0.02389491, 0.1941492 ],
+         [0.9945736 , 0.9751452 , 0.8406082 ],
+         [0.57539046, 0.42583978, 0.13171911]],
+
+        [[0.6603623 , 0.00471932, 0.95481515],
+         [0.40903217, 0.5195924 , 0.43442643],
+         [0.9400866 , 0.53280336, 0.8142709 ],
+         [0.6807979 , 0.8285532 , 0.15397513]],
+
+        [[0.3338802 , 0.3183627 , 0.08036298],
+         [0.05298567, 0.3479439 , 0.99650383],
+         [0.7338384 , 0.4238503 , 0.80008024],
+         [0.6784851 , 0.0987215 , 0.28526318]],
+
+        [[0.5788638 , 0.14221787, 0.3648123 ],
+         [0.19353455, 0.14382297, 0.0151903 ],
+         [0.39655596, 0.68827856, 0.646103  ],
+         [0.9896895 , 0.11503363, 0.09160089]],
+
+...
+
+        [[0.76609176, 0.6019984 , 0.79280883],
+         [0.38130784, 0.5901058 , 0.00915205],
+         [0.90862775, 0.4483226 , 0.11429518],
+         [0.26972133, 0.03128856, 0.9952797 ]],
+
+        [[0.651298  , 0.57846045, 0.43180954],
+         [0.885679  , 0.4138593 , 0.6912523 ],
+         [0.70576227, 0.09142452, 0.22265702],
+         [0.49069571, 0.5481217 , 0.94970644]],
+
+        [[0.9259698 , 0.5313641 , 0.31995964],
+         [0.14138544, 0.6010946 , 0.7624793 ],
+         [0.62297505, 0.7780074 , 0.9005806 ],
+         [0.7345368 , 0.7941161 , 0.66071725]],
+
+        [[0.80581665, 0.85088706, 0.6221792 ],
+         [0.4303187 , 0.64177316, 0.34032702],
+         [0.03552908, 0.8956116 , 0.5326058 ],
+         [0.08575606, 0.19706625, 0.96911186]]]], dtype=float32)</pre></div></li></ul></div></li></ul></div></div></div></div>
+</div>
+</section>
+<section id="split-on-write">
+<h2>Split on write<a class="headerlink" href="#split-on-write" title="Link to this heading">#</a></h2>
+<p>Writing the dataset through the convention produces one file per component, per fraction and per step. <code class="docutils literal notranslate"><span class="pre">u</span></code> never appears on disk; <code class="docutils literal notranslate"><span class="pre">pp</span></code> is written as is.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">binary_engine</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">convention</span><span class="o">.</span><span class="n">writer</span><span class="p">,</span> <span class="n">directory</span><span class="p">)</span>
+<span class="nb">sorted</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">"*.bin"</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>['phi1-000.bin',
+ 'phi1-001.bin',
+ 'phi1-002.bin',
+ 'phi2-000.bin',
+ 'phi2-001.bin',
+ 'phi2-002.bin',
+ 'pp-000.bin',
+ 'pp-001.bin',
+ 'pp-002.bin',
+ 'ux-000.bin',
+ 'ux-001.bin',
+ 'ux-002.bin',
+ 'uy-000.bin',
+ 'uy-001.bin',
+ 'uy-002.bin',
+ 'uz-000.bin',
+ 'uz-001.bin',
+ 'uz-002.bin']
+</pre></div>
+</div>
+</div>
+</div>
+<p>The split happens before the file split, so the per-file slices are plain <code class="docutils literal notranslate"><span class="pre">(x,</span> <span class="pre">y,</span> <span class="pre">z)</span></code> arrays. You can inspect the plan without writing anything by iterating the writer:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">[(</span><span class="n">spec</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">sub_array</span><span class="o">.</span><span class="n">dims</span><span class="p">)</span> <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">convention</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s2">"u"</span><span class="p">])][:</span><span class="mi">4</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[('ux-000.bin', ('x', 'y', 'z')),
+ ('ux-001.bin', ('x', 'y', 'z')),
+ ('ux-002.bin', ('x', 'y', 'z')),
+ ('uy-000.bin', ('x', 'y', 'z'))]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="stack-on-read">
+<h2>Stack on read<a class="headerlink" href="#stack-on-read" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">open</span></code> lists the files that follow the pattern, opens them lazily with <code class="docutils literal notranslate"><span class="pre">xarray.open_mfdataset</span></code>, and applies the stacks. The result has the same variables as the original dataset, with <code class="docutils literal notranslate"><span class="pre">i</span></code> and <code class="docutils literal notranslate"><span class="pre">n</span></code> as proper coordinates.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">opened</span> <span class="o">=</span> <span class="n">convention</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">"time"</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+<span class="n">opened</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div><svg style="position: absolute; width: 0; height: 0; overflow: hidden">
+<defs>
+<symbol id="icon-database" viewBox="0 0 32 32">
+<path d="M16 0c-8.837 0-16 2.239-16 5v4c0 2.761 7.163 5 16 5s16-2.239 16-5v-4c0-2.761-7.163-5-16-5z"></path>
+<path d="M16 17c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
+<path d="M16 26c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
+</symbol>
+<symbol id="icon-file-text2" viewBox="0 0 32 32">
+<path d="M28.681 7.159c-0.694-0.947-1.662-2.053-2.724-3.116s-2.169-2.030-3.116-2.724c-1.612-1.182-2.393-1.319-2.841-1.319h-15.5c-1.378 0-2.5 1.121-2.5 2.5v27c0 1.378 1.122 2.5 2.5 2.5h23c1.378 0 2.5-1.122 2.5-2.5v-19.5c0-0.448-0.137-1.23-1.319-2.841zM24.543 5.457c0.959 0.959 1.712 1.825 2.268 2.543h-4.811v-4.811c0.718 0.556 1.584 1.309 2.543 2.268zM28 29.5c0 0.271-0.229 0.5-0.5 0.5h-23c-0.271 0-0.5-0.229-0.5-0.5v-27c0-0.271 0.229-0.5 0.5-0.5 0 0 15.499-0 15.5 0v7c0 0.552 0.448 1 1 1h7v19.5z"></path>
+<path d="M23 26h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+<path d="M23 22h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+<path d="M23 18h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+</symbol>
+</defs>
+</svg>
+<style>/* CSS stylesheet for displaying xarray objects in notebooks */
+
+:root {
+  --xr-font-color0: var(
+    --jp-content-font-color0,
+    var(--pst-color-text-base rgba(0, 0, 0, 1))
+  );
+  --xr-font-color2: var(
+    --jp-content-font-color2,
+    var(--pst-color-text-base, rgba(0, 0, 0, 0.54))
+  );
+  --xr-font-color3: var(
+    --jp-content-font-color3,
+    var(--pst-color-text-base, rgba(0, 0, 0, 0.38))
+  );
+  --xr-border-color: var(
+    --jp-border-color2,
+    hsl(from var(--pst-color-on-background, white) h s calc(l - 10))
+  );
+  --xr-disabled-color: var(
+    --jp-layout-color3,
+    hsl(from var(--pst-color-on-background, white) h s calc(l - 40))
+  );
+  --xr-background-color: var(
+    --jp-layout-color0,
+    var(--pst-color-on-background, white)
+  );
+  --xr-background-color-row-even: var(
+    --jp-layout-color1,
+    hsl(from var(--pst-color-on-background, white) h s calc(l - 5))
+  );
+  --xr-background-color-row-odd: var(
+    --jp-layout-color2,
+    hsl(from var(--pst-color-on-background, white) h s calc(l - 15))
+  );
+}
+
+html[theme="dark"],
+html[data-theme="dark"],
+body[data-theme="dark"],
+body.vscode-dark {
+  --xr-font-color0: var(
+    --jp-content-font-color0,
+    var(--pst-color-text-base, rgba(255, 255, 255, 1))
+  );
+  --xr-font-color2: var(
+    --jp-content-font-color2,
+    var(--pst-color-text-base, rgba(255, 255, 255, 0.54))
+  );
+  --xr-font-color3: var(
+    --jp-content-font-color3,
+    var(--pst-color-text-base, rgba(255, 255, 255, 0.38))
+  );
+  --xr-border-color: var(
+    --jp-border-color2,
+    hsl(from var(--pst-color-on-background, #111111) h s calc(l + 10))
+  );
+  --xr-disabled-color: var(
+    --jp-layout-color3,
+    hsl(from var(--pst-color-on-background, #111111) h s calc(l + 40))
+  );
+  --xr-background-color: var(
+    --jp-layout-color0,
+    var(--pst-color-on-background, #111111)
+  );
+  --xr-background-color-row-even: var(
+    --jp-layout-color1,
+    hsl(from var(--pst-color-on-background, #111111) h s calc(l + 5))
+  );
+  --xr-background-color-row-odd: var(
+    --jp-layout-color2,
+    hsl(from var(--pst-color-on-background, #111111) h s calc(l + 15))
+  );
+}
+
+.xr-wrap {
+  display: block !important;
+  min-width: 300px;
+  max-width: 700px;
+  line-height: 1.6;
+  padding-bottom: 4px;
+}
+
+.xr-text-repr-fallback {
+  /* fallback to plain text repr when CSS is not injected (untrusted notebook) */
+  display: none;
+}
+
+.xr-header {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.xr-header {
+  border-bottom: solid 1px var(--xr-border-color);
+  margin-bottom: 4px;
+}
+
+.xr-header > div,
+.xr-header > ul {
+  display: inline;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.xr-obj-type,
+.xr-obj-name {
+  margin-left: 2px;
+  margin-right: 10px;
+}
+
+.xr-obj-type,
+.xr-group-box-contents > label {
+  color: var(--xr-font-color2);
+  display: block;
+}
+
+.xr-sections {
+  padding-left: 0 !important;
+  display: grid;
+  grid-template-columns: 150px auto auto 1fr 0 20px 0 20px;
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+
+.xr-section-item {
+  display: contents;
+}
+
+.xr-section-item > input,
+.xr-group-box-contents > input,
+.xr-array-wrap > input {
+  display: block;
+  opacity: 0;
+  height: 0;
+  margin: 0;
+}
+
+.xr-section-item > input + label,
+.xr-var-item > input + label {
+  color: var(--xr-disabled-color);
+}
+
+.xr-section-item > input:enabled + label,
+.xr-var-item > input:enabled + label,
+.xr-array-wrap > input:enabled + label,
+.xr-group-box-contents > input:enabled + label {
+  cursor: pointer;
+  color: var(--xr-font-color2);
+}
+
+.xr-section-item > input:focus-visible + label,
+.xr-var-item > input:focus-visible + label,
+.xr-array-wrap > input:focus-visible + label,
+.xr-group-box-contents > input:focus-visible + label {
+  outline: auto;
+}
+
+.xr-section-item > input:enabled + label:hover,
+.xr-var-item > input:enabled + label:hover,
+.xr-array-wrap > input:enabled + label:hover,
+.xr-group-box-contents > input:enabled + label:hover {
+  color: var(--xr-font-color0);
+}
+
+.xr-section-summary {
+  grid-column: 1;
+  color: var(--xr-font-color2);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.xr-section-summary > em {
+  font-weight: normal;
+}
+
+.xr-span-grid {
+  grid-column-end: -1;
+}
+
+.xr-section-summary > span {
+  display: inline-block;
+  padding-left: 0.3em;
+}
+
+.xr-group-box-contents > input:checked + label > span {
+  display: inline-block;
+  padding-left: 0.6em;
+}
+
+.xr-section-summary-in:disabled + label {
+  color: var(--xr-font-color2);
+}
+
+.xr-section-summary-in + label:before {
+  display: inline-block;
+  content: "►";
+  font-size: 11px;
+  width: 15px;
+  text-align: center;
+}
+
+.xr-section-summary-in:disabled + label:before {
+  color: var(--xr-disabled-color);
+}
+
+.xr-section-summary-in:checked + label:before {
+  content: "▼";
+}
+
+.xr-section-summary-in:checked + label > span {
+  display: none;
+}
+
+.xr-section-summary,
+.xr-section-inline-details,
+.xr-group-box-contents > label {
+  padding-top: 4px;
+}
+
+.xr-section-inline-details {
+  grid-column: 2 / -1;
+}
+
+.xr-section-details {
+  grid-column: 1 / -1;
+  margin-top: 4px;
+  margin-bottom: 5px;
+}
+
+.xr-section-summary-in ~ .xr-section-details {
+  display: none;
+}
+
+.xr-section-summary-in:checked ~ .xr-section-details {
+  display: contents;
+}
+
+.xr-children {
+  display: inline-grid;
+  grid-template-columns: 100%;
+  grid-column: 1 / -1;
+  padding-top: 4px;
+}
+
+.xr-group-box {
+  display: inline-grid;
+  grid-template-columns: 0px 30px auto;
+}
+
+.xr-group-box-vline {
+  grid-column-start: 1;
+  border-right: 0.2em solid;
+  border-color: var(--xr-border-color);
+  width: 0px;
+}
+
+.xr-group-box-hline {
+  grid-column-start: 2;
+  grid-row-start: 1;
+  height: 1em;
+  width: 26px;
+  border-bottom: 0.2em solid;
+  border-color: var(--xr-border-color);
+}
+
+.xr-group-box-contents {
+  grid-column-start: 3;
+  padding-bottom: 4px;
+}
+
+.xr-group-box-contents > label::before {
+  content: "📂";
+  padding-right: 0.3em;
+}
+
+.xr-group-box-contents > input:checked + label::before {
+  content: "📁";
+}
+
+.xr-group-box-contents > input:checked + label {
+  padding-bottom: 0px;
+}
+
+.xr-group-box-contents > input:checked ~ .xr-sections {
+  display: none;
+}
+
+.xr-group-box-contents > input + label > span {
+  display: none;
+}
+
+.xr-group-box-ellipsis {
+  font-size: 1.4em;
+  font-weight: 900;
+  color: var(--xr-font-color2);
+  letter-spacing: 0.15em;
+  cursor: default;
+}
+
+.xr-array-wrap {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 20px auto;
+}
+
+.xr-array-wrap > label {
+  grid-column: 1;
+  vertical-align: top;
+}
+
+.xr-preview {
+  color: var(--xr-font-color3);
+}
+
+.xr-array-preview,
+.xr-array-data {
+  padding: 0 5px !important;
+  grid-column: 2;
+}
+
+.xr-array-data,
+.xr-array-in:checked ~ .xr-array-preview {
+  display: none;
+}
+
+.xr-array-in:checked ~ .xr-array-data,
+.xr-array-preview {
+  display: inline-block;
+}
+
+.xr-dim-list {
+  display: inline-block !important;
+  list-style: none;
+  padding: 0 !important;
+  margin: 0;
+}
+
+.xr-dim-list li {
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+}
+
+.xr-dim-list:before {
+  content: "(";
+}
+
+.xr-dim-list:after {
+  content: ")";
+}
+
+.xr-dim-list li:not(:last-child):after {
+  content: ",";
+  padding-right: 5px;
+}
+
+.xr-has-index {
+  font-weight: bold;
+}
+
+.xr-var-list,
+.xr-var-item {
+  display: contents;
+}
+
+.xr-var-item > div,
+.xr-var-item label,
+.xr-var-item > .xr-var-name span {
+  background-color: var(--xr-background-color-row-even);
+  border-color: var(--xr-background-color-row-odd);
+  margin-bottom: 0;
+  padding-top: 2px;
+}
+
+.xr-var-item > .xr-var-name:hover span {
+  padding-right: 5px;
+}
+
+.xr-var-list > li:nth-child(odd) > div,
+.xr-var-list > li:nth-child(odd) > label,
+.xr-var-list > li:nth-child(odd) > .xr-var-name span {
+  background-color: var(--xr-background-color-row-odd);
+  border-color: var(--xr-background-color-row-even);
+}
+
+.xr-var-name {
+  grid-column: 1;
+}
+
+.xr-var-dims {
+  grid-column: 2;
+}
+
+.xr-var-dtype {
+  grid-column: 3;
+  text-align: right;
+  color: var(--xr-font-color2);
+}
+
+.xr-var-preview {
+  grid-column: 4;
+}
+
+.xr-index-preview {
+  grid-column: 2 / 5;
+  color: var(--xr-font-color2);
+}
+
+.xr-var-name,
+.xr-var-dims,
+.xr-var-dtype,
+.xr-preview,
+.xr-attrs dt {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 10px;
+}
+
+.xr-var-name:hover,
+.xr-var-dims:hover,
+.xr-var-dtype:hover,
+.xr-attrs dt:hover {
+  overflow: visible;
+  width: auto;
+  z-index: 1;
+}
+
+.xr-var-attrs,
+.xr-var-data,
+.xr-index-data {
+  display: none;
+  border-top: 2px dotted var(--xr-background-color);
+  padding-bottom: 20px !important;
+  padding-top: 10px !important;
+}
+
+.xr-var-attrs-in + label,
+.xr-var-data-in + label,
+.xr-index-data-in + label {
+  padding: 0 1px;
+}
+
+.xr-var-attrs-in:checked ~ .xr-var-attrs,
+.xr-var-data-in:checked ~ .xr-var-data,
+.xr-index-data-in:checked ~ .xr-index-data {
+  display: block;
+}
+
+.xr-var-data > table {
+  float: right;
+}
+
+.xr-var-data > pre,
+.xr-index-data > pre,
+.xr-var-data > table > tbody > tr {
+  background-color: transparent !important;
+}
+
+.xr-var-name span,
+.xr-var-data,
+.xr-index-name div,
+.xr-index-data,
+.xr-attrs {
+  padding-left: 25px !important;
+}
+
+.xr-attrs,
+.xr-var-attrs,
+.xr-var-data,
+.xr-index-data {
+  grid-column: 1 / -1;
+}
+
+dl.xr-attrs {
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 125px auto;
+}
+
+.xr-attrs dt,
+.xr-attrs dd {
+  padding: 0;
+  margin: 0;
+  float: left;
+  padding-right: 10px;
+  width: auto;
+}
+
+.xr-attrs dt {
+  font-weight: normal;
+  grid-column: 1;
+}
+
+.xr-attrs dt:hover span {
+  display: inline-block;
+  background: var(--xr-background-color);
+  padding-right: 10px;
+}
+
+.xr-attrs dd {
+  grid-column: 2;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.xr-icon-database,
+.xr-icon-file-text2,
+.xr-no-icon {
+  display: inline-block;
+  vertical-align: middle;
+  width: 1em;
+  height: 1.5em !important;
+  stroke-width: 0;
+  stroke: currentColor;
+  fill: currentColor;
+}
+
+.xr-var-attrs-in:checked + label > .xr-icon-file-text2,
+.xr-var-data-in:checked + label > .xr-icon-database,
+.xr-index-data-in:checked + label > .xr-icon-database {
+  color: var(--xr-font-color0);
+  filter: drop-shadow(1px 1px 5px var(--xr-font-color2));
+  stroke-width: 0.8px;
+}
+</style><pre class='xr-text-repr-fallback'>&lt;xarray.Dataset&gt; Size: 14kB
+Dimensions:  (x: 8, y: 6, z: 4, time: 3, n: 2, i: 3)
+Coordinates:
+  * x        (x) float32 32B 0.0 0.1429 0.2857 0.4286 0.5714 0.7143 0.8571 1.0
+  * y        (y) float32 24B 0.0 0.4 0.8 1.2 1.6 2.0
+  * z        (z) float32 16B 0.0 0.1667 0.3333 0.5
+  * time     (time) float64 24B 0.0 0.25 0.5
+  * n        (n) int64 16B 1 2
+  * i        (i) &lt;U1 12B &#x27;x&#x27; &#x27;y&#x27; &#x27;z&#x27;
+Data variables:
+    pp       (x, y, z, time) float32 2kB dask.array&lt;chunksize=(8, 6, 4, 1), meta=np.ndarray&gt;
+    phi      (n, x, y, z, time) float32 5kB dask.array&lt;chunksize=(1, 8, 6, 4, 1), meta=np.ndarray&gt;
+    u        (i, x, y, z, time) float32 7kB dask.array&lt;chunksize=(1, 8, 6, 4, 1), meta=np.ndarray&gt;</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.Dataset</div></div><ul class='xr-sections'><li class='xr-section-item'><input id='section-bcc4df26-23d6-4e4a-a3da-d47bb15dcd7d' class='xr-section-summary-in' type='checkbox' disabled /><label for='section-bcc4df26-23d6-4e4a-a3da-d47bb15dcd7d' class='xr-section-summary'>Dimensions:</label><div class='xr-section-inline-details'><ul class='xr-dim-list'><li><span class='xr-has-index'>x</span>: 8</li><li><span class='xr-has-index'>y</span>: 6</li><li><span class='xr-has-index'>z</span>: 4</li><li><span class='xr-has-index'>time</span>: 3</li><li><span class='xr-has-index'>n</span>: 2</li><li><span class='xr-has-index'>i</span>: 3</li></ul></div></li><li class='xr-section-item'><input id='section-4808cc35-091e-4508-a0cc-a3e11f2f8339' class='xr-section-summary-in' type='checkbox' checked /><label for='section-4808cc35-091e-4508-a0cc-a3e11f2f8339' class='xr-section-summary' title='Expand/collapse section'>Coordinates: <span>(6)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>x</span></div><div class='xr-var-dims'>(x)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.0 0.1429 0.2857 ... 0.8571 1.0</div><input id='attrs-a859f582-06b4-4ab7-9b54-d79909ef37bb' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-a859f582-06b4-4ab7-9b54-d79909ef37bb' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-1b25c993-a8bb-4c60-806c-cc4187e0062c' class='xr-var-data-in' type='checkbox'><label for='data-1b25c993-a8bb-4c60-806c-cc4187e0062c' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0.      , 0.142857, 0.285714, 0.428571, 0.571429, 0.714286, 0.857143,
+       1.      ], dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>y</span></div><div class='xr-var-dims'>(y)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.0 0.4 0.8 1.2 1.6 2.0</div><input id='attrs-d718087a-ed56-464a-b6b2-f94c3d9ef556' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-d718087a-ed56-464a-b6b2-f94c3d9ef556' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-1d60f773-e337-4e2a-9963-c5164514e1fd' class='xr-var-data-in' type='checkbox'><label for='data-1d60f773-e337-4e2a-9963-c5164514e1fd' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0. , 0.4, 0.8, 1.2, 1.6, 2. ], dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>z</span></div><div class='xr-var-dims'>(z)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.0 0.1667 0.3333 0.5</div><input id='attrs-60e33ba0-9aaf-4840-b428-533c390762fe' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-60e33ba0-9aaf-4840-b428-533c390762fe' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-e9199c79-82aa-43f1-a91a-bd5f25e4ad42' class='xr-var-data-in' type='checkbox'><label for='data-e9199c79-82aa-43f1-a91a-bd5f25e4ad42' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0.      , 0.166667, 0.333333, 0.5     ], dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>time</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>0.0 0.25 0.5</div><input id='attrs-52a1e270-b103-4579-a83e-8de38dca9400' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-52a1e270-b103-4579-a83e-8de38dca9400' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-365437fd-c7d6-4c12-8a44-7c1360a9b778' class='xr-var-data-in' type='checkbox'><label for='data-365437fd-c7d6-4c12-8a44-7c1360a9b778' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0.  , 0.25, 0.5 ])</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>n</span></div><div class='xr-var-dims'>(n)</div><div class='xr-var-dtype'>int64</div><div class='xr-var-preview xr-preview'>1 2</div><input id='attrs-dbb03252-9a1a-4c31-af7e-95872c923875' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-dbb03252-9a1a-4c31-af7e-95872c923875' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-b36a7e0f-b134-49e5-9361-d624ee23f483' class='xr-var-data-in' type='checkbox'><label for='data-b36a7e0f-b134-49e5-9361-d624ee23f483' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([1, 2])</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>i</span></div><div class='xr-var-dims'>(i)</div><div class='xr-var-dtype'>&lt;U1</div><div class='xr-var-preview xr-preview'>&#x27;x&#x27; &#x27;y&#x27; &#x27;z&#x27;</div><input id='attrs-7e37586b-0314-4a01-bb52-634e2ab637eb' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-7e37586b-0314-4a01-bb52-634e2ab637eb' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-3df0c248-d4ad-49e2-8ae6-a0becbf8cb39' class='xr-var-data-in' type='checkbox'><label for='data-3df0c248-d4ad-49e2-8ae6-a0becbf8cb39' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([&#x27;x&#x27;, &#x27;y&#x27;, &#x27;z&#x27;], dtype=&#x27;&lt;U1&#x27;)</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-29e77a9a-17fb-485b-9772-db7d980060a4' class='xr-section-summary-in' type='checkbox' checked /><label for='section-29e77a9a-17fb-485b-9772-db7d980060a4' class='xr-section-summary' title='Expand/collapse section'>Data variables: <span>(3)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span>pp</span></div><div class='xr-var-dims'>(x, y, z, time)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(8, 6, 4, 1), meta=np.ndarray&gt;</div><input id='attrs-8c80041e-7a22-46fd-9068-bf4ffdbb5a5f' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-8c80041e-7a22-46fd-9068-bf4ffdbb5a5f' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-986dbe50-1374-4aec-abec-ecf2365d2363' class='xr-var-data-in' type='checkbox'><label for='data-986dbe50-1374-4aec-abec-ecf2365d2363' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><table>
+    <tr>
+        <td>
+            <table style="border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <td> </td>
+                        <th> Array </th>
+                        <th> Chunk </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <th> Bytes </th>
+                        <td> 2.25 kiB </td>
+                        <td> 768 B </td>
+                    </tr>
+                    
+                    <tr>
+                        <th> Shape </th>
+                        <td> (8, 6, 4, 3) </td>
+                        <td> (8, 6, 4, 1) </td>
+                    </tr>
+                    <tr>
+                        <th> Dask graph </th>
+                        <td colspan="2"> 3 chunks in 7 graph layers </td>
+                    </tr>
+                    <tr>
+                        <th> Data type </th>
+                        <td colspan="2"> float32 numpy.ndarray </td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+        <td>
+        <svg width="527" height="162" style="stroke:rgb(0,0,0);stroke-width:1" >
+
+  <!-- Horizontal lines -->
+  <line x1="0" y1="0" x2="120" y2="0" style="stroke-width:2" />
+  <line x1="0" y1="39" x2="120" y2="39" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="0" y1="0" x2="0" y2="39" style="stroke-width:2" />
+  <line x1="120" y1="0" x2="120" y2="39" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="0.0,0.0 120.0,0.0 120.0,39.793935054828374 0.0,39.793935054828374" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="60.0" y="59.793935054828374" font-size="1.0rem" font-weight="100" text-anchor="middle" >8</text>
+  <text x="140.0" y="19.896967527414187" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(0,140.0,19.896967527414187)">1</text>
+
+
+  <!-- Horizontal lines -->
+  <line x1="190" y1="0" x2="242" y2="52" style="stroke-width:2" />
+  <line x1="190" y1="60" x2="242" y2="112" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="190" y1="0" x2="190" y2="60" style="stroke-width:2" />
+  <line x1="242" y1="52" x2="242" y2="112" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="190.0,0.0 242.94117647058823,52.94117647058824 242.94117647058823,112.94117647058823 190.0,60.0" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Horizontal lines -->
+  <line x1="190" y1="0" x2="235" y2="0" style="stroke-width:2" />
+  <line x1="242" y1="52" x2="287" y2="52" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="190" y1="0" x2="242" y2="52" style="stroke-width:2" />
+  <line x1="205" y1="0" x2="257" y2="52" />
+  <line x1="220" y1="0" x2="272" y2="52" />
+  <line x1="235" y1="0" x2="287" y2="52" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="190.0,0.0 235.0,0.0 287.94117647058823,52.94117647058824 242.94117647058823,52.94117647058824" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Horizontal lines -->
+  <line x1="242" y1="52" x2="287" y2="52" style="stroke-width:2" />
+  <line x1="242" y1="112" x2="287" y2="112" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="242" y1="52" x2="242" y2="112" style="stroke-width:2" />
+  <line x1="257" y1="52" x2="257" y2="112" />
+  <line x1="272" y1="52" x2="272" y2="112" />
+  <line x1="287" y1="52" x2="287" y2="112" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="242.94117647058823,52.94117647058824 287.94117647058823,52.94117647058824 287.94117647058823,112.94117647058823 242.94117647058823,112.94117647058823" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="265.44117647058823" y="132.94117647058823" font-size="1.0rem" font-weight="100" text-anchor="middle" >3</text>
+  <text x="307.94117647058823" y="82.94117647058823" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(0,307.94117647058823,82.94117647058823)">4</text>
+  <text x="206.47058823529412" y="106.47058823529412" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(45,206.47058823529412,106.47058823529412)">6</text>
+</svg>
+        </td>
+    </tr>
+</table></div></li><li class='xr-var-item'><div class='xr-var-name'><span>phi</span></div><div class='xr-var-dims'>(n, x, y, z, time)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(1, 8, 6, 4, 1), meta=np.ndarray&gt;</div><input id='attrs-ac0aab81-6f2b-4f2d-bc5a-0cad919d2a24' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-ac0aab81-6f2b-4f2d-bc5a-0cad919d2a24' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-12941437-5bd7-4d3c-8856-3b294e56a8ee' class='xr-var-data-in' type='checkbox'><label for='data-12941437-5bd7-4d3c-8856-3b294e56a8ee' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><table>
+    <tr>
+        <td>
+            <table style="border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <td> </td>
+                        <th> Array </th>
+                        <th> Chunk </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <th> Bytes </th>
+                        <td> 4.50 kiB </td>
+                        <td> 768 B </td>
+                    </tr>
+                    
+                    <tr>
+                        <th> Shape </th>
+                        <td> (2, 8, 6, 4, 3) </td>
+                        <td> (1, 8, 6, 4, 1) </td>
+                    </tr>
+                    <tr>
+                        <th> Dask graph </th>
+                        <td colspan="2"> 6 chunks in 17 graph layers </td>
+                    </tr>
+                    <tr>
+                        <th> Data type </th>
+                        <td colspan="2"> float32 numpy.ndarray </td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+        <td>
+        <svg width="527" height="162" style="stroke:rgb(0,0,0);stroke-width:1" >
+
+  <!-- Horizontal lines -->
+  <line x1="0" y1="0" x2="120" y2="0" style="stroke-width:2" />
+  <line x1="0" y1="21" x2="120" y2="21" />
+  <line x1="0" y1="42" x2="120" y2="42" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="0" y1="0" x2="0" y2="42" style="stroke-width:2" />
+  <line x1="120" y1="0" x2="120" y2="42" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="0.0,0.0 120.0,0.0 120.0,42.89879552186203 0.0,42.89879552186203" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="60.0" y="62.89879552186203" font-size="1.0rem" font-weight="100" text-anchor="middle" >8</text>
+  <text x="140.0" y="21.449397760931014" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(0,140.0,21.449397760931014)">2</text>
+
+
+  <!-- Horizontal lines -->
+  <line x1="190" y1="0" x2="242" y2="52" style="stroke-width:2" />
+  <line x1="190" y1="60" x2="242" y2="112" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="190" y1="0" x2="190" y2="60" style="stroke-width:2" />
+  <line x1="242" y1="52" x2="242" y2="112" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="190.0,0.0 242.94117647058823,52.94117647058824 242.94117647058823,112.94117647058823 190.0,60.0" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Horizontal lines -->
+  <line x1="190" y1="0" x2="235" y2="0" style="stroke-width:2" />
+  <line x1="242" y1="52" x2="287" y2="52" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="190" y1="0" x2="242" y2="52" style="stroke-width:2" />
+  <line x1="205" y1="0" x2="257" y2="52" />
+  <line x1="220" y1="0" x2="272" y2="52" />
+  <line x1="235" y1="0" x2="287" y2="52" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="190.0,0.0 235.0,0.0 287.94117647058823,52.94117647058824 242.94117647058823,52.94117647058824" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Horizontal lines -->
+  <line x1="242" y1="52" x2="287" y2="52" style="stroke-width:2" />
+  <line x1="242" y1="112" x2="287" y2="112" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="242" y1="52" x2="242" y2="112" style="stroke-width:2" />
+  <line x1="257" y1="52" x2="257" y2="112" />
+  <line x1="272" y1="52" x2="272" y2="112" />
+  <line x1="287" y1="52" x2="287" y2="112" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="242.94117647058823,52.94117647058824 287.94117647058823,52.94117647058824 287.94117647058823,112.94117647058823 242.94117647058823,112.94117647058823" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="265.44117647058823" y="132.94117647058823" font-size="1.0rem" font-weight="100" text-anchor="middle" >3</text>
+  <text x="307.94117647058823" y="82.94117647058823" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(0,307.94117647058823,82.94117647058823)">4</text>
+  <text x="206.47058823529412" y="106.47058823529412" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(45,206.47058823529412,106.47058823529412)">6</text>
+</svg>
+        </td>
+    </tr>
+</table></div></li><li class='xr-var-item'><div class='xr-var-name'><span>u</span></div><div class='xr-var-dims'>(i, x, y, z, time)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(1, 8, 6, 4, 1), meta=np.ndarray&gt;</div><input id='attrs-c6f1ab42-a98a-4f47-9d09-2bae3b37dbea' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-c6f1ab42-a98a-4f47-9d09-2bae3b37dbea' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-5d05ab3f-501e-4175-b739-463a8c4b27f6' class='xr-var-data-in' type='checkbox'><label for='data-5d05ab3f-501e-4175-b739-463a8c4b27f6' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><table>
+    <tr>
+        <td>
+            <table style="border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <td> </td>
+                        <th> Array </th>
+                        <th> Chunk </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <th> Bytes </th>
+                        <td> 6.75 kiB </td>
+                        <td> 768 B </td>
+                    </tr>
+                    
+                    <tr>
+                        <th> Shape </th>
+                        <td> (3, 8, 6, 4, 3) </td>
+                        <td> (1, 8, 6, 4, 1) </td>
+                    </tr>
+                    <tr>
+                        <th> Dask graph </th>
+                        <td colspan="2"> 9 chunks in 25 graph layers </td>
+                    </tr>
+                    <tr>
+                        <th> Data type </th>
+                        <td colspan="2"> float32 numpy.ndarray </td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+        <td>
+        <svg width="527" height="162" style="stroke:rgb(0,0,0);stroke-width:1" >
+
+  <!-- Horizontal lines -->
+  <line x1="0" y1="0" x2="120" y2="0" style="stroke-width:2" />
+  <line x1="0" y1="15" x2="120" y2="15" />
+  <line x1="0" y1="30" x2="120" y2="30" />
+  <line x1="0" y1="45" x2="120" y2="45" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="0" y1="0" x2="0" y2="45" style="stroke-width:2" />
+  <line x1="120" y1="0" x2="120" y2="45" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="0.0,0.0 120.0,0.0 120.0,45.0 0.0,45.0" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="60.0" y="65.0" font-size="1.0rem" font-weight="100" text-anchor="middle" >8</text>
+  <text x="140.0" y="22.5" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(0,140.0,22.5)">3</text>
+
+
+  <!-- Horizontal lines -->
+  <line x1="190" y1="0" x2="242" y2="52" style="stroke-width:2" />
+  <line x1="190" y1="60" x2="242" y2="112" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="190" y1="0" x2="190" y2="60" style="stroke-width:2" />
+  <line x1="242" y1="52" x2="242" y2="112" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="190.0,0.0 242.94117647058823,52.94117647058824 242.94117647058823,112.94117647058823 190.0,60.0" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Horizontal lines -->
+  <line x1="190" y1="0" x2="235" y2="0" style="stroke-width:2" />
+  <line x1="242" y1="52" x2="287" y2="52" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="190" y1="0" x2="242" y2="52" style="stroke-width:2" />
+  <line x1="205" y1="0" x2="257" y2="52" />
+  <line x1="220" y1="0" x2="272" y2="52" />
+  <line x1="235" y1="0" x2="287" y2="52" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="190.0,0.0 235.0,0.0 287.94117647058823,52.94117647058824 242.94117647058823,52.94117647058824" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Horizontal lines -->
+  <line x1="242" y1="52" x2="287" y2="52" style="stroke-width:2" />
+  <line x1="242" y1="112" x2="287" y2="112" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="242" y1="52" x2="242" y2="112" style="stroke-width:2" />
+  <line x1="257" y1="52" x2="257" y2="112" />
+  <line x1="272" y1="52" x2="272" y2="112" />
+  <line x1="287" y1="52" x2="287" y2="112" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="242.94117647058823,52.94117647058824 287.94117647058823,52.94117647058824 287.94117647058823,112.94117647058823 242.94117647058823,112.94117647058823" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="265.44117647058823" y="132.94117647058823" font-size="1.0rem" font-weight="100" text-anchor="middle" >3</text>
+  <text x="307.94117647058823" y="82.94117647058823" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(0,307.94117647058823,82.94117647058823)">4</text>
+  <text x="206.47058823529412" y="106.47058823529412" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(45,206.47058823529412,106.47058823529412)">6</text>
+</svg>
+        </td>
+    </tr>
+</table></div></li></ul></div></li></ul></div></div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">data_vars</span><span class="p">:</span>
+    <span class="n">xr</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+        <span class="n">opened</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="o">*</span><span class="n">dataset</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">dims</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">(),</span> <span class="n">dataset</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"round trip matches"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>round trip matches
+</pre></div>
+</div>
+</div>
+</div>
+<p>Stacking is lazy, so a Dask-backed dataset stays Dask-backed, and <code class="docutils literal notranslate"><span class="pre">i</span></code> and <code class="docutils literal notranslate"><span class="pre">n</span></code> can be used like any other coordinate:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">speed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">opened</span><span class="p">[</span><span class="s2">"u"</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">"i"</span><span class="p">))</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">"speed"</span><span class="p">)</span>
+<span class="n">speed</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div><svg style="position: absolute; width: 0; height: 0; overflow: hidden">
+<defs>
+<symbol id="icon-database" viewBox="0 0 32 32">
+<path d="M16 0c-8.837 0-16 2.239-16 5v4c0 2.761 7.163 5 16 5s16-2.239 16-5v-4c0-2.761-7.163-5-16-5z"></path>
+<path d="M16 17c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
+<path d="M16 26c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
+</symbol>
+<symbol id="icon-file-text2" viewBox="0 0 32 32">
+<path d="M28.681 7.159c-0.694-0.947-1.662-2.053-2.724-3.116s-2.169-2.030-3.116-2.724c-1.612-1.182-2.393-1.319-2.841-1.319h-15.5c-1.378 0-2.5 1.121-2.5 2.5v27c0 1.378 1.122 2.5 2.5 2.5h23c1.378 0 2.5-1.122 2.5-2.5v-19.5c0-0.448-0.137-1.23-1.319-2.841zM24.543 5.457c0.959 0.959 1.712 1.825 2.268 2.543h-4.811v-4.811c0.718 0.556 1.584 1.309 2.543 2.268zM28 29.5c0 0.271-0.229 0.5-0.5 0.5h-23c-0.271 0-0.5-0.229-0.5-0.5v-27c0-0.271 0.229-0.5 0.5-0.5 0 0 15.499-0 15.5 0v7c0 0.552 0.448 1 1 1h7v19.5z"></path>
+<path d="M23 26h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+<path d="M23 22h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+<path d="M23 18h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+</symbol>
+</defs>
+</svg>
+<style>/* CSS stylesheet for displaying xarray objects in notebooks */
+
+:root {
+  --xr-font-color0: var(
+    --jp-content-font-color0,
+    var(--pst-color-text-base rgba(0, 0, 0, 1))
+  );
+  --xr-font-color2: var(
+    --jp-content-font-color2,
+    var(--pst-color-text-base, rgba(0, 0, 0, 0.54))
+  );
+  --xr-font-color3: var(
+    --jp-content-font-color3,
+    var(--pst-color-text-base, rgba(0, 0, 0, 0.38))
+  );
+  --xr-border-color: var(
+    --jp-border-color2,
+    hsl(from var(--pst-color-on-background, white) h s calc(l - 10))
+  );
+  --xr-disabled-color: var(
+    --jp-layout-color3,
+    hsl(from var(--pst-color-on-background, white) h s calc(l - 40))
+  );
+  --xr-background-color: var(
+    --jp-layout-color0,
+    var(--pst-color-on-background, white)
+  );
+  --xr-background-color-row-even: var(
+    --jp-layout-color1,
+    hsl(from var(--pst-color-on-background, white) h s calc(l - 5))
+  );
+  --xr-background-color-row-odd: var(
+    --jp-layout-color2,
+    hsl(from var(--pst-color-on-background, white) h s calc(l - 15))
+  );
+}
+
+html[theme="dark"],
+html[data-theme="dark"],
+body[data-theme="dark"],
+body.vscode-dark {
+  --xr-font-color0: var(
+    --jp-content-font-color0,
+    var(--pst-color-text-base, rgba(255, 255, 255, 1))
+  );
+  --xr-font-color2: var(
+    --jp-content-font-color2,
+    var(--pst-color-text-base, rgba(255, 255, 255, 0.54))
+  );
+  --xr-font-color3: var(
+    --jp-content-font-color3,
+    var(--pst-color-text-base, rgba(255, 255, 255, 0.38))
+  );
+  --xr-border-color: var(
+    --jp-border-color2,
+    hsl(from var(--pst-color-on-background, #111111) h s calc(l + 10))
+  );
+  --xr-disabled-color: var(
+    --jp-layout-color3,
+    hsl(from var(--pst-color-on-background, #111111) h s calc(l + 40))
+  );
+  --xr-background-color: var(
+    --jp-layout-color0,
+    var(--pst-color-on-background, #111111)
+  );
+  --xr-background-color-row-even: var(
+    --jp-layout-color1,
+    hsl(from var(--pst-color-on-background, #111111) h s calc(l + 5))
+  );
+  --xr-background-color-row-odd: var(
+    --jp-layout-color2,
+    hsl(from var(--pst-color-on-background, #111111) h s calc(l + 15))
+  );
+}
+
+.xr-wrap {
+  display: block !important;
+  min-width: 300px;
+  max-width: 700px;
+  line-height: 1.6;
+  padding-bottom: 4px;
+}
+
+.xr-text-repr-fallback {
+  /* fallback to plain text repr when CSS is not injected (untrusted notebook) */
+  display: none;
+}
+
+.xr-header {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.xr-header {
+  border-bottom: solid 1px var(--xr-border-color);
+  margin-bottom: 4px;
+}
+
+.xr-header > div,
+.xr-header > ul {
+  display: inline;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.xr-obj-type,
+.xr-obj-name {
+  margin-left: 2px;
+  margin-right: 10px;
+}
+
+.xr-obj-type,
+.xr-group-box-contents > label {
+  color: var(--xr-font-color2);
+  display: block;
+}
+
+.xr-sections {
+  padding-left: 0 !important;
+  display: grid;
+  grid-template-columns: 150px auto auto 1fr 0 20px 0 20px;
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+
+.xr-section-item {
+  display: contents;
+}
+
+.xr-section-item > input,
+.xr-group-box-contents > input,
+.xr-array-wrap > input {
+  display: block;
+  opacity: 0;
+  height: 0;
+  margin: 0;
+}
+
+.xr-section-item > input + label,
+.xr-var-item > input + label {
+  color: var(--xr-disabled-color);
+}
+
+.xr-section-item > input:enabled + label,
+.xr-var-item > input:enabled + label,
+.xr-array-wrap > input:enabled + label,
+.xr-group-box-contents > input:enabled + label {
+  cursor: pointer;
+  color: var(--xr-font-color2);
+}
+
+.xr-section-item > input:focus-visible + label,
+.xr-var-item > input:focus-visible + label,
+.xr-array-wrap > input:focus-visible + label,
+.xr-group-box-contents > input:focus-visible + label {
+  outline: auto;
+}
+
+.xr-section-item > input:enabled + label:hover,
+.xr-var-item > input:enabled + label:hover,
+.xr-array-wrap > input:enabled + label:hover,
+.xr-group-box-contents > input:enabled + label:hover {
+  color: var(--xr-font-color0);
+}
+
+.xr-section-summary {
+  grid-column: 1;
+  color: var(--xr-font-color2);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.xr-section-summary > em {
+  font-weight: normal;
+}
+
+.xr-span-grid {
+  grid-column-end: -1;
+}
+
+.xr-section-summary > span {
+  display: inline-block;
+  padding-left: 0.3em;
+}
+
+.xr-group-box-contents > input:checked + label > span {
+  display: inline-block;
+  padding-left: 0.6em;
+}
+
+.xr-section-summary-in:disabled + label {
+  color: var(--xr-font-color2);
+}
+
+.xr-section-summary-in + label:before {
+  display: inline-block;
+  content: "►";
+  font-size: 11px;
+  width: 15px;
+  text-align: center;
+}
+
+.xr-section-summary-in:disabled + label:before {
+  color: var(--xr-disabled-color);
+}
+
+.xr-section-summary-in:checked + label:before {
+  content: "▼";
+}
+
+.xr-section-summary-in:checked + label > span {
+  display: none;
+}
+
+.xr-section-summary,
+.xr-section-inline-details,
+.xr-group-box-contents > label {
+  padding-top: 4px;
+}
+
+.xr-section-inline-details {
+  grid-column: 2 / -1;
+}
+
+.xr-section-details {
+  grid-column: 1 / -1;
+  margin-top: 4px;
+  margin-bottom: 5px;
+}
+
+.xr-section-summary-in ~ .xr-section-details {
+  display: none;
+}
+
+.xr-section-summary-in:checked ~ .xr-section-details {
+  display: contents;
+}
+
+.xr-children {
+  display: inline-grid;
+  grid-template-columns: 100%;
+  grid-column: 1 / -1;
+  padding-top: 4px;
+}
+
+.xr-group-box {
+  display: inline-grid;
+  grid-template-columns: 0px 30px auto;
+}
+
+.xr-group-box-vline {
+  grid-column-start: 1;
+  border-right: 0.2em solid;
+  border-color: var(--xr-border-color);
+  width: 0px;
+}
+
+.xr-group-box-hline {
+  grid-column-start: 2;
+  grid-row-start: 1;
+  height: 1em;
+  width: 26px;
+  border-bottom: 0.2em solid;
+  border-color: var(--xr-border-color);
+}
+
+.xr-group-box-contents {
+  grid-column-start: 3;
+  padding-bottom: 4px;
+}
+
+.xr-group-box-contents > label::before {
+  content: "📂";
+  padding-right: 0.3em;
+}
+
+.xr-group-box-contents > input:checked + label::before {
+  content: "📁";
+}
+
+.xr-group-box-contents > input:checked + label {
+  padding-bottom: 0px;
+}
+
+.xr-group-box-contents > input:checked ~ .xr-sections {
+  display: none;
+}
+
+.xr-group-box-contents > input + label > span {
+  display: none;
+}
+
+.xr-group-box-ellipsis {
+  font-size: 1.4em;
+  font-weight: 900;
+  color: var(--xr-font-color2);
+  letter-spacing: 0.15em;
+  cursor: default;
+}
+
+.xr-array-wrap {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 20px auto;
+}
+
+.xr-array-wrap > label {
+  grid-column: 1;
+  vertical-align: top;
+}
+
+.xr-preview {
+  color: var(--xr-font-color3);
+}
+
+.xr-array-preview,
+.xr-array-data {
+  padding: 0 5px !important;
+  grid-column: 2;
+}
+
+.xr-array-data,
+.xr-array-in:checked ~ .xr-array-preview {
+  display: none;
+}
+
+.xr-array-in:checked ~ .xr-array-data,
+.xr-array-preview {
+  display: inline-block;
+}
+
+.xr-dim-list {
+  display: inline-block !important;
+  list-style: none;
+  padding: 0 !important;
+  margin: 0;
+}
+
+.xr-dim-list li {
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+}
+
+.xr-dim-list:before {
+  content: "(";
+}
+
+.xr-dim-list:after {
+  content: ")";
+}
+
+.xr-dim-list li:not(:last-child):after {
+  content: ",";
+  padding-right: 5px;
+}
+
+.xr-has-index {
+  font-weight: bold;
+}
+
+.xr-var-list,
+.xr-var-item {
+  display: contents;
+}
+
+.xr-var-item > div,
+.xr-var-item label,
+.xr-var-item > .xr-var-name span {
+  background-color: var(--xr-background-color-row-even);
+  border-color: var(--xr-background-color-row-odd);
+  margin-bottom: 0;
+  padding-top: 2px;
+}
+
+.xr-var-item > .xr-var-name:hover span {
+  padding-right: 5px;
+}
+
+.xr-var-list > li:nth-child(odd) > div,
+.xr-var-list > li:nth-child(odd) > label,
+.xr-var-list > li:nth-child(odd) > .xr-var-name span {
+  background-color: var(--xr-background-color-row-odd);
+  border-color: var(--xr-background-color-row-even);
+}
+
+.xr-var-name {
+  grid-column: 1;
+}
+
+.xr-var-dims {
+  grid-column: 2;
+}
+
+.xr-var-dtype {
+  grid-column: 3;
+  text-align: right;
+  color: var(--xr-font-color2);
+}
+
+.xr-var-preview {
+  grid-column: 4;
+}
+
+.xr-index-preview {
+  grid-column: 2 / 5;
+  color: var(--xr-font-color2);
+}
+
+.xr-var-name,
+.xr-var-dims,
+.xr-var-dtype,
+.xr-preview,
+.xr-attrs dt {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 10px;
+}
+
+.xr-var-name:hover,
+.xr-var-dims:hover,
+.xr-var-dtype:hover,
+.xr-attrs dt:hover {
+  overflow: visible;
+  width: auto;
+  z-index: 1;
+}
+
+.xr-var-attrs,
+.xr-var-data,
+.xr-index-data {
+  display: none;
+  border-top: 2px dotted var(--xr-background-color);
+  padding-bottom: 20px !important;
+  padding-top: 10px !important;
+}
+
+.xr-var-attrs-in + label,
+.xr-var-data-in + label,
+.xr-index-data-in + label {
+  padding: 0 1px;
+}
+
+.xr-var-attrs-in:checked ~ .xr-var-attrs,
+.xr-var-data-in:checked ~ .xr-var-data,
+.xr-index-data-in:checked ~ .xr-index-data {
+  display: block;
+}
+
+.xr-var-data > table {
+  float: right;
+}
+
+.xr-var-data > pre,
+.xr-index-data > pre,
+.xr-var-data > table > tbody > tr {
+  background-color: transparent !important;
+}
+
+.xr-var-name span,
+.xr-var-data,
+.xr-index-name div,
+.xr-index-data,
+.xr-attrs {
+  padding-left: 25px !important;
+}
+
+.xr-attrs,
+.xr-var-attrs,
+.xr-var-data,
+.xr-index-data {
+  grid-column: 1 / -1;
+}
+
+dl.xr-attrs {
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 125px auto;
+}
+
+.xr-attrs dt,
+.xr-attrs dd {
+  padding: 0;
+  margin: 0;
+  float: left;
+  padding-right: 10px;
+  width: auto;
+}
+
+.xr-attrs dt {
+  font-weight: normal;
+  grid-column: 1;
+}
+
+.xr-attrs dt:hover span {
+  display: inline-block;
+  background: var(--xr-background-color);
+  padding-right: 10px;
+}
+
+.xr-attrs dd {
+  grid-column: 2;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.xr-icon-database,
+.xr-icon-file-text2,
+.xr-no-icon {
+  display: inline-block;
+  vertical-align: middle;
+  width: 1em;
+  height: 1.5em !important;
+  stroke-width: 0;
+  stroke: currentColor;
+  fill: currentColor;
+}
+
+.xr-var-attrs-in:checked + label > .xr-icon-file-text2,
+.xr-var-data-in:checked + label > .xr-icon-database,
+.xr-index-data-in:checked + label > .xr-icon-database {
+  color: var(--xr-font-color0);
+  filter: drop-shadow(1px 1px 5px var(--xr-font-color2));
+  stroke-width: 0.8px;
+}
+</style><pre class='xr-text-repr-fallback'>&lt;xarray.DataArray &#x27;speed&#x27; (x: 8, y: 6)&gt; Size: 192B
+array([[1.1247979 , 0.86448395, 0.8608992 , 0.8522515 , 0.989852  ,
+        1.3473282 ],
+       [1.0405256 , 1.2060987 , 0.42936805, 0.78646976, 0.8598593 ,
+        1.3224748 ],
+       [1.3334062 , 0.7149343 , 0.9340206 , 1.2359606 , 0.97345084,
+        1.127519  ],
+       [1.0206339 , 1.3768864 , 0.86056584, 1.1147308 , 1.162789  ,
+        0.7539792 ],
+       [1.1112336 , 0.816075  , 0.9981457 , 0.9136917 , 0.80917716,
+        1.0983425 ],
+       [1.4620398 , 0.83937114, 1.0697271 , 0.97283274, 0.82576287,
+        0.38723063],
+       [1.1310261 , 1.0491469 , 0.87537694, 0.28573936, 1.1410129 ,
+        1.1055974 ],
+       [0.71271676, 0.82669467, 0.8290663 , 0.7100887 , 0.9869886 ,
+        1.1314225 ]], dtype=float32)
+Coordinates:
+  * x        (x) float32 32B 0.0 0.1429 0.2857 0.4286 0.5714 0.7143 0.8571 1.0
+  * y        (y) float32 24B 0.0 0.4 0.8 1.2 1.6 2.0
+    z        float32 4B 0.0
+    time     float64 8B 0.0</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.DataArray</div><div class='xr-obj-name'>&#x27;speed&#x27;</div><ul class='xr-dim-list'><li><span class='xr-has-index'>x</span>: 8</li><li><span class='xr-has-index'>y</span>: 6</li></ul></div><ul class='xr-sections'><li class='xr-section-item'><div class='xr-array-wrap'><input id='section-df84c17e-e193-4936-932b-b6be1052b767' class='xr-array-in' type='checkbox' checked><label for='section-df84c17e-e193-4936-932b-b6be1052b767' title='Show/hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-array-preview xr-preview'><span>1.125 0.8645 0.8609 0.8523 0.9899 ... 0.8267 0.8291 0.7101 0.987 1.131</span></div><div class='xr-array-data'><pre>array([[1.1247979 , 0.86448395, 0.8608992 , 0.8522515 , 0.989852  ,
+        1.3473282 ],
+       [1.0405256 , 1.2060987 , 0.42936805, 0.78646976, 0.8598593 ,
+        1.3224748 ],
+       [1.3334062 , 0.7149343 , 0.9340206 , 1.2359606 , 0.97345084,
+        1.127519  ],
+       [1.0206339 , 1.3768864 , 0.86056584, 1.1147308 , 1.162789  ,
+        0.7539792 ],
+       [1.1112336 , 0.816075  , 0.9981457 , 0.9136917 , 0.80917716,
+        1.0983425 ],
+       [1.4620398 , 0.83937114, 1.0697271 , 0.97283274, 0.82576287,
+        0.38723063],
+       [1.1310261 , 1.0491469 , 0.87537694, 0.28573936, 1.1410129 ,
+        1.1055974 ],
+       [0.71271676, 0.82669467, 0.8290663 , 0.7100887 , 0.9869886 ,
+        1.1314225 ]], dtype=float32)</pre></div></div></li><li class='xr-section-item'><input id='section-1557db19-e68d-4d5f-a521-6b05e82aa0a8' class='xr-section-summary-in' type='checkbox' checked /><label for='section-1557db19-e68d-4d5f-a521-6b05e82aa0a8' class='xr-section-summary' title='Expand/collapse section'>Coordinates: <span>(4)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>x</span></div><div class='xr-var-dims'>(x)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.0 0.1429 0.2857 ... 0.8571 1.0</div><input id='attrs-cef8e9cd-82ae-430c-944b-3efa9fc8d9b7' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-cef8e9cd-82ae-430c-944b-3efa9fc8d9b7' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-f241f896-fd0b-4402-953f-f061e87567ff' class='xr-var-data-in' type='checkbox'><label for='data-f241f896-fd0b-4402-953f-f061e87567ff' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0.      , 0.142857, 0.285714, 0.428571, 0.571429, 0.714286, 0.857143,
+       1.      ], dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>y</span></div><div class='xr-var-dims'>(y)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.0 0.4 0.8 1.2 1.6 2.0</div><input id='attrs-4008c377-a226-4dd8-8193-cc64c0f420a2' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-4008c377-a226-4dd8-8193-cc64c0f420a2' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-ffa4811c-b269-42f9-8fdb-edb859e9b8a0' class='xr-var-data-in' type='checkbox'><label for='data-ffa4811c-b269-42f9-8fdb-edb859e9b8a0' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([0. , 0.4, 0.8, 1.2, 1.6, 2. ], dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>z</span></div><div class='xr-var-dims'>()</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>0.0</div><input id='attrs-29cc4943-1764-44b9-a8da-d6502f639047' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-29cc4943-1764-44b9-a8da-d6502f639047' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-628c4f52-ee74-41ba-830e-719a2c3ae206' class='xr-var-data-in' type='checkbox'><label for='data-628c4f52-ee74-41ba-830e-719a2c3ae206' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array(0., dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>time</span></div><div class='xr-var-dims'>()</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>0.0</div><input id='attrs-904a89d7-700e-4696-b8dc-b29ed503020f' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-904a89d7-700e-4696-b8dc-b29ed503020f' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-66ec205c-5cd5-4a4e-a19f-681461124ec1' class='xr-var-data-in' type='checkbox'><label for='data-66ec205c-5cd5-4a4e-a19f-681461124ec1' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array(0.)</pre></div></li></ul></div></li></ul></div></div></div></div>
+</div>
+</section>
+<section id="opt-out-or-stack-by-hand">
+<h2>Opt out, or stack by hand<a class="headerlink" href="#opt-out-or-stack-by-hand" title="Link to this heading">#</a></h2>
+<p>Pass <code class="docutils literal notranslate"><span class="pre">stack=False</span></code> to see the variables exactly as they are on disk. The same declarations are available as functions for datasets opened another way: <code class="docutils literal notranslate"><span class="pre">VariableStack.stack</span></code> for one dimension, <code class="docutils literal notranslate"><span class="pre">stack_variables</span></code> for a sequence, and <code class="docutils literal notranslate"><span class="pre">split_variables</span></code> for the inverse.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">raw</span> <span class="o">=</span> <span class="n">convention</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">stack</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">sorted</span><span class="p">(</span><span class="n">raw</span><span class="o">.</span><span class="n">data_vars</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>['phi1', 'phi2', 'pp', 'ux', 'uy', 'uz']
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">xarray_binfile.conventions</span><span class="w"> </span><span class="kn">import</span> <span class="n">split_variables</span><span class="p">,</span> <span class="n">stack_variables</span>
+
+<span class="n">restacked</span> <span class="o">=</span> <span class="n">stack_variables</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="p">[</span><span class="n">velocity</span><span class="p">,</span> <span class="n">scalars</span><span class="p">])</span>
+<span class="n">pieces</span> <span class="o">=</span> <span class="p">[</span><span class="n">piece</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">piece</span> <span class="ow">in</span> <span class="n">split_variables</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s2">"u"</span><span class="p">],</span> <span class="p">[</span><span class="n">velocity</span><span class="p">])]</span>
+<span class="nb">sorted</span><span class="p">(</span><span class="n">restacked</span><span class="o">.</span><span class="n">data_vars</span><span class="p">),</span> <span class="n">pieces</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(['phi', 'pp', 'u'], ['ux', 'uy', 'uz'])
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="guard-rails">
+<h2>Guard rails<a class="headerlink" href="#guard-rails" title="Link to this heading">#</a></h2>
+<p>A value that is not declared cannot be written, because the reader would have no way to stack it back:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bad</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="s2">"u"</span><span class="p">]</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="p">[</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">])</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="nb">list</span><span class="p">(</span><span class="n">convention</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">bad</span><span class="p">))</span>
+<span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Coordinate value(s) ['w'] on 'i' are not listed in the VariableStack values ['x', 'y', 'z']; files written for them could not be stacked back.
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">directory_holder</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./tutorials"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="write.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Write Derived Results Back To Raw Binary Files</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="parallel-and-larger-than-memory.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Parallel And Larger-Than-Memory Workflows</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#declare-the-stacks">Declare the stacks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attach-them-to-a-convention">Attach them to a convention</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-a-dataset-with-stacked-arrays">Build a dataset with stacked arrays</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#split-on-write">Split on write</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stack-on-read">Stack on read</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#opt-out-or-stack-by-hand">Opt out, or stack by hand</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#guard-rails">Guard rails</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Felipe N. Schuch
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
