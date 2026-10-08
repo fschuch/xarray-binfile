@@ -239,7 +239,7 @@ class _ConventionBase(Convention):
         """
         return stack_variables(dataset, self.stacks)
 
-    def _extra_coords(self, fields: Mapping[str, Any]) -> dict[str, Any]:
+    def _extra_coords(self, fields: Mapping[str, Any]) -> dict[str, Any]:  # no cov
         """
         Coordinates decoded from the filename, added on top of the layout.
 
@@ -247,9 +247,9 @@ class _ConventionBase(Convention):
             fields: The parsed filename fields.
 
         Returns:
-            Extra single-value coordinates (none for static files).
+            Extra single-value coordinates, keyed by dimension.
         """
-        return {}
+        raise NotImplementedError
 
     def reader(self, path: Path) -> ReadSpecs:
         """
@@ -328,6 +328,10 @@ class StaticFiles(_ConventionBase):
     """
 
     pattern: FilenamePattern | str = "{name}.bin"
+
+    def _extra_coords(self, fields: Mapping[str, Any]) -> dict[str, Any]:
+        """Static files encode nothing beyond the name: no extra coordinate."""
+        return {}
 
     def _write_one(self, data_array: xr.DataArray) -> Iterator[WriteSpecs]:
         self.layout.validate(data_array, check_coords=self.check_coords)

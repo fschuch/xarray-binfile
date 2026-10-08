@@ -221,17 +221,7 @@ class VariableStack:
             ValueError: If a group's base name is already a variable of the
                 dataset, which would silently overwrite it.
         """
-        groups: dict[str, dict[Any, str]] = {}
-        for variable in map(str, dataset.data_vars):
-            for value, matcher in self._matchers:
-                match = matcher.fullmatch(variable)
-                if match is None:
-                    continue
-                name = match.group("name")
-                if self.names is None or name in self.names:
-                    groups.setdefault(name, {})[value] = variable
-                break
-
+        groups = self._groups(dataset)
         to_drop: list[str] = []
         stacked: dict[str, xr.DataArray] = {}
         for name, members in groups.items():
@@ -244,15 +234,50 @@ class VariableStack:
                     "``names``, or open with stack=False."
                 )
                 raise ValueError(error_message)
-            found = [value for value in self.values if value in members]
-            stacked[name] = xr.concat(
-                [dataset[members[value]] for value in found],
-                dim=xr.DataArray(
-                    found, dims=self.dim, name=self.dim, attrs=dict(self.attrs or {})
-                ),
-            )
+            stacked[name] = self._concat(dataset, members)
             to_drop.extend(members.values())
         return dataset.drop_vars(to_drop).assign(stacked)
+
+    def _groups(self, dataset: xr.Dataset) -> dict[str, dict[Any, str]]:
+        """
+        Group the variables encoding ``dim`` by base name.
+
+        Args:
+            dataset: The dataset holding the split variables.
+
+        Returns:
+            ``{base name: {value: variable name}}`` for the accepted names.
+        """
+        groups: dict[str, dict[Any, str]] = {}
+        for variable in map(str, dataset.data_vars):
+            for value, matcher in self._matchers:
+                match = matcher.fullmatch(variable)
+                if match is None:
+                    continue
+                name = match.group("name")
+                if self.names is None or name in self.names:
+                    groups.setdefault(name, {})[value] = variable
+                break
+        return groups
+
+    def _concat(self, dataset: xr.Dataset, members: Mapping[Any, str]) -> xr.DataArray:
+        """
+        Concatenate one group along a new ``dim`` coordinate, in ``values`` order.
+
+        Args:
+            dataset: The dataset holding the split variables.
+            members: ``{value: variable name}`` for the group.
+
+        Returns:
+            The stacked array.
+        """
+        found = [value for value in self.values if value in members]
+        return xr.concat(
+            [dataset[members[value]] for value in found],
+            dim=xr.DataArray(
+                found, dims=self.dim, name=self.dim, attrs=dict(self.attrs or {})
+            ),
+        )
 
 
 def split_variables(

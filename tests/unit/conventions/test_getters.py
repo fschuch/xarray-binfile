@@ -261,8 +261,10 @@ class TestStacks:
     def test_writer_refuses_values_outside_the_stack(self):
         u = xr.concat([_array([0])] * 2, dim="i").assign_coords(i=["x", "w"])
 
+        specs = self.convention.writer(u.rename("u"))
+
         with pytest.raises(ValueError, match=r"\['w'\] on 'i' are not listed"):
-            list(self.convention.writer(u.rename("u")))
+            list(specs)
 
     def test_stacks_are_frozen_as_a_tuple(self):
         assert self.convention.stacks == (VELOCITY, SCALARS)
@@ -436,17 +438,20 @@ class TestNames:
         assert [
             s.filename for s in static.writer(array.rename("geometry/epsilon"))
         ] == ["geometry/epsilon.bin"]
+        rejected = static.writer(array.rename("pp"))
         with pytest.raises(LayoutMismatchError, match="not among the names"):
-            next(static.writer(array.rename("pp")))
+            next(rejected)
 
     def test_names_work_for_time_series_too(self, tmp_path):
         convention = StepIndexedFiles(LAYOUT, names=("ux",))
 
         assert convention.reader(pathlib.Path("ux-0001.bin")).name == "ux"
+        other = pathlib.Path("uy-0001.bin")
         with pytest.raises(ValueError, match="not among the names"):
-            convention.reader(pathlib.Path("uy-0001.bin"))
+            convention.reader(other)
+        rejected = convention.writer(_array([0]).rename("uy"))
         with pytest.raises(LayoutMismatchError, match="not among the names"):
-            next(convention.writer(_array([0]).rename("uy")))
+            next(rejected)
 
     def test_names_let_pattern_conventions_skip_to_the_next_member(self, directory):
         from xarray_binfile.conventions import PatternConventions

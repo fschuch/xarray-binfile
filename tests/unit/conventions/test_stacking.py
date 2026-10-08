@@ -188,8 +188,10 @@ class TestReviewFixes:
     def test_stack_refuses_to_overwrite_an_existing_variable(self):
         ds = xr.Dataset({name: ("x", np.zeros(2)) for name in ("pp", "ppx", "ppy")})
 
+        stack = VariableStack("i", "{name}{i}", values=("x", "y", "z"))
+
         with pytest.raises(ValueError, match="'pp' already exists"):
-            VariableStack("i", "{name}{i}", values=("x", "y", "z")).stack(ds)
+            stack.stack(ds)
 
     def test_names_must_be_a_collection_not_a_str(self):
         with pytest.raises(TypeError, match="collection of names"):

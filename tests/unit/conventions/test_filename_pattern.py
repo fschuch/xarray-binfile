@@ -182,8 +182,10 @@ class TestGlob:
         assert FilenamePattern(template).glob(**fixed) == expected
 
     def test_glob_rejects_unknown_field(self):
+        pattern = FilenamePattern("{name}.bin")
+
         with pytest.raises(ValueError, match="Unknown field"):
-            FilenamePattern("{name}.bin").glob(step=1)
+            pattern.glob(step=1)
 
     def test_glob_matches_formatted_names(self, tmp_path):
         pattern = FilenamePattern("{name}-{step:04d}.bin")
@@ -209,8 +211,10 @@ class TestFolderPrefix:
 
     @pytest.mark.parametrize("name", ["../epsi", "./epsi", "/epsi", "a//epsi"])
     def test_format_rejects_malformed_prefix(self, name):
+        pattern = FilenamePattern("{name}.bin")
+
         with pytest.raises(ValueError, match="Invalid folder prefix"):
-            FilenamePattern("{name}.bin").format(name=name)
+            pattern.format(name=name)
 
     def test_parse_still_works_on_bare_filenames_only(self):
         pattern = FilenamePattern("{name}.bin")

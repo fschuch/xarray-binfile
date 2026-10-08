@@ -139,8 +139,10 @@ class TestFolderPrefixedNames:
         assert specs[0].sub_array.name == "epsi"
 
     def test_name_without_prefix_is_ambiguous_between_equal_layouts(self):
+        specs = self.conventions.writer(self.array.rename("epsi"))
+
         with pytest.raises(LayoutMismatchError, match="Several conventions accept"):
-            next(self.conventions.writer(self.array.rename("epsi")))
+            next(specs)
 
     def test_unknown_folder_prefix_falls_back_to_root(self):
         conventions = FolderConventions({".": StaticFiles(self.layout)})
@@ -234,8 +236,10 @@ class TestPatternConventions:
         )
         static = xr.DataArray(np.zeros((3, 2, 4)), coords={"x": X, "y": Y, "z": Z})
 
+        specs = ambiguous.writer(static.rename("e"))
+
         with pytest.raises(LayoutMismatchError, match="Several conventions accept"):
-            next(ambiguous.writer(static.rename("e")))
+            next(specs)
 
     def test_files_and_open_cover_both_patterns(self, tmp_path):
         import xarray_binfile  # noqa: F401  (registers the accessors)
