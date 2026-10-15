@@ -417,9 +417,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">platform</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">statistics</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
@@ -439,7 +437,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>PosixPath('/tmp/tmplg5tlpno')
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>PosixPath('/tmp/tmpvoij2u_1')
 </pre></div>
 </div>
 </div>
@@ -447,22 +445,6 @@
 <section id="record-your-environment">
 <h2>Record your environment<a class="headerlink" href="#record-your-environment" title="Link to this heading">#</a></h2>
 <p>A benchmark is only meaningful next to the machine that produced it. Capture the basics so results stay comparable when you change hardware or revisit them later.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"platform:"</span><span class="p">,</span> <span class="n">platform</span><span class="o">.</span><span class="n">platform</span><span class="p">())</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"python:"</span><span class="p">,</span> <span class="n">platform</span><span class="o">.</span><span class="n">python_version</span><span class="p">())</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"logical CPU cores:"</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">())</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>platform: Linux-6.17.0-1022-azure-x86_64-with-glibc2.39
-python: 3.13.16
-logical CPU cores: 4
-</pre></div>
-</div>
-</div>
-</div>
 </section>
 <section id="a-tiny-benchmarking-harness">
 <h2>A tiny benchmarking harness<a class="headerlink" href="#a-tiny-benchmarking-harness" title="Link to this heading">#</a></h2>
@@ -586,26 +568,26 @@ logical CPU cores: 4
       <td>float32</td>
       <td>24</td>
       <td>1.27</td>
-      <td>0.1172</td>
-      <td>0.1206</td>
-      <td>10.8</td>
+      <td>0.1152</td>
+      <td>0.1169</td>
+      <td>11.0</td>
     </tr>
     <tr>
       <th>1</th>
       <td>float32</td>
       <td>40</td>
       <td>5.86</td>
-      <td>0.1182</td>
-      <td>0.1194</td>
-      <td>49.6</td>
+      <td>0.1149</td>
+      <td>0.1155</td>
+      <td>51.0</td>
     </tr>
     <tr>
       <th>2</th>
       <td>float64</td>
       <td>24</td>
       <td>2.53</td>
-      <td>0.1144</td>
-      <td>0.1171</td>
+      <td>0.1145</td>
+      <td>0.1159</td>
       <td>22.1</td>
     </tr>
     <tr>
@@ -613,9 +595,9 @@ logical CPU cores: 4
       <td>float64</td>
       <td>40</td>
       <td>11.72</td>
-      <td>0.1193</td>
-      <td>0.1199</td>
-      <td>98.2</td>
+      <td>0.1168</td>
+      <td>0.1168</td>
+      <td>100.3</td>
     </tr>
   </tbody>
 </table>

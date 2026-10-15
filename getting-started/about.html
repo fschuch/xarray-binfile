@@ -153,6 +153,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -364,7 +368,9 @@
 <button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
 </button>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -380,6 +386,15 @@
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-not-just-numpy-fromfile">Why not just <code class="docutils literal notranslate"><span class="pre">numpy.fromfile</span></code>?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#origin">Origin</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -399,21 +414,33 @@
 <li><p>binary dumps created with <code class="docutils literal notranslate"><span class="pre">numpy.ndarray.tofile</span></code></p></li>
 <li><p>one-file-per-variable or one-file-per-timestep layouts from CFD and scientific computing pipelines</p></li>
 </ul>
+<section id="why-not-just-numpy-fromfile">
+<h2>Why not just <code class="docutils literal notranslate"><span class="pre">numpy.fromfile</span></code>?<a class="headerlink" href="#why-not-just-numpy-fromfile" title="Link to this heading">#</a></h2>
+<p>A call to <code class="docutils literal notranslate"><span class="pre">numpy.fromfile</span></code> returns a flat array with no shape, no dimension names, no coordinates, and the whole file resident in memory. That is fine for a single small file, but turns every multi-file dataset into a hand-written loop over paths, reshapes, and index arithmetic.</p>
+<p>The natural next step is <code class="docutils literal notranslate"><span class="pre">numpy.memmap</span></code>. It maps the file into memory with a known shape and dtype, so slicing it reads only the bytes that are touched, and that is exactly what xarray-binfile does under the hood: a request for a whole file goes through <code class="docutils literal notranslate"><span class="pre">numpy.fromfile</span></code>, while a request for a slice goes through <code class="docutils literal notranslate"><span class="pre">numpy.memmap</span></code> and only the selected region is read. On its own, however, a memmap is still a single unlabeled array for a single file. The caller still has to know which file holds which variable and time step, and which integer offsets correspond to which physical location.</p>
+<p>Xarray-binfile does not try to improve on NumPy as a byte reader. Its value is that the metadata you provide is enough to hand the files to xarray, and from there everything is handled by xarray, Dask, and the tools built around them:</p>
+<ul class="simple">
+<li><p><strong>One labeled dataset from many files.</strong> The file-name convention is folded into coordinates, so a slab at a given time or height is selected by value rather than by computed offsets. Alignment, broadcasting, <code class="docutils literal notranslate"><span class="pre">groupby</span></code>, <code class="docutils literal notranslate"><span class="pre">rolling</span></code>, <code class="docutils literal notranslate"><span class="pre">coarsen</span></code>, and reductions along named dimensions all work out of the box.</p></li>
+<li><p><strong>Lazy loading and larger-than-memory data.</strong> Opening a dataset reads no bytes until a value is needed, and only the chunks required by a computation are ever read. See <a class="reference internal" href="../tutorials/parallel-and-larger-than-memory.html"><span class="std std-doc">Parallel and larger-than-memory</span></a>.</p></li>
+<li><p><strong>Parallel execution.</strong> The same code runs on a laptop with the threaded scheduler or on a cluster with <a class="reference external" href="https://distributed.dask.org">Dask Distributed</a>, with no changes to how the files are opened.</p></li>
+<li><p><strong>Visualization.</strong> <code class="docutils literal notranslate"><span class="pre">DataArray.plot</span></code> builds matplotlib figures with axes labeled from the coordinates, and <a class="reference external" href="https://hvplot.holoviz.org">hvplot</a> or <a class="reference external" href="https://docs.xarray.dev/en/stable/user-guide/plotting.html">xarray’s plotting integrations</a> add interactive views. See the <a class="reference internal" href="../tutorials/examples.html"><span class="std std-doc">examples</span></a>.</p></li>
+<li><p><strong>Conversion to portable formats.</strong> A dataset can be written to <a class="reference external" href="https://docs.xarray.dev/en/stable/user-guide/io.html#netcdf">netCDF</a> with <code class="docutils literal notranslate"><span class="pre">to_netcdf</span></code> or to <a class="reference external" href="https://docs.xarray.dev/en/stable/user-guide/io.html#zarr">Zarr</a> with <code class="docutils literal notranslate"><span class="pre">to_zarr</span></code>. Both carry dimension names, coordinates, and attributes with the data, so the metadata convention no longer has to travel separately. Zarr in particular keeps chunked, lazy access while being readable from object storage. Both conversions are shown in <a class="reference internal" href="../tutorials/write.html"><span class="std std-doc">Write</span></a>.</p></li>
+<li><p><strong>Interoperability.</strong> <code class="docutils literal notranslate"><span class="pre">to_dataframe</span></code> hands data to pandas, <code class="docutils literal notranslate"><span class="pre">.values</span></code> exposes NumPy arrays for SciPy and friends, and on a chunked dataset <code class="docutils literal notranslate"><span class="pre">.data</span></code> exposes the underlying Dask array for custom graphs. Derived quantities keep their coordinates, so results can be written back to any of the formats above. The <a class="reference internal" href="../tutorials/examples.html"><span class="std std-doc">examples</span></a> include exporting probe time series to CSV this way.</p></li>
+</ul>
+<p>None of these are available in pure NumPy without writing them yourself. The tutorials in this documentation show the backend in that larger ecosystem instead of treating it as a standalone file reader.</p>
 <p>The package integrates with xarray in two directions:</p>
 <ul class="simple">
 <li><p>reading through <code class="docutils literal notranslate"><span class="pre">xr.open_dataset(...,</span> <span class="pre">engine=&quot;binfile&quot;)</span></code> and <code class="docutils literal notranslate"><span class="pre">xr.open_mfdataset(...,</span> <span class="pre">engine=&quot;binfile&quot;)</span></code></p></li>
 <li><p>writing through the <code class="docutils literal notranslate"><span class="pre">.binary_engine.to_file(...)</span></code> accessor on <code class="docutils literal notranslate"><span class="pre">xarray.DataArray</span></code> and <code class="docutils literal notranslate"><span class="pre">xarray.Dataset</span></code></p></li>
 </ul>
 <p>The read engine is registered automatically with xarray as a plugin entry point. The write accessors become available as soon as <code class="docutils literal notranslate"><span class="pre">xarray_binfile</span></code> (or any of its modules) is imported.</p>
-<p>Xarray-binfile focuses on translating between raw binary files and xarray objects. Once the data is open, standard xarray and Dask operations apply:</p>
-<ul class="simple">
-<li><p>coordinate-based indexing with <code class="docutils literal notranslate"><span class="pre">.sel(...)</span></code></p></li>
-<li><p>positional indexing with <code class="docutils literal notranslate"><span class="pre">.isel(...)</span></code></p></li>
-<li><p>grouped and labeled reductions such as <code class="docutils literal notranslate"><span class="pre">.mean(...)</span></code></p></li>
-<li><p>lazy loading and parallel execution with Dask until <code class="docutils literal notranslate"><span class="pre">.compute()</span></code> or <code class="docutils literal notranslate"><span class="pre">.load()</span></code> is called</p></li>
-</ul>
-<p>The tutorials in this documentation show the backend in that larger ecosystem instead of treating it as a standalone file reader.</p>
+</section>
+<section id="origin">
+<h2>Origin<a class="headerlink" href="#origin" title="Link to this heading">#</a></h2>
+<p>Xarray-binfile started life inside <a class="reference external" href="https://github.com/fschuch/xcompact3d-toolbox">xcompact3d-toolbox</a>, the post-processing toolbox for Xcompact3d. There it began as a thin layer around <code class="docutils literal notranslate"><span class="pre">numpy.fromfile</span></code>: each call read a whole file into memory and wrapped the result in an xarray object, with some extra syntactic sugar on top. A dict-like interface made it possible to select the entire time series of a given variable, or every variable from a given snapshot, without writing the file-name bookkeeping by hand.</p>
+<p>Moving from “read one file at a time” to “open every file at once and load from disk only on demand” called for a real xarray backend, so the code was moved into a stand-alone package. The hope is that it can serve a wide range of raw binary conventions, not just Xcompact3d. The toolbox now depends on xarray-binfile for its file I/O. Credit is also due to the xarray community for the guidance given in <a class="reference external" href="https://github.com/pydata/xarray/discussions/6406">this discussion</a> when the backend was first being designed.</p>
 <p>For broader coverage of analysis, visualization, and distributed execution, see the <a class="reference external" href="https://docs.xarray.dev">xarray documentation</a> and the <a class="reference external" href="https://docs.dask.org">Dask documentation</a>.</p>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -470,6 +497,24 @@
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-not-just-numpy-fromfile">Why not just <code class="docutils literal notranslate"><span class="pre">numpy.fromfile</span></code>?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#origin">Origin</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
