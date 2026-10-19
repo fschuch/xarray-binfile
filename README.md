@@ -40,12 +40,61 @@ Xarray-binfile is a Python package that integrates raw binary files with xarray.
 
 The package was first designed around binary outputs from the Fortran framework [2DECOMP&FFT](https://github.com/2decomp-fft/2decomp-fft) and the CFD solver [Xcompact3d](https://github.com/xcompact3d/Incompact3d), which is built on top of it. It is not limited to those ecosystems and can be used with any raw binary convention once the corresponding metadata mapping is provided.
 
-It is aimed at workflows where raw binary files are part of an existing convention, such as simulation outputs or NumPy `.tofile()` dumps. Once opened, the data can be indexed, reduced, plotted, and computed with the usual xarray and Dask APIs.
-
-See the documentation for end-to-end examples covering lazy loading, Dask-backed computations, task-graph visualization, writing derived results back to `.bin` files, parallel and larger-than-memory workflows, benchmarking on your own data, batch dtype conversion, probe time-series export to CSV, and quick matplotlib plots.
+It is aimed at workflows where raw binary files are part of an existing convention, such as simulation outputs or NumPy `.tofile()` dumps. Once opened, the data can be indexed, reduced, plotted, and computed with the usual xarray and Dask APIs. See [why not just `numpy.fromfile`?](https://docs.fschuch.com/xarray-binfile/getting-started/about.html#why-not-just-numpy-fromfile) in the documentation for what that buys you over `numpy.fromfile` and `numpy.memmap`.
 
 > [!CAUTION]
 > Raw binary files are machine- and convention-dependent. Differences such as little-endian vs big-endian byte order, word size, record layout, and memory ordering can change how bytes should be interpreted. Always verify dtype and endianness when sharing files across machines or toolchains.
+
+## Installation
+
+```bash
+pip install xarray-binfile
+```
+
+Python 3.10 or later is required; xarray, Dask, and NumPy are installed as dependencies. See the [installation guide](https://docs.fschuch.com/xarray-binfile/getting-started/installation.html) for version pinning and for `pyproject.toml`, `requirements.txt`, and conda environment examples.
+
+## Quick start
+
+Describe the file convention once, then let xarray and Dask do the rest:
+
+```python
+import numpy as np
+
+from xarray_binfile.conventions import Layout, StepIndexedFiles
+
+# Describe the convention once: coordinates, dtype, and filename pattern
+convention = StepIndexedFiles(
+    layout=Layout(
+        {"x": np.linspace(0, 1, 8), "y": np.linspace(0, 1, 4)},
+        dtype=np.float32,
+    ),
+    pattern="{name}-{step:04d}.bin",  # ux-0000.bin, ux-0001.bin, ...
+)
+
+# Open every matching file in a folder as one lazy, Dask-backed dataset
+ds = convention.open("path/to/data", chunks={"time": 1})
+
+# From here on it is plain xarray
+mean = ds["ux"].mean(dim="time").compute()
+
+# Write a derived result back to the same raw layout
+mean.rename("ux_mean").expand_dims(time=[0]).binary_engine.to_file(
+    convention.writer, "path/to/data"
+)
+```
+
+The same files also open through the standard xarray entry points, `xr.open_dataset(path, engine="binfile", read_specs_getter=convention.reader)` and `xr.open_mfdataset(...)`, so they fit into existing xarray code.
+
+The documentation covers the rest:
+
+- [Spec getter protocols](https://docs.fschuch.com/xarray-binfile/usage/spec-getter-protocols.html): the shipped conventions (step-indexed, time-stamped, static files, folder layouts, stacked variables) and how to describe your own.
+- [Read lazily with Dask](https://docs.fschuch.com/xarray-binfile/tutorials/read.html) and [write derived results](https://docs.fschuch.com/xarray-binfile/tutorials/write.html).
+- [Parallel and larger-than-memory](https://docs.fschuch.com/xarray-binfile/tutorials/parallel-and-larger-than-memory.html) workflows, [benchmarking](https://docs.fschuch.com/xarray-binfile/tutorials/benchmarking.html) on your own data, and [practical examples](https://docs.fschuch.com/xarray-binfile/tutorials/examples.html).
+- [API reference](https://docs.fschuch.com/xarray-binfile/references/api-reference.html).
+
+## Contributing
+
+Bug reports, feature requests, and pull requests are welcome. Start with [CONTRIBUTING.md](https://github.com/fschuch/xarray-binfile/blob/main/CONTRIBUTING.md) for the development setup with Hatch and the pull request checklist, or read the [full contributor guide](https://docs.fschuch.com/xarray-binfile/references/how-to-contribute.html) in the documentation. This project follows the [Contributor Covenant](https://github.com/fschuch/xarray-binfile/blob/main/CODE_OF_CONDUCT.md).
 
 ## Copyright and License
 
