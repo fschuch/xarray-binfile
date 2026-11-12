@@ -34,6 +34,18 @@ Install the package, understand the runtime dependencies, and get ready to open 
 :::
 
 :::{grid-item-card}
+:link: getting-started/quickstart
+:link-type: doc
+:class-header: bg-light
+
+Quick Start
+^^^
+
+Describe a file convention, open a folder of binary files lazily, compute with xarray, and write a result back, all in a few lines.
+
+:::
+
+:::{grid-item-card}
 :link: tutorials/read
 :link-type: doc
 :class-header: bg-light
@@ -102,18 +114,6 @@ API Reference
 ^^^
 
 See the public modules, metadata protocols, backend entrypoint, and tutorial helpers.
-
-:::
-
-:::{grid-item-card}
-:link: references/further-reading
-:link-type: doc
-:class-header: bg-light
-
-Further Reading
-^^^
-
-Go deeper on xarray, Dask, NumPy binary I/O, and related simulation workflows.
 
 :::
 
