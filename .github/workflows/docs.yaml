@@ -3,6 +3,8 @@ name: Docs
 # See:
 # https://jupyterbook.org/en/stable/publish/gh-pages.html
 on:
+  # Deploy the docs without cutting a release: Actions > Docs > Run workflow
+  workflow_dispatch:
   push:
     tags:
       - "v*.*.*"
@@ -51,7 +53,9 @@ jobs:
 
   deploy:
     needs: build
-    if: github.event_name == 'push' && github.ref_type == 'tag' && !github.event.pull_request.head.repo.fork
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'push' && github.ref_type == 'tag' && !github.event.pull_request.head.repo.fork)
     runs-on: ubuntu-latest
     permissions:
       contents: write
