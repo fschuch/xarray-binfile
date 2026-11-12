@@ -55,12 +55,15 @@ Python 3.10 or later is required; xarray, Dask, and NumPy are installed as depen
 
 ## Quick start
 
-Describe the file convention once, then let xarray and Dask do the rest:
+Describe the file convention once, then let xarray and Dask do the rest. The snippet below is self-contained: it writes a few small sample files with the generator shipped in `xarray_binfile.tutorial`, so you can paste it into a Python session and run it as is.
 
 ```python
+import pathlib
+
 import numpy as np
 
 from xarray_binfile.conventions import Layout, StepIndexedFiles
+from xarray_binfile.tutorial import DatasetGenerator
 
 # Describe the convention once: coordinates, dtype, and filename pattern
 convention = StepIndexedFiles(
@@ -71,19 +74,25 @@ convention = StepIndexedFiles(
     pattern="{name}-{step:04d}.bin",  # ux-0000.bin, ux-0001.bin, ...
 )
 
-# Open every matching file in a folder as one lazy, Dask-backed dataset
-ds = convention.open("path/to/data", chunks={"time": 1})
+# Generate a few sample files that follow the convention (skip this with your own data)
+data_directory = pathlib.Path("quickstart-data")
+data_directory.mkdir(exist_ok=True)
+filenames = [f"{name}-{step:04d}.bin" for name in ("ux", "uy") for step in range(3)]
+sample = DatasetGenerator(convention.reader)(map(pathlib.Path, filenames))
+sample.binary_engine.to_file(convention.writer, data_directory)
+
+# Open every matching file in the folder as one lazy, Dask-backed dataset
+ds = convention.open(data_directory, chunks={"time": 1})
 
 # From here on it is plain xarray
 mean = ds["ux"].mean(dim="time").compute()
 
-# Write a derived result back to the same raw layout
-mean.rename("ux_mean").expand_dims(time=[0]).binary_engine.to_file(
-    convention.writer, "path/to/data"
-)
+# Write a derived result back to the same raw layout, one file per time step
+fluctuation = (ds["ux"] - mean).rename("ux_fluctuation")
+fluctuation.binary_engine.to_file(convention.writer, data_directory)
 ```
 
-The same files also open through the standard xarray entry points, `xr.open_dataset(path, engine="binfile", read_specs_getter=convention.reader)` and `xr.open_mfdataset(...)`, so they fit into existing xarray code.
+The same files also open through the standard xarray entry points, `xr.open_dataset(path, engine="binfile", read_specs_getter=convention.reader)` and `xr.open_mfdataset(...)`, so they fit into existing xarray code. The [quick start](https://docs.fschuch.com/xarray-binfile/getting-started/quickstart.html) page in the documentation walks through the same snippet step by step, with the outputs.
 
 The documentation covers the rest:
 

@@ -8,6 +8,7 @@ parts:
     chapters:
       - file: getting-started/about.md
       - file: getting-started/installation.md
+      - file: getting-started/quickstart.ipynb
   - caption: Usage
     chapters:
       - file: usage/spec-getter-protocols.md
