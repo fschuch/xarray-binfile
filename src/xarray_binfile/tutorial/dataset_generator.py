@@ -38,7 +38,9 @@ class DatasetGenerator:
         Returns:
             A random NumPy array.
         """
-        return self.random_generator.random(size=metadata.shape, dtype=metadata.dtype)
+        # Generator.random only supports native float32/float64; other dtypes
+        # fail at runtime too. Tracked in https://github.com/fschuch/xarray-binfile/issues/72
+        return self.random_generator.random(size=metadata.shape, dtype=metadata.dtype)  # type: ignore[arg-type]
 
     def _get_xarray_array(self, metadata: ReadSpecs) -> xr.DataArray:
         """

@@ -90,7 +90,7 @@ def test_roundtrip(tmp_path: pathlib.Path):
 
     opened = CONVENTION.open(tmp_path, chunks={"t": 1})
 
-    assert sorted(opened.data_vars) == ["phi", "pp", "u"]
+    assert sorted(map(str, opened.data_vars)) == ["phi", "pp", "u"]
     assert opened["u"].dims == ("i", "x", "y", "z", "t")
     assert opened["t"].dtype == np.float32
     assert opened["x"].attrs == {"long_name": "Streamwise coordinate"}
@@ -108,4 +108,4 @@ def test_roundtrip(tmp_path: pathlib.Path):
     np.testing.assert_array_equal(epsilon, case["epsi"])
 
     raw = CONVENTION.open(tmp_path, stack=False)
-    assert sorted(raw.data_vars) == ["phi1", "phi2", "pp", "ux", "uy", "uz"]
+    assert sorted(map(str, raw.data_vars)) == ["phi1", "phi2", "pp", "ux", "uy", "uz"]

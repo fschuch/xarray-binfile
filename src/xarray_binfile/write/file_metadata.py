@@ -58,12 +58,13 @@ class WriteSpecsGetterProtocol(Protocol):
           is written in a single pass.
     """
 
-    def __call__(self, data_array: xr.DataArray) -> Iterator[WriteSpecs]:
+    def __call__(self, data_array: xr.DataArray, /) -> Iterator[WriteSpecs]:
         """
         Generate write instructions for a DataArray.
 
         Args:
             data_array: The data array for which to generate write specifications.
+                Positional-only, so implementations may name the parameter anything.
 
         Returns:
             An iterator over per-file write instructions.

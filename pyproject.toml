@@ -92,7 +92,7 @@ convention = "google"
 
 [tool.mypy]
 pretty = true
-ignore_missing_imports = true
+files = ["src", "tests"]
 exclude = ["docs/conf.py"]
 
 [tool.codespell]
@@ -110,18 +110,20 @@ version-file = "src/xarray_binfile/_version.py"
 description = "Base development environment"
 features = ["tests", "benchmarks"]
 installer = "uv"
+# mypy runs here rather than in pre-commit, so it sees the real numpy, xarray and dask types
+extra-dependencies = ["mypy>=2.4.1"]
 
 [tool.hatch.envs.default.scripts]
 pre-commit-install = "pre-commit install {args}"
 pre-commit-uninstall = "pre-commit uninstall {args}"
 check = "pre-commit run {args} --all-files"
-type = "check mypy {args}"
+type = "mypy {args}"
 lint = "check ruff {args}"
 format = "check ruff-format {args}"
 test = "pytest --cov --cov-report=term {args}"
 test-benchmark = "test --benchmark-enable --memray {args}"
 test-no-cov = "test --no-cov {args}"
-qa = ["check", "test", "echo '✅ QA passed'"]
+qa = ["check", "type", "test", "echo '✅ QA passed'"]
 
 [tool.hatch.envs.test]
 description = "Extended test environment"

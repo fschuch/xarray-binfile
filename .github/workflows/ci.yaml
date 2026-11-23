@@ -61,6 +61,26 @@ jobs:
           name: coverage-${{ matrix.os }}-${{ matrix.python-version }}
           path: coverage.*.xml
 
+  type:
+    # mypy runs in the Hatch environment, not in pre-commit, so it sees the
+    # real numpy, xarray and dask types instead of treating them as Any.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13"
+
+      - name: Install Hatch
+        uses: pypa/hatch@f647ed70d49adb885f53a27d1c7f5bdaeacf2c60
+
+      - name: Run mypy
+        run: hatch run type
+
   build:
     needs: test
     runs-on: ubuntu-latest

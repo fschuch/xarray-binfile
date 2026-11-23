@@ -2,9 +2,10 @@ import pathlib
 
 import numpy as np
 import pytest
+import xarray as xr
 
 from xarray_binfile.read.entrypoint import RawBinaryEntrypoint
-from xarray_binfile.read.file_metadata import ReadSpecs
+from xarray_binfile.read.file_metadata import ReadSpecs, ReadSpecsGetterProtocol
 
 
 def make_reader(name="ux", dtype=np.float32, coords=None):
@@ -62,3 +63,19 @@ def test_open_dataset_wraps_metadata_errors(tmp_path):
         RawBinaryEntrypoint().open_dataset(
             tmp_path / "ux.bin", read_specs_getter=failing_reader
         )
+
+
+def test_open_dataset_calls_getter_positionally(tmp_path):
+    # https://github.com/fschuch/xarray-binfile/issues/71 and #73: any
+    # single-argument callable is a valid getter, whatever its parameter name.
+    write_file(tmp_path / "ux.bin")
+
+    def custom_reader(filepath: pathlib.Path) -> ReadSpecs:
+        return ReadSpecs(filepath, np.float32, {"x": range(2), "y": range(3)}, "ux")
+
+    getter: ReadSpecsGetterProtocol = custom_reader  # checked by mypy
+    dataset = xr.open_dataset(
+        tmp_path / "ux.bin", engine="binfile", read_specs_getter=getter
+    )
+
+    assert list(dataset.data_vars) == ["ux"]

@@ -53,13 +53,15 @@ To ensure quality standards on the codebase, several tools are configured in the
 - [pytest](https://docs.pytest.org/en/7.4.x/) as the test engine
 - [zizmor](https://github.com/woodruffw/zizmor) for static analysis tool for GitHub Actions workflows
 
-[pre-commit](https://pre-commit.com) manages and runs them on isolated environments.
+[pre-commit](https://pre-commit.com) manages and runs most of them on isolated environments.
 These tools are not declared as development dependencies on the project to avoid duplication.
+mypy is the exception: it runs in the default Hatch environment (`hatch run type`), so it type-checks against the
+installed numpy, xarray and dask rather than treating them as `Any`.
 Even though it performs checks on the changes for every commit when installed (`hatch run pre-commit-install`),
 it is a good practice to run the checks on the whole codebase occasionally (when a new hook is added or on Pull
 Requests). You can do so by running `hatch run check <hook-id>`, for instance `hatch run check nbstripout`.
-Some of them are available as scripts as a syntax sugar, like `hatch run lint`,
-`hatch run format`, or `hatch run type`. They check the whole codebase using ruff, ruff-format, and mypy, respectively.
+Some of them are available as scripts as a syntax sugar, like `hatch run lint` or `hatch run format`.
+They check the whole codebase using ruff and ruff-format, respectively.
 
 The file [pyproject.toml](https://github.com/fschuch/xarray-binfile/blob/main/pyproject.toml) includes configuration for some of the tools, so they can be consumed by your IDE as well.
 The file [.pre-commit-config.yaml](https://github.com/fschuch/xarray-binfile/blob/main/.pre-commit-config.yaml) includes the configuration for the pre-commit hooks.

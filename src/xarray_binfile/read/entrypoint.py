@@ -60,7 +60,7 @@ class RawBinaryEntrypoint(BackendEntrypoint):
             error_message = f"Expected a file path or file-like object, but got: {filename_or_obj!r}"
             raise ValueError(error_message) from err
         try:
-            file_metadata = read_specs_getter(path=file_path)
+            file_metadata = read_specs_getter(file_path)
         except Exception as err:
             error_message = f"Error reading metadata from {file_path}: {err}"
             raise ValueError(error_message) from err

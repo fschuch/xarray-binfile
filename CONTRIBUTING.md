@@ -14,10 +14,11 @@ The development workflow is powered by [Hatch](https://hatch.pypa.io). After ins
 hatch run qa
 ```
 
-This runs the pre-commit checks (ruff, mypy, codespell, and others) and the full test suite with coverage. Useful individual commands:
+This runs the pre-commit checks (ruff, codespell, and others), mypy, and the full test suite with coverage. Useful individual commands:
 
 ```bash
 hatch run check          # pre-commit hooks on all files
+hatch run type           # mypy, with the package dependencies installed
 hatch run test           # tests with coverage
 hatch run test-benchmark # benchmarks (pytest-benchmark and memray)
 hatch run docs:serve     # live preview of the documentation
@@ -30,7 +31,7 @@ hatch run docs:serve     # live preview of the documentation
 1. Make sure `hatch run qa` passes locally.
 1. Open a pull request describing the motivation and the change.
 
-Continuous integration runs the same checks across all supported Python versions.
+Continuous integration runs the same checks on every pull request: the pre-commit hooks through [pre-commit.ci](https://pre-commit.ci), and mypy plus the test suite (across all supported Python versions) through GitHub Actions.
 
 ## Code of conduct
 

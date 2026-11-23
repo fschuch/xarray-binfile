@@ -8,6 +8,8 @@ from functools import cached_property
 from pathlib import Path
 from typing import Protocol
 
+import numpy as np
+
 from xarray_binfile.typing import AttributesLike, CoordsLike, DTypeLike, MemoryOrder
 
 
@@ -60,7 +62,7 @@ class ReadSpecs:
         Returns:
             Shape of the data.
         """
-        return tuple(len(i) for i in self.coords.values())
+        return tuple(len(np.asarray(i)) for i in self.coords.values())
 
     @cached_property
     def dims(self) -> tuple[str, ...]:
@@ -86,12 +88,13 @@ class ReadSpecsGetterProtocol(Protocol):
         - Provide explicit dtype, coordinates, and optional attrs.
     """
 
-    def __call__(self, path: Path) -> ReadSpecs:
+    def __call__(self, path: Path, /) -> ReadSpecs:
         """
         Generate read specifications for a binary file.
 
         Args:
-            path: Path to the binary file.
+            path: Path to the binary file. Positional-only, so implementations
+                may name the parameter anything.
 
         Returns:
             The metadata required by the binary backend to decode ``path``.
