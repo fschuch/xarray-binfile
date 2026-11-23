@@ -64,6 +64,8 @@ jobs:
   type:
     # mypy runs in the Hatch environment, not in pre-commit, so it sees the
     # real numpy, xarray and dask types instead of treating them as Any.
+    # Newest stable Python for the newest dependency stubs; [tool.mypy]
+    # python_version still checks against the oldest supported release.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -73,7 +75,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
-          python-version: "3.13"
+          python-version: "3.14"
 
       - name: Install Hatch
         uses: pypa/hatch@f647ed70d49adb885f53a27d1c7f5bdaeacf2c60
