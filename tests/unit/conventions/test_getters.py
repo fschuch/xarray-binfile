@@ -539,7 +539,9 @@ class TestPatternField:
     def test_pattern_survives_pickle_and_replace(self):
         convention = StepIndexedFiles(LAYOUT, pattern="{name}_{step:03d}.bin")
 
-        restored = pickle.loads(pickle.dumps(convention))
+        # Conventions travel to worker processes (dask multiprocessing), so the
+        # descriptor-held pattern must survive pickling. Trusted, local bytes.
+        restored = pickle.loads(pickle.dumps(convention))  # nosec B301
         replaced = dataclasses.replace(convention, pattern="{name}-{step:02d}.bin")
 
         assert restored.pattern == convention.pattern
