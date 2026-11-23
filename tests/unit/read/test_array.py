@@ -166,7 +166,11 @@ class TestArrayBenchmark:
         result = benchmark(helper)
         assert np.array_equal(result, write_array)
 
-    @pytest.mark.limit_memory("86 MB")
+    # Worst case: the whole 76 MiB array through the memmap path. memray counts
+    # the file mapping (file-backed, released after the read) plus the copy
+    # handed to the caller, so about twice the array. The copy is what keeps
+    # loaded data independent of the file (issue #61).
+    @pytest.mark.limit_memory("160 MB")
     def test_read_array__numpy_memmap(self, file_path, array, write_array, benchmark):
         keys = tuple(slice(None) for _ in array.metadata.shape)
 

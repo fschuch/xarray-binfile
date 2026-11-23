@@ -20,12 +20,6 @@ from dask.callbacks import Callback
 
 from xarray_binfile import ReadSpecs
 
-ISSUE_61 = pytest.mark.xfail(
-    strict=True,
-    reason="https://github.com/fschuch/xarray-binfile/issues/61: "
-    "sliced reads return a view of the memory-mapped file",
-)
-
 
 def _reader(path: pathlib.Path) -> ReadSpecs:
     return ReadSpecs(path, "f8", {"x": range(3), "y": range(4)}, "u")
@@ -40,8 +34,7 @@ def _open(path: pathlib.Path, chunks=None) -> xr.Dataset:
 @pytest.mark.parametrize(
     "chunks",
     [
-        pytest.param(None, id="lazy", marks=ISSUE_61),
-        # Dask joins the chunks into a new array, so this path already copied.
+        pytest.param(None, id="lazy"),
         pytest.param({"x": 1}, id="dask"),
     ],
 )
@@ -67,7 +60,6 @@ NEEDS_DEV_FD = pytest.mark.skipif(
 )
 
 
-@ISSUE_61
 @NEEDS_DEV_FD
 def test_loaded_slices_do_not_hold_file_descriptors(tmp_path):
     path = tmp_path / "u.bin"
@@ -93,7 +85,6 @@ class _PeakDescriptors(Callback):
         self.peak = max(self.peak, _open_descriptors())
 
 
-@ISSUE_61
 @NEEDS_DEV_FD
 def test_chunked_load_does_not_hold_one_descriptor_per_chunk(tmp_path):
     path = tmp_path / "u.bin"
