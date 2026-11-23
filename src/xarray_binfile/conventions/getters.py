@@ -12,7 +12,7 @@ from collections import Counter
 from collections.abc import Callable, Collection, Iterator, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, ClassVar
+from typing import Any, ClassVar, overload
 
 import numpy as np
 import xarray as xr
@@ -77,6 +77,55 @@ def _require_unique(filenames: list[str]) -> None:
         raise ValueError(error_message)
 
 
+def _as_pattern(value: FilenamePattern | str) -> FilenamePattern:
+    """Return ``value`` as a :class:`FilenamePattern`, parsing a template string."""
+    return value if isinstance(value, FilenamePattern) else FilenamePattern(value)
+
+
+class _PatternField:
+    """
+    Descriptor-typed dataclass field for ``pattern``.
+
+    Assigning accepts a template string or a :class:`FilenamePattern`; reading
+    always returns a :class:`FilenamePattern`. Type checkers take the
+    constructor argument type from :meth:`__set__` and the attribute type from
+    :meth:`__get__`, so ``StepIndexedFiles(..., pattern="{name}-{step:04d}.bin")``
+    type-checks and ``convention.pattern.parse(...)`` needs no narrowing. See
+    "Descriptor-typed fields" in the :mod:`dataclasses` documentation.
+
+    The value is stored in the instance ``__dict__`` under the field name, so
+    pickling, ``repr`` and equality behave as for a plain field.
+    """
+
+    def __init__(self, default: FilenamePattern | str | None = None) -> None:
+        self._default = None if default is None else _as_pattern(default)
+        self._name = "pattern"
+
+    def __set_name__(self, owner: type, name: str) -> None:
+        self._name = name
+
+    @overload
+    def __get__(self, obj: None, objtype: type | None = None) -> FilenamePattern: ...
+
+    @overload
+    def __get__(self, obj: object, objtype: type | None = None) -> FilenamePattern: ...
+
+    def __get__(
+        self, obj: object | None, objtype: type | None = None
+    ) -> FilenamePattern:
+        if obj is None:
+            # Class access is how dataclasses look up the field default; raising
+            # AttributeError here means "no default", so the field is required.
+            if self._default is None:
+                raise AttributeError(self._name)
+            return self._default
+        pattern: FilenamePattern = obj.__dict__[self._name]
+        return pattern
+
+    def __set__(self, obj: object, value: FilenamePattern | str) -> None:
+        obj.__dict__[self._name] = _as_pattern(value)
+
+
 @dataclass(frozen=True)
 class _ConventionBase(Convention):
     """
@@ -84,7 +133,8 @@ class _ConventionBase(Convention):
 
     Attributes:
         layout: Dimension order, coordinates and dtype of each file.
-        pattern: Filename pattern, as a :class:`FilenamePattern` or template string.
+        pattern (FilenamePattern): Filename pattern, given as a :class:`FilenamePattern` or a
+            template string; always read back as a :class:`FilenamePattern`.
         check_coords: Whether :meth:`writer` also requires coordinate values to
             match ``layout`` (dimensions and sizes are always checked).
         stacks: Dimensions that are not stored in the files but encoded in
@@ -107,7 +157,7 @@ class _ConventionBase(Convention):
     """
 
     layout: Layout
-    pattern: FilenamePattern | str
+    pattern: _PatternField = _PatternField()
     check_coords: bool = True
     stacks: Sequence[VariableStack] = ()
     name_of: Callable[[xr.DataArray], str] | None = None
@@ -117,14 +167,11 @@ class _ConventionBase(Convention):
 
     def __post_init__(self) -> None:
         """
-        Normalize ``pattern`` and check that it declares the required fields.
+        Normalize the collections and check that ``pattern`` declares the required fields.
 
         Raises:
             ValueError: If the pattern misses a required field.
         """
-        if isinstance(self.pattern, str):
-            object.__setattr__(self, "pattern", FilenamePattern(self.pattern))
-        assert isinstance(self.pattern, FilenamePattern)
         object.__setattr__(self, "stacks", tuple(self.stacks))
         if isinstance(self.names, str):
             error_message = (
@@ -141,11 +188,6 @@ class _ConventionBase(Convention):
             )
             raise ValueError(error_message)
 
-    @property
-    def _pattern(self) -> FilenamePattern:
-        assert isinstance(self.pattern, FilenamePattern)
-        return self.pattern
-
     def _parse(self, path: Path) -> dict[str, Any]:
         """
         Parse a filename and check the variable name against ``names``.
@@ -160,7 +202,7 @@ class _ConventionBase(Convention):
             ValueError: If the filename does not follow ``pattern`` or its
                 name is not listed in ``names``.
         """
-        fields = self._pattern.parse(path.name)
+        fields = self.pattern.parse(path.name)
         self._check_name(fields["name"], ValueError)
         return fields
 
@@ -322,12 +364,12 @@ class StaticFiles(_ConventionBase):
         ('epsi', ('x', 'y'))
 
     Attributes:
-        pattern: Filename pattern declaring ``{name}``. Defaults to ``"{name}.bin"``.
+        pattern (FilenamePattern): Filename pattern declaring ``{name}``. Defaults to ``"{name}.bin"``.
             The other attributes are shared with every shipped convention: ``layout``,
             ``check_coords``, ``stacks``, ``name_of`` and ``names``.
     """
 
-    pattern: FilenamePattern | str = "{name}.bin"
+    pattern: _PatternField = _PatternField("{name}.bin")
 
     def _extra_coords(self, fields: Mapping[str, Any]) -> dict[str, Any]:
         """Static files encode nothing beyond the name: no extra coordinate."""
@@ -336,7 +378,7 @@ class StaticFiles(_ConventionBase):
     def _write_one(self, data_array: xr.DataArray) -> Iterator[WriteSpecs]:
         self.layout.validate(data_array, check_coords=self.check_coords)
         yield WriteSpecs(
-            filename=self._pattern.format(name=str(data_array.name)),
+            filename=self.pattern.format(name=str(data_array.name)),
             sub_array=self.layout.transpose(data_array),
             dtype=self.layout.dtype,
             order=self.layout.order,
@@ -387,7 +429,7 @@ class _SplitAlongDimension(_ConventionBase):
         )
         values = _coordinate_or_index(data_array, self.time_dim)
         filenames = [
-            self._pattern.format(name=name, **self._fields_from_time(value))
+            self.pattern.format(name=name, **self._fields_from_time(value))
             for value in values
         ]
         _require_unique(filenames)
@@ -432,7 +474,7 @@ class StepIndexedFiles(_SplitAlongDimension):
         ['ux-0002.bin', 'ux-0003.bin']
 
     Attributes:
-        pattern: Filename pattern declaring ``{name}`` and ``{step}``.
+        pattern (FilenamePattern): Filename pattern declaring ``{name}`` and ``{step}``.
             Defaults to ``"{name}-{step:04d}.bin"``.
         time_dim: Name of the dimension split across files. Defaults to ``"time"``.
         time_dtype: Optional dtype for the ``time`` coordinate on read.
@@ -440,7 +482,7 @@ class StepIndexedFiles(_SplitAlongDimension):
             ``time`` coordinate is the integer step itself.
     """
 
-    pattern: FilenamePattern | str = "{name}-{step:04d}.bin"
+    pattern: _PatternField = _PatternField("{name}-{step:04d}.bin")
     time_step: float | None = None
 
     _required_fields: ClassVar[frozenset[str]] = frozenset({"name", "step"})
@@ -489,13 +531,13 @@ class TimeStampedFiles(_SplitAlongDimension):
         array([0.25])
 
     Attributes:
-        pattern: Filename pattern declaring ``{name}`` and ``{time}``.
+        pattern (FilenamePattern): Filename pattern declaring ``{name}`` and ``{time}``.
             Defaults to ``"{name}-{time:.3f}.bin"``.
         time_dim: Name of the dimension split across files. Defaults to ``"time"``.
         time_dtype: Optional dtype for the ``time`` coordinate on read.
     """
 
-    pattern: FilenamePattern | str = "{name}-{time:.3f}.bin"
+    pattern: _PatternField = _PatternField("{name}-{time:.3f}.bin")
 
     _required_fields: ClassVar[frozenset[str]] = frozenset({"name", "time"})
 
