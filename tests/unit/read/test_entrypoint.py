@@ -1,5 +1,7 @@
 import pathlib
 
+import dask
+import dask.array as da
 import numpy as np
 import pytest
 import xarray as xr
@@ -79,3 +81,15 @@ def test_open_dataset_calls_getter_positionally(tmp_path):
     )
 
     assert list(dataset.data_vars) == ["ux"]
+
+
+def test_read_specs_shape_does_not_compute_lazy_coordinates(tmp_path):
+    # ReadSpecs.shape reads the length of a Dask coordinate without computing it.
+    def forbid_compute(*args, **kwargs):  # pragma: no cover - runs only on regression
+        error_message = "ReadSpecs.shape computed a lazy coordinate"
+        raise AssertionError(error_message)
+
+    lazy = da.arange(5, chunks=2)
+    specs = ReadSpecs(tmp_path / "u.bin", np.float32, {"x": lazy}, "u")
+    with dask.config.set(scheduler=forbid_compute):
+        assert specs.shape == (5,)

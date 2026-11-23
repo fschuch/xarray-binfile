@@ -2,7 +2,7 @@
 Defines metadata structures and protocols for reading binary files.
 """
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sized
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
@@ -62,7 +62,12 @@ class ReadSpecs:
         Returns:
             Shape of the data.
         """
-        return tuple(len(np.asarray(i)) for i in self.coords.values())
+        # len() on sized inputs avoids computing lazy (e.g. Dask) coordinates;
+        # np.asarray only for the rest, which keeps scalars an error as before.
+        return tuple(
+            len(i) if isinstance(i, Sized) else len(np.asarray(i))
+            for i in self.coords.values()
+        )
 
     @cached_property
     def dims(self) -> tuple[str, ...]:
