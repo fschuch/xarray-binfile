@@ -78,7 +78,16 @@ omit = ["src/xarray_binfile/_version.py"]
 [tool.coverage.report]
 precision = 2
 show_missing = true
-exclude_lines = ["no cov", "\\.\\.\\.", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]
+# Patterns are regexes matched anywhere in a line, and a match on a `def` line
+# excludes the whole function, so stub bodies are matched only as a lone `...`
+# (unanchored, it also hid every function annotated with `tuple[int, ...]`).
+exclude_lines = [
+    "no cov",
+    "^\\s*\\.\\.\\.\\s*$",
+    "@(typing\\.)?overload",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]
 
 [tool.ruff]
 extend-exclude = ["./docs/conf.py"]

@@ -165,6 +165,14 @@ class TestLongNames:
         assert sorted(stacked.data_vars) == ["vort", "vorticity"]
         assert stacked["i"].values.tolist() == ["x", "y", "z"]
 
+    def test_stacks_templates_with_a_trailing_literal(self):
+        ds = xr.Dataset({name: ("x", np.zeros(2)) for name in ("u_x_mean", "u_y_mean")})
+
+        stacked = VariableStack("i", "{name}_{i}_mean", values=("x", "y")).stack(ds)
+
+        assert list(stacked.data_vars) == ["u"]
+        assert stacked["i"].values.tolist() == ["x", "y"]
+
     def test_stacks_zero_filled_integers(self):
         ds = xr.Dataset(
             {name: ("x", np.zeros(2)) for name in ("phi01", "phi02", "phi1")}
