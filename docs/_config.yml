@@ -40,6 +40,9 @@ html:
   announcement: Found a problem with a file layout or metadata convention? Please report it on GitHub.
 
 sphinx:
+  local_extensions:
+    # Show the conventions' ``pattern`` field as ``FilenamePattern | str``
+    pattern_signature: _ext
   extra_extensions:
     - sphinx_github_changelog
     - sphinx.ext.autodoc

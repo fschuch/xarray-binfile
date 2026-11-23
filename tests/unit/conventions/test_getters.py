@@ -1,4 +1,6 @@
+import dataclasses
 import pathlib
+import pickle
 
 import numpy as np
 import pytest
@@ -499,3 +501,52 @@ class TestReviewFixes:
         convention.open(tmp_path, variables=["uy"])
 
         assert [p.name for p in calls] == ["uy-0000.bin"]
+
+
+class TestPatternField:
+    """``pattern`` accepts a string or a FilenamePattern and reads back as a FilenamePattern."""
+
+    @pytest.mark.parametrize(
+        ("convention_cls", "template"),
+        [
+            (StaticFiles, "{name}.bin"),
+            (StepIndexedFiles, "{name}-{step:04d}.bin"),
+            (TimeStampedFiles, "{name}-{time:.3f}.bin"),
+        ],
+    )
+    def test_default_is_a_filename_pattern(self, convention_cls, template):
+        convention = convention_cls(LAYOUT)
+
+        assert convention.pattern == FilenamePattern(template)
+        assert convention_cls.pattern == FilenamePattern(template)
+
+    def test_string_and_object_give_the_same_pattern(self):
+        from_string = StepIndexedFiles(LAYOUT, pattern="{name}_{step:03d}.bin")
+        from_object = StepIndexedFiles(
+            LAYOUT, pattern=FilenamePattern("{name}_{step:03d}.bin")
+        )
+
+        assert isinstance(from_string.pattern, FilenamePattern)
+        assert from_string.pattern == from_object.pattern
+
+    def test_pattern_methods_need_no_narrowing(self):
+        # https://github.com/fschuch/xarray-binfile/issues/71: mypy checks this
+        # line, which failed while the attribute was typed FilenamePattern | str.
+        fields = StepIndexedFiles(LAYOUT).pattern.parse("ux-0001.bin")
+
+        assert fields == {"name": "ux", "step": 1}
+
+    def test_pattern_survives_pickle_and_replace(self):
+        convention = StepIndexedFiles(LAYOUT, pattern="{name}_{step:03d}.bin")
+
+        restored = pickle.loads(pickle.dumps(convention))
+        replaced = dataclasses.replace(convention, pattern="{name}-{step:02d}.bin")
+
+        assert restored.pattern == convention.pattern
+        assert replaced.pattern == FilenamePattern("{name}-{step:02d}.bin")
+
+    def test_pattern_stays_frozen(self):
+        convention = StepIndexedFiles(LAYOUT)
+
+        with pytest.raises(dataclasses.FrozenInstanceError):
+            convention.pattern = "{name}.bin"  # type: ignore[misc]
