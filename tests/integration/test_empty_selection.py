@@ -18,12 +18,6 @@ import xarray as xr
 from xarray_binfile import ReadSpecs
 from xarray_binfile.conventions import Layout, StaticFiles
 
-ISSUE_62 = pytest.mark.xfail(
-    strict=True,
-    reason="https://github.com/fschuch/xarray-binfile/issues/62: "
-    "a stop of 0 is read as 'up to the end', so the whole file is returned",
-)
-
 VALUES = np.arange(12.0).reshape(3, 4)
 
 
@@ -39,9 +33,9 @@ def path(tmp_path) -> pathlib.Path:
 
 
 SELECTIONS = [
-    pytest.param(lambda u: u.sel(x=slice(-2, -1)), marks=ISSUE_62, id="below-grid"),
-    pytest.param(lambda u: u.head(x=0), marks=ISSUE_62, id="head-0"),
-    pytest.param(lambda u: u[:0], marks=ISSUE_62, id="getitem-0"),
+    pytest.param(lambda u: u.sel(x=slice(-2, -1)), id="below-grid"),
+    pytest.param(lambda u: u.head(x=0), id="head-0"),
+    pytest.param(lambda u: u[:0], id="getitem-0"),
     pytest.param(lambda u: u.sel(x=slice(5, 6)), id="above-grid"),
 ]
 
@@ -56,15 +50,9 @@ def test_empty_selection_loads_empty(path, select):
     assert loaded.values.shape == (0, 4)
 
 
-# Dask asks the backend for ``slice(0, 0)`` here too: for a window above the
-# grid, the end of the array is a chunk boundary.
-DASK_SELECTIONS = [
-    *SELECTIONS[:3],
-    pytest.param(lambda u: u.sel(x=slice(5, 6)), marks=ISSUE_62, id="above-grid"),
-]
-
-
-@pytest.mark.parametrize("select", DASK_SELECTIONS)
+# With Dask chunks the window above the grid also reaches the backend as
+# ``slice(0, 0)``, because the end of the array is a chunk boundary.
+@pytest.mark.parametrize("select", SELECTIONS)
 def test_empty_selection_loads_empty_with_dask_chunks(path, select):
     ds = xr.open_dataset(
         path, engine="binfile", read_specs_getter=_reader, chunks={"x": 1}
@@ -76,7 +64,6 @@ def test_empty_selection_loads_empty_with_dask_chunks(path, select):
     assert loaded.values.shape == (0, 4)
 
 
-@ISSUE_62
 @pytest.mark.filterwarnings("ignore:Mean of empty slice:RuntimeWarning")
 def test_mean_of_an_empty_window_from_a_convention_is_nan(tmp_path):
     convention = StaticFiles(Layout({"x": np.arange(3.0), "y": np.arange(4.0)}))
