@@ -51,6 +51,10 @@ class BinaryEngineDataset:
         See that method for guidance on sizing files and on alternatives when
         streaming or partial writes are needed.
 
+        The variables are written one after the other, so the warning there
+        about writing over the inputs also covers one variable computed from
+        another (https://github.com/fschuch/xarray-binfile/issues/64).
+
         Args:
             write_specs_getter: A callable that generates write specifications for the data arrays.
             directory: The directory where the binary files will be written. Defaults to the current working directory.
@@ -102,6 +106,23 @@ class BinaryEngineDataArray:
         path with :func:`os.replace` only once it is complete. An interrupted
         write never leaves a truncated file at the destination, and the
         temporary file is removed automatically.
+
+        .. warning::
+
+            **Writing a lazy result over its own inputs can give wrong
+            numbers, without an error.** Each file is computed separately,
+            and each compute reads the lazy inputs again. When a file depends
+            on more than its own input, such as an anomaly
+            ``ux - ux.mean("time")``, and it is written into the folder it was
+            read from, later files are computed from inputs already replaced
+            (https://github.com/fschuch/xarray-binfile/issues/64). A result
+            that only needs its own file, such as ``ux * 2``, is safe. To
+            write over the inputs, either:
+
+            - compute the result first, with ``result = result.compute()``,
+              which costs the whole result in memory; or
+            - write to another folder and move the files over the originals
+              afterwards, which costs the whole result on disk.
 
         Plan the write specifications so that every individual output file
         fits comfortably in memory, for example by splitting the array into
