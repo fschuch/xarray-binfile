@@ -149,12 +149,17 @@ class BinaryEngineBackendArray(BackendArray):
         """
         Reads a portion of the binary file using memory mapping.
 
+        Only the selected region is read, and it is copied out of the mapping,
+        so the returned array owns its memory: it does not change if the file
+        is rewritten, and it keeps neither the mapping nor a file descriptor
+        alive (https://github.com/fschuch/xarray-binfile/issues/61).
+
         Args:
             file: The binary file to read.
             key: Tuple of slices or integers specifying the indices to read.
 
         Returns:
-            The data read from the file.
+            The data read from the file, as a new array.
         """
         memory_map = np.memmap(
             file,
@@ -163,7 +168,8 @@ class BinaryEngineBackendArray(BackendArray):
             shape=self.metadata.shape,
             order=self.metadata.order,
         )
-        return np.asarray(memory_map[key])  # ensure we actually read the data
+        # np.array copies; np.asarray would return a view of the mapped file
+        return np.array(memory_map[key])
 
     def _read_binary_at_slices(
         self, file, key: tuple[slice | int, ...]
