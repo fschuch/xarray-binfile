@@ -182,6 +182,37 @@ class TestBackendArrayIndexing:
         np.testing.assert_array_equal(actual, self.reference[[0, 1, 2], [0, 1, 2]])
 
 
+EMPTY_FILE = pytest.mark.xfail(
+    strict=True,
+    raises=ValueError,
+    reason="a partial key on a file with a zero-length axis goes through "
+    "numpy.memmap, which cannot map an empty file",
+)
+
+
+@pytest.mark.parametrize(
+    "key",
+    [
+        pytest.param((slice(0, 0), slice(None)), id="empty-axis"),
+        pytest.param((slice(None), slice(0, 0)), marks=EMPTY_FILE, id="empty-other"),
+        pytest.param((slice(None), slice(1, 3)), marks=EMPTY_FILE, id="partial"),
+        pytest.param((slice(None), 2), marks=EMPTY_FILE, id="integer"),
+    ],
+)
+def test_partial_read_of_a_file_with_a_zero_length_axis(tmp_path, key):
+    # Zero elements, zero bytes: there is nothing to map.
+    reference = np.zeros((0, 4))
+    file_path = tmp_path / "test.bin"
+    reference.tofile(file_path)
+    array = BinaryEngineBackendArray(
+        file_read_specs_getter_factory(coords={"x": [], "y": range(4)})(file_path)
+    )
+
+    actual = array[BasicIndexer(key)]
+
+    assert actual.shape == reference[key].shape
+
+
 def test_backend_array_rejects_missing_file(tmp_path):
     metadata = file_read_specs_getter_factory(
         coords={"x": range(2), "y": range(3)},
