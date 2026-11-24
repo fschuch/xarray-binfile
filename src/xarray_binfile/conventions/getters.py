@@ -33,6 +33,32 @@ from xarray_binfile.typing import DTypeLike
 from xarray_binfile.write.file_metadata import WriteSpecs
 
 _STEP_TOLERANCE = 1e-6
+# How many units in the last place a time value may be off its step: the
+# reader rounds once (0.5 ulp) and values built in single precision drift to
+# about 1.3 ulp (https://github.com/fschuch/xarray-binfile/issues/65).
+_STEP_TOLERANCE_ULPS = 4
+
+
+def _step_tolerance(value: Any, time_step: float) -> float:
+    """
+    How far ``value / time_step`` may land from an integer step.
+
+    ``1e-6`` of a step, or a few units in the last place of ``value`` in its
+    own dtype when that is coarser, as it is for float32 times. Integer
+    values are exact.
+
+    Args:
+        value: One coordinate value, keeping its dtype.
+        time_step: The interval between steps.
+
+    Returns:
+        The tolerance, in steps.
+    """
+    value = np.asarray(value)
+    if not np.issubdtype(value.dtype, np.floating):
+        return _STEP_TOLERANCE
+    ulp = float(np.spacing(np.abs(value)))
+    return max(_STEP_TOLERANCE, _STEP_TOLERANCE_ULPS * ulp / abs(time_step))
 
 
 def _require_name(data_array: xr.DataArray) -> str:
@@ -453,7 +479,13 @@ class StepIndexedFiles(_SplitAlongDimension):
     ``ux.0002`` or ``ux0003.dat``. The ``time`` coordinate is derived from the
     step: it is the step itself by default, or ``step * time_step`` when the
     interval between snapshots is known. Writing inverts that mapping and
-    refuses coordinate values that do not land on an integer step.
+    refuses coordinate values that do not land on an integer step: within
+    ``1e-6`` of a step, or within a few units in the last place of the value
+    in its own dtype when that is coarser, so float32 times read with
+    ``time_dtype=np.float32`` write back to their steps. That allowance grows
+    with the step number; past about a million steps, a float32 time may be
+    off by a sizeable fraction of a step before it is refused, so a wrong
+    ``time_step`` is caught less reliably there.
 
     Examples:
         >>> import numpy as np
@@ -477,7 +509,9 @@ class StepIndexedFiles(_SplitAlongDimension):
         pattern (FilenamePattern): Filename pattern declaring ``{name}`` and ``{step}``.
             Defaults to ``"{name}-{step:04d}.bin"``.
         time_dim: Name of the dimension split across files. Defaults to ``"time"``.
-        time_dtype: Optional dtype for the ``time`` coordinate on read.
+        time_dtype: Optional dtype for the ``time`` coordinate on read, for
+            example ``np.float32``, so that arithmetic using the time values
+            (``integrate("time")``) keeps single-precision data in float32.
         time_step: Interval between consecutive steps. When ``None`` the
             ``time`` coordinate is the integer step itself.
     """
@@ -494,9 +528,12 @@ class StepIndexedFiles(_SplitAlongDimension):
         return step * self.time_step
 
     def _fields_from_time(self, value: Any) -> dict[str, Any]:
-        step = float(value) if self.time_step is None else float(value) / self.time_step
+        time_step = 1.0 if self.time_step is None else self.time_step
+        step = float(value) / time_step
         rounded = round(step)
-        if not math.isclose(step, rounded, rel_tol=0.0, abs_tol=_STEP_TOLERANCE):
+        if not math.isclose(
+            step, rounded, rel_tol=0.0, abs_tol=_step_tolerance(value, time_step)
+        ):
             hint = (
                 "Set time_step to the interval between snapshots"
                 if self.time_step is None

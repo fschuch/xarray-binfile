@@ -32,7 +32,6 @@ def _steps_written(convention: StepIndexedFiles, time) -> list[int]:
     ]
 
 
-@pytest.mark.xfail(strict=True, reason="#65: 1e-6 is tighter than float32")
 def test_the_reviewers_float32_step_writes_back():
     convention = StepIndexedFiles(LAYOUT, time_step=0.1, time_dtype=np.float32)
     time = convention.reader(pathlib.Path("ux-0042.bin")).coords["time"]
@@ -44,7 +43,6 @@ def test_the_reviewers_float32_step_writes_back():
 TIME_STEPS = (0.1, 0.01, 0.001, 0.3)
 
 
-@pytest.mark.xfail(strict=True, reason="#65: 1e-6 is tighter than float32")
 @pytest.mark.parametrize("time_step", TIME_STEPS)
 def test_float32_times_read_from_files_write_back_to_their_steps(time_step):
     convention = StepIndexedFiles(LAYOUT, time_step=time_step, time_dtype=np.float32)
@@ -54,7 +52,6 @@ def test_float32_times_read_from_files_write_back_to_their_steps(time_step):
     assert _steps_written(convention, time) == STEPS.tolist()
 
 
-@pytest.mark.xfail(strict=True, reason="#65: 1e-6 is tighter than float32")
 @pytest.mark.parametrize("time_step", TIME_STEPS)
 def test_float32_times_built_in_single_precision_write_back_to_their_steps(
     time_step,

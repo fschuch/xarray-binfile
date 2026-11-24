@@ -77,7 +77,7 @@ Every shipped convention also offers:
 - `names`: the variable names the convention accepts. When the pattern alone is too permissive, for example a bare `"{name}"` template for extension-less files that would also match `README` or `Makefile`, `names=("epsilon",)` restricts reading, discovery and writing to the listed variables, and lets a `PatternConventions` move on to the next member
 - `stacks`: dimensions encoded in the variable names, see [Stacked variables](#stacked-variables)
 - `name_of`: a hook returning the name to write an array under, in place of `data_array.name` (for example `lambda da: da.attrs["file_name"]`)
-- `time_dtype` (time-series conventions): the dtype of the `time` coordinate on read, for example `np.float32` to match single-precision data
+- `time_dtype` (time-series conventions): the dtype of the `time` coordinate on read, for example `np.float32` to match single-precision data. Most operations keep float32 data in float32 with either time dtype; a float32 time matters when the time values enter the arithmetic, as in `integrate("time")` or `u * u.time`, which otherwise give float64 results. With `StepIndexedFiles`, float32 times write back to their steps within a few units in the last place.
 
 ### Time-series numbered by step
 
