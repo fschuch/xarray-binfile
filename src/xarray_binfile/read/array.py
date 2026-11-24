@@ -187,11 +187,13 @@ class BinaryEngineBackendArray(BackendArray):
         Returns:
             The array data read from the file at the specified slices.
         """
-        if self._is_sliced(key):
+        # A file with a zero-length axis holds no bytes, and numpy.memmap
+        # cannot map an empty file, so it always takes the whole read.
+        if self._is_sliced(key) and all(self.shape):
             return self._wrap_numpy_memmap(file, key)
-        # The key selects everything, so indexing returns a view of the array
-        # just read, at no cost. It still applies the key, so a key wrongly
-        # taken as whole yields a slower read instead of the wrong data.
+        # Applying the key is free when it selects everything (a view of the
+        # array just read). It also makes a key wrongly taken as whole give a
+        # slower read instead of the wrong data.
         return self._wrap_numpy_fromfile(file)[key]
 
     def get_xarray_dataset(self) -> xr.Dataset:
