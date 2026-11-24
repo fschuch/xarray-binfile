@@ -56,22 +56,28 @@ def _slab_chunks(specs: Iterable[ReadSpecs]) -> dict[str, str]:
     """
     Chunks that split the files into slabs along their slowest axis on disk.
 
-    Dask reads every chunk a selection touches in full, so with one chunk per
-    file, reading a single value reads the whole file
+    Since Dask 2024.12.0, Dask reads every chunk a selection touches in full,
+    so with one chunk per file, reading a single value reads the whole file
     (https://github.com/fschuch/xarray-binfile/issues/63). Slabs along the
     slowest axis are contiguous in the file, and ``"auto"`` lets Dask size
     them by its ``array.chunk-size`` setting, so a file that fits in one chunk
     keeps one chunk. Only one ``chunks`` mapping applies to every file, so
     the largest file decides the axis; the dimensions not named stay whole,
-    and files without that dimension are not split.
+    and files without that dimension are not split. Dask cannot size an
+    ``"auto"`` chunk on an array that holds nothing, so when any file is
+    empty, no file is split.
 
     Args:
         specs: The read specs of the files to open.
 
     Returns:
         ``{axis: "auto"}`` for the slowest axis longer than one element of the
-        largest file, or ``{}`` (one chunk per file) when there is none.
+        largest file, or ``{}`` (one chunk per file) when there is none or
+        when any file is empty.
     """
+    specs = list(specs)
+    if any(0 in spec.shape for spec in specs):
+        return {}
     largest = max(
         specs,
         key=lambda s: int(np.prod(s.shape)) * np.dtype(s.dtype).itemsize,
@@ -191,12 +197,15 @@ class Convention:
         """
         Open every accepted file in ``directory`` as one lazy dataset.
 
-        Dask reads every chunk a selection touches in full, and holds it in
-        memory while it is processed, so the chunks decide what a selection
-        costs. Without ``chunks``, a file larger than Dask's
-        ``array.chunk-size`` (128 MiB by default) is split into slabs along
-        its slowest axis on disk, which are contiguous in the file; a smaller
-        file stays one chunk. Set ``chunks`` to choose for your access
+        Since Dask 2024.12.0, Dask reads every chunk a selection touches in
+        full, and holds it in memory while it is processed, so the chunks
+        decide what a selection costs. Without ``chunks``, a file larger than
+        Dask's ``array.chunk-size`` (128 MiB by default) is split into slabs
+        along its slowest axis on disk, which are contiguous in the file; a
+        smaller file stays one chunk. One ``chunks`` applies to every file, so
+        the largest file picks the axis, and files without that dimension
+        stay whole, whatever their size. When any file is empty, no file is
+        split. Set ``chunks`` to choose for your access
         pattern: smaller chunks make points and planes cheaper to read, and
         larger ones mean fewer tasks when every value is needed.
 
@@ -222,15 +231,27 @@ class Convention:
         if "chunks" not in open_mfdataset_kwargs:
             # Read each file's specs once, for the chunks and for opening it.
             # xarray passes absolute paths, so the cache is keyed by them.
-            absolute = [Path(os.path.abspath(path)) for path in paths]
-            specs = {path: self.reader(path) for path in absolute}
-            chunks = _slab_chunks(specs.values())
+            # A file the reader rejects keeps its error, raised again when
+            # xarray opens it, so ``errors=`` applies to it as usual.
+            specs: dict[Path, ReadSpecs | Exception] = {}
+            for path in (Path(os.path.abspath(path)) for path in paths):
+                try:
+                    specs[path] = self.reader(path)
+                except Exception as error:  # noqa: BLE001
+                    specs[path] = error
+            chunks = _slab_chunks(
+                spec for spec in specs.values() if not isinstance(spec, Exception)
+            )
             if chunks:
                 open_mfdataset_kwargs["chunks"] = chunks
 
             def reader(path: Path) -> ReadSpecs:
                 cached = specs.get(Path(os.path.abspath(path)))
-                return cached if cached is not None else self.reader(path)
+                if cached is None:
+                    return self.reader(path)
+                if isinstance(cached, Exception):
+                    raise cached
+                return cached
 
         dataset = open_files(paths, reader, **open_mfdataset_kwargs)
         return self.stack(dataset) if stack else dataset

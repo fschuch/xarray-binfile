@@ -182,7 +182,6 @@ ZERO_LENGTH_LAYOUTS = (
 )
 
 
-@pytest.mark.xfail(strict=True, reason="#81 review: auto chunks on an empty array")
 @pytest.mark.usefixtures("small_chunks")
 @pytest.mark.parametrize("coords", ZERO_LENGTH_LAYOUTS)
 def test_open_keeps_zero_length_files_in_one_chunk(tmp_path, coords):
@@ -197,7 +196,6 @@ def test_open_keeps_zero_length_files_in_one_chunk(tmp_path, coords):
     assert ds.ux.values.shape == (*shape, 2)
 
 
-@pytest.mark.xfail(strict=True, reason="#81 review: auto chunks on an empty array")
 @pytest.mark.usefixtures("small_chunks")
 def test_open_does_not_split_when_any_file_is_empty(tmp_path):
     # The axis the largest files pick would reach the empty files too, so one
@@ -238,7 +236,6 @@ needs_per_file_errors = pytest.mark.skipif(
 
 
 @needs_per_file_errors
-@pytest.mark.xfail(strict=True, reason="#81 review: one reader failure aborts open")
 @pytest.mark.usefixtures("small_chunks")
 @pytest.mark.parametrize("errors", ["ignore", "warn"])
 def test_open_lets_xarray_skip_a_file_the_reader_rejects(tmp_path, errors):
@@ -259,5 +256,6 @@ def test_open_still_raises_a_reader_failure_by_default(tmp_path):
     convention = _FailsOnStep2(Layout(GRID, dtype="<f4"))
     _write(tmp_path, convention, steps=3)
 
-    with pytest.raises(OSError, match="unreadable header"):
+    # xarray names the file in a ValueError from 2025.08.0 on.
+    with pytest.raises((OSError, ValueError), match="unreadable header"):
         convention.open(tmp_path)

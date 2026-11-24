@@ -152,9 +152,10 @@ class BinaryEngineBackendArray(BackendArray):
         """
         Reads the region selected by ``key`` using memory mapping.
 
-        The region is the key this method receives. With Dask, that key is a
-        whole chunk, whatever smaller selection the user made, so the whole
-        chunk is read (https://github.com/fschuch/xarray-binfile/issues/63).
+        The region is the key this method receives. Since Dask 2024.12.0,
+        that key is a whole chunk, whatever smaller selection the user made,
+        so the whole chunk is read
+        (https://github.com/fschuch/xarray-binfile/issues/63).
         The region is copied out of the mapping, so the returned array owns
         its memory: it does not change if the file is rewritten, and it keeps
         neither the mapping nor a file descriptor alive
