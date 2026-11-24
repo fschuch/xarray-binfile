@@ -14,10 +14,11 @@ from collections.abc import Iterable, Iterator
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 import xarray as xr
 
 from xarray_binfile.conventions.protocol import ConventionProtocol
-from xarray_binfile.read.file_metadata import ReadSpecs
+from xarray_binfile.read.file_metadata import ReadSpecs, ReadSpecsGetterProtocol
 from xarray_binfile.write.file_metadata import WriteSpecs
 
 
@@ -49,6 +50,81 @@ def open_files(
     return xr.open_mfdataset(
         paths, engine="binfile", read_specs_getter=reader, **open_mfdataset_kwargs
     )
+
+
+def _slab_chunks(specs: Iterable[ReadSpecs]) -> dict[str, str]:
+    """
+    Chunks that split the files into slabs along their slowest axis on disk.
+
+    Since Dask 2024.12.0, Dask reads every chunk a selection touches in full,
+    so with one chunk per file, reading a single value reads the whole file
+    (https://github.com/fschuch/xarray-binfile/issues/63). Slabs along the
+    slowest axis are contiguous in the file, and ``"auto"`` lets Dask size
+    them by its ``array.chunk-size`` setting, so a file that fits in one chunk
+    keeps one chunk. Only one ``chunks`` mapping applies to every file, so
+    the largest file decides the axis; the dimensions not named stay whole,
+    and files without that dimension are not split. Dask cannot size an
+    ``"auto"`` chunk on an array that holds nothing, so when any file is
+    empty, no file is split.
+
+    Args:
+        specs: The read specs of the files to open.
+
+    Returns:
+        ``{axis: "auto"}`` for the slowest axis longer than one element of the
+        largest file, or ``{}`` (one chunk per file) when there is none or
+        when any file is empty.
+    """
+    specs = list(specs)
+    if any(0 in spec.shape for spec in specs):
+        return {}
+    largest = max(
+        specs,
+        key=lambda s: int(np.prod(s.shape)) * np.dtype(s.dtype).itemsize,
+        default=None,
+    )
+    if largest is None:
+        return {}
+    sizes = dict(zip(largest.dims, largest.shape, strict=True))
+    slow_to_fast = largest.dims if largest.order == "C" else largest.dims[::-1]
+    axis = next((dim for dim in slow_to_fast if sizes[dim] > 1), None)
+    return {} if axis is None else {axis: "auto"}
+
+
+class _SpecsCache:
+    """
+    Each file's specs, read once, for planning the chunks and for opening it.
+
+    xarray passes absolute paths, so the cache is keyed by them, and an
+    unknown path falls back to ``reader``. A file the reader rejects keeps
+    its error, raised again when xarray opens it, so ``errors=`` applies to
+    it as usual.
+    """
+
+    def __init__(self, paths: Iterable[Path], reader: ReadSpecsGetterProtocol):
+        self._reader = reader
+        self._specs: dict[Path, ReadSpecs | Exception] = {}
+        for path in paths:
+            try:
+                self._specs[self._key(path)] = reader(path)
+            except Exception as error:  # noqa: BLE001
+                self._specs[self._key(path)] = error
+
+    @staticmethod
+    def _key(path: Path) -> Path:
+        return Path(os.path.abspath(path))
+
+    def read_specs(self) -> list[ReadSpecs]:
+        """The specs of the files the reader accepted."""
+        return [s for s in self._specs.values() if not isinstance(s, Exception)]
+
+    def __call__(self, path: Path) -> ReadSpecs:
+        cached = self._specs.get(self._key(path))
+        if cached is None:
+            return self._reader(path)
+        if isinstance(cached, Exception):
+            raise cached
+        return cached
 
 
 def scan_files(directory: str | os.PathLike[str], accepts: Any) -> list[Path]:
@@ -157,13 +233,25 @@ class Convention:
         """
         Open every accepted file in ``directory`` as one lazy dataset.
 
+        Since Dask 2024.12.0, Dask reads every chunk a selection touches in
+        full, and holds it in memory while it is processed, so the chunks
+        decide what a selection costs. Without ``chunks``, a file larger than
+        Dask's ``array.chunk-size`` (128 MiB by default) is split into slabs
+        along its slowest axis on disk, which are contiguous in the file; a
+        smaller file stays one chunk. One ``chunks`` applies to every file, so
+        the largest file picks the axis, and files without that dimension
+        stay whole, whatever their size. When any file is empty, no file is
+        split. Set ``chunks`` to choose for your access
+        pattern: smaller chunks make points and planes cheaper to read, and
+        larger ones mean fewer tasks when every value is needed.
+
         Args:
             directory: The folder holding the files.
             variables: Optional names to keep, as found on disk (``"ux"``, not
                 ``"u"``); other files are not opened.
             stack: Whether to rebuild the stacked arrays.
             **open_mfdataset_kwargs: Forwarded to :func:`xarray.open_mfdataset`,
-                for example ``chunks={"time": 1}`` or ``parallel=True``.
+                for example ``chunks={"x": 16}`` or ``parallel=True``.
 
         Returns:
             The lazily opened dataset, combined by coordinates.
@@ -175,7 +263,13 @@ class Convention:
         if variables is not None:
             wanted = set(variables)
             paths = [path for path in paths if self.name_of_file(path) in wanted]
-        dataset = open_files(paths, self.reader, **open_mfdataset_kwargs)
+        reader: ReadSpecsGetterProtocol = self.reader
+        if "chunks" not in open_mfdataset_kwargs:
+            reader = _SpecsCache(paths, self.reader)
+            chunks = _slab_chunks(reader.read_specs())
+            if chunks:
+                open_mfdataset_kwargs["chunks"] = chunks
+        dataset = open_files(paths, reader, **open_mfdataset_kwargs)
         return self.stack(dataset) if stack else dataset
 
     @classmethod
