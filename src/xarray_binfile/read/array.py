@@ -13,21 +13,24 @@ from xarray_binfile.read.file_metadata import ReadSpecs
 def _is_coord_sliced(size: int, slice_spec: slice | int) -> bool:
     """
     Check if a coordinate is sliced.
+
+    A slice counts as not sliced only when it selects every element of the
+    axis, in order, however it is spelled: ``slice(None)``, ``slice(0, 1000)``
+    and ``slice(-size, None)`` all do, while an empty ``slice(0, 0)`` does not
+    (https://github.com/fschuch/xarray-binfile/issues/62). Two ``range``
+    objects compare equal when they hold the same elements, so the check
+    needs no special cases and builds no list.
+
     Args:
         size: Size of the coordinate.
         slice_spec: Slice specification or integer index.
+
     Returns:
         True if the coordinate is sliced, False otherwise.
     """
     if not isinstance(slice_spec, slice):
         return True
-    return any(
-        (
-            (slice_spec.start or 0) != 0,
-            (slice_spec.stop or size) != size,
-            (slice_spec.step or 1) != 1,
-        ),
-    )
+    return range(size)[slice_spec] != range(size)
 
 
 class BinaryEngineBackendArray(BackendArray):
@@ -184,9 +187,14 @@ class BinaryEngineBackendArray(BackendArray):
         Returns:
             The array data read from the file at the specified slices.
         """
-        if self._is_sliced(key):
+        # A file with a zero-length axis holds no bytes, and numpy.memmap
+        # cannot map an empty file, so it always takes the whole read.
+        if self._is_sliced(key) and all(self.shape):
             return self._wrap_numpy_memmap(file, key)
-        return self._wrap_numpy_fromfile(file)
+        # Applying the key is free when it selects everything (a view of the
+        # array just read). It also makes a key wrongly taken as whole give a
+        # slower read instead of the wrong data.
+        return self._wrap_numpy_fromfile(file)[key]
 
     def get_xarray_dataset(self) -> xr.Dataset:
         """

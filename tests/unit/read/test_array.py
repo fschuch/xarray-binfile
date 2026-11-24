@@ -36,10 +36,36 @@ def file_read_specs_getter_factory(
         (100, slice(1, 100), True),
         (100, slice(0, 99), True),
         (100, slice(None), False),
+        (100, slice(None, None, 1), False),
+        (100, slice(0, None), False),
+        (100, slice(None, 100), False),
         # non-slice keys (integers) must be treated as sliced, never assumed
         # to expose slice attributes such as ``.start``
         (100, 0, True),
         (100, 50, True),
+        # Empty selections. A stop of 0 must not fall back to "up to the end"
+        # (https://github.com/fschuch/xarray-binfile/issues/62).
+        pytest.param(100, slice(0, 0), True, id="empty-0-0"),
+        pytest.param(100, slice(None, 0), True, id="empty-None-0"),
+        pytest.param(100, slice(0, 0, 1), True, id="empty-from-dask"),
+        (100, slice(100, 100), True),
+        (100, slice(50, 10), True),
+        (100, slice(None, -100), True),
+        # Reversed: same elements, different order
+        (100, slice(None, None, -1), True),
+        (100, slice(99, None, -1), True),
+        # The whole axis in another spelling: out-of-range bounds are clipped,
+        # and negative bounds count from the end. Taking these as sliced would
+        # not be wrong, only slower (memmap instead of one whole read).
+        pytest.param(100, slice(0, 1000), False, id="stop-past-end"),
+        pytest.param(100, slice(-100, None), False, id="neg-start"),
+        pytest.param(100, slice(-1000, None), False, id="neg-start-past"),
+        pytest.param(100, slice(0, 100, 100), True, id="step-past-end-one-element"),
+        # A size-1 axis: any step past the end still selects the whole axis
+        pytest.param(1, slice(0, 1, 5), False, id="size1-big-step"),
+        # A size-0 axis is whole whatever the slice
+        (0, slice(None), False),
+        pytest.param(0, slice(0, 5), False, id="size0-stop-past"),
     ],
 )
 def test_is_coord_sliced(size: int, slice_spec: slice | int, *, expected: bool):
@@ -112,6 +138,39 @@ class TestBackendArrayIndexing:
         actual = array[BasicIndexer(key)]
         np.testing.assert_array_equal(actual, self.reference[key])
 
+    keys_against_numpy = (
+        pytest.param((slice(0, 0), slice(None)), id="empty-first"),
+        pytest.param((slice(None), slice(0, 0)), id="empty-last"),
+        pytest.param((slice(0, 0), slice(0, 0)), id="empty-both"),
+        pytest.param((slice(3, 3), slice(None)), id="empty-at-end"),
+        pytest.param((slice(1, 3), slice(None, None, 2)), id="partial"),
+        pytest.param((slice(0, 10), slice(-4, None)), id="whole-other-spelling"),
+        pytest.param((slice(None, None, -1), slice(None)), id="reversed"),
+    )
+
+    # Whatever path a key takes, the result must be what numpy gives for it.
+    @pytest.mark.parametrize("key", keys_against_numpy)
+    def test_getitem_matches_numpy(self, array, key):
+        actual = array[BasicIndexer(key)]
+
+        assert actual.shape == self.reference[key].shape
+        np.testing.assert_array_equal(actual, self.reference[key])
+
+    # The whole read still applies the key, so even a key wrongly taken as
+    # whole gives the right data, only through a slower read (issue #62).
+    @pytest.mark.parametrize("key", keys_against_numpy)
+    def test_getitem_is_right_even_when_every_key_is_taken_as_whole(
+        self, array, key, monkeypatch
+    ):
+        monkeypatch.setattr(
+            "xarray_binfile.read.array._is_coord_sliced", lambda size, key: False
+        )
+
+        actual = array[BasicIndexer(key)]
+
+        assert actual.shape == self.reference[key].shape
+        np.testing.assert_array_equal(actual, self.reference[key])
+
     def test_getitem_outer_indexer_with_array(self, array):
         key = (np.array([0, 2]), slice(None))
         actual = array[OuterIndexer(key)]
@@ -121,6 +180,29 @@ class TestBackendArrayIndexing:
         key = (np.array([0, 1, 2]), np.array([0, 1, 2]))
         actual = array[VectorizedIndexer(key)]
         np.testing.assert_array_equal(actual, self.reference[[0, 1, 2], [0, 1, 2]])
+
+
+@pytest.mark.parametrize(
+    "key",
+    [
+        pytest.param((slice(0, 0), slice(None)), id="empty-axis"),
+        pytest.param((slice(None), slice(0, 0)), id="empty-other"),
+        pytest.param((slice(None), slice(1, 3)), id="partial"),
+        pytest.param((slice(None), 2), id="integer"),
+    ],
+)
+def test_partial_read_of_a_file_with_a_zero_length_axis(tmp_path, key):
+    # Zero elements, zero bytes: there is nothing to map.
+    reference = np.zeros((0, 4))
+    file_path = tmp_path / "test.bin"
+    reference.tofile(file_path)
+    array = BinaryEngineBackendArray(
+        file_read_specs_getter_factory(coords={"x": [], "y": range(4)})(file_path)
+    )
+
+    actual = array[BasicIndexer(key)]
+
+    assert actual.shape == reference[key].shape
 
 
 def test_backend_array_rejects_missing_file(tmp_path):
