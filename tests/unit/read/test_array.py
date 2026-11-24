@@ -26,6 +26,19 @@ def file_read_specs_getter_factory(
     return helper
 
 
+ISSUE_62 = pytest.mark.xfail(
+    strict=True,
+    reason="https://github.com/fschuch/xarray-binfile/issues/62: "
+    "a stop of 0 is read as 'up to the end', so the whole file is returned",
+)
+# Not a correctness bug: these slices cover the whole axis but are taken as
+# partial, so they go through the memmap path instead of the cheaper whole read.
+FULL_RANGE = pytest.mark.xfail(
+    strict=True,
+    reason="slices covering the whole axis in another spelling are read as partial",
+)
+
+
 @pytest.mark.parametrize(
     ("size", "slice_spec", "expected"),
     [
@@ -36,10 +49,36 @@ def file_read_specs_getter_factory(
         (100, slice(1, 100), True),
         (100, slice(0, 99), True),
         (100, slice(None), False),
+        (100, slice(None, None, 1), False),
+        (100, slice(0, None), False),
+        (100, slice(None, 100), False),
         # non-slice keys (integers) must be treated as sliced, never assumed
         # to expose slice attributes such as ``.start``
         (100, 0, True),
         (100, 50, True),
+        # Empty selections. A stop of 0 must not fall back to "up to the end".
+        pytest.param(100, slice(0, 0), True, marks=ISSUE_62, id="empty-0-0"),
+        pytest.param(100, slice(None, 0), True, marks=ISSUE_62, id="empty-None-0"),
+        pytest.param(100, slice(0, 0, 1), True, marks=ISSUE_62, id="empty-from-dask"),
+        (100, slice(100, 100), True),
+        (100, slice(50, 10), True),
+        (100, slice(None, -100), True),
+        # Reversed: same elements, different order
+        (100, slice(None, None, -1), True),
+        (100, slice(99, None, -1), True),
+        # The whole axis in another spelling: out-of-range bounds are clipped,
+        # and negative bounds count from the end.
+        pytest.param(100, slice(0, 1000), False, marks=FULL_RANGE, id="stop-past-end"),
+        pytest.param(100, slice(-100, None), False, marks=FULL_RANGE, id="neg-start"),
+        pytest.param(
+            100, slice(-1000, None), False, marks=FULL_RANGE, id="neg-start-past"
+        ),
+        pytest.param(100, slice(0, 100, 100), True, id="step-past-end-one-element"),
+        # A size-1 axis: any step past the end still selects the whole axis
+        pytest.param(1, slice(0, 1, 5), False, marks=FULL_RANGE, id="size1-big-step"),
+        # A size-0 axis is whole whatever the slice
+        (0, slice(None), False),
+        pytest.param(0, slice(0, 5), False, marks=FULL_RANGE, id="size0-stop-past"),
     ],
 )
 def test_is_coord_sliced(size: int, slice_spec: slice | int, *, expected: bool):
@@ -110,6 +149,24 @@ class TestBackendArrayIndexing:
     )
     def test_getitem_basic_indexer(self, array, key):
         actual = array[BasicIndexer(key)]
+        np.testing.assert_array_equal(actual, self.reference[key])
+
+    # Whatever path a key takes, the result must be what numpy gives for it.
+    @pytest.mark.parametrize(
+        "key",
+        [
+            pytest.param((slice(0, 0), slice(None)), marks=ISSUE_62, id="empty-first"),
+            pytest.param((slice(None), slice(0, 0)), marks=ISSUE_62, id="empty-last"),
+            pytest.param((slice(0, 0), slice(0, 0)), marks=ISSUE_62, id="empty-both"),
+            pytest.param((slice(3, 3), slice(None)), id="empty-at-end"),
+            pytest.param((slice(0, 10), slice(-4, None)), id="whole-other-spelling"),
+            pytest.param((slice(None, None, -1), slice(None)), id="reversed"),
+        ],
+    )
+    def test_getitem_matches_numpy(self, array, key):
+        actual = array[BasicIndexer(key)]
+
+        assert actual.shape == self.reference[key].shape
         np.testing.assert_array_equal(actual, self.reference[key])
 
     def test_getitem_outer_indexer_with_array(self, array):
