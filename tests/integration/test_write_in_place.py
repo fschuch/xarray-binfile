@@ -5,7 +5,8 @@ From the pyOpenSci review, https://github.com/fschuch/xarray-binfile/issues/64:
 ``to_file`` computes one file at a time, and each compute reads the lazy
 inputs again. A result that depends on more than its own file, written into
 the folder it came from, is then computed from inputs already replaced. The
-docs advise computing the result first; these tests keep that advice true.
+docs advise computing the result first; these tests keep that advice true,
+and a strict xfail records the lazy case, so a fix shows up as a failure.
 """
 
 import pathlib
@@ -38,6 +39,23 @@ def test_a_computed_anomaly_can_be_written_over_its_inputs(
     _write_steps(tmp_path, convention)
     ux = convention.open(tmp_path).ux
     anomaly = getattr(ux - ux.mean("time"), compute)()
+
+    anomaly.binary_engine.to_file(convention.writer, tmp_path)
+
+    np.testing.assert_array_equal(
+        convention.open(tmp_path).ux.isel(x=0).values, [-1.5, -0.5, 0.5, 1.5]
+    )
+
+
+@pytest.mark.xfail(
+    strict=True,
+    reason="#64: each file's compute re-reads inputs already replaced; "
+    "documented, not fixed. Passing means #64 is fixed: drop this marker.",
+)
+def test_a_lazy_anomaly_can_be_written_over_its_inputs(tmp_path, convention):
+    _write_steps(tmp_path, convention)
+    ux = convention.open(tmp_path).ux
+    anomaly = ux - ux.mean("time")
 
     anomaly.binary_engine.to_file(convention.writer, tmp_path)
 
