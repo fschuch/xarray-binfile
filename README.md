@@ -81,8 +81,10 @@ filenames = [f"{name}-{step:04d}.bin" for name in ("ux", "uy") for step in range
 sample = DatasetGenerator(convention.reader)(map(pathlib.Path, filenames))
 sample.binary_engine.to_file(convention.writer, data_directory)
 
-# Open every matching file in the folder as one lazy, Dask-backed dataset
-ds = convention.open(data_directory, chunks={"time": 1})
+# Open every matching file in the folder as one lazy, Dask-backed dataset.
+# Files larger than Dask's chunk size are split into slabs along their slowest
+# axis; pass chunks=... to choose for how you will read the data.
+ds = convention.open(data_directory)
 
 # From here on it is plain xarray
 mean = ds["ux"].mean(dim="time").compute()

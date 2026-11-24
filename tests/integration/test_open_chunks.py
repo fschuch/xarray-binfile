@@ -18,12 +18,6 @@ import pytest
 from xarray_binfile.conventions import FolderConventions, Layout, StepIndexedFiles
 from xarray_binfile.read.array import BinaryEngineBackendArray
 
-ISSUE_63 = pytest.mark.xfail(
-    strict=True,
-    reason="https://github.com/fschuch/xarray-binfile/issues/63: "
-    "open() makes one chunk per file, so any selection reads whole files",
-)
-
 # 32 KiB per file: four 8 KiB slabs once Dask's chunk size is 8 KiB.
 GRID = {"x": np.arange(32), "y": np.arange(16), "z": np.arange(16)}
 
@@ -65,7 +59,6 @@ def _extent(key_part: slice | int, size: int) -> int:
     return 1 if isinstance(key_part, int) else len(range(size)[key_part])
 
 
-@ISSUE_63
 @pytest.mark.usefixtures("small_chunks")
 @pytest.mark.parametrize(
     ("order", "expected"),
@@ -112,7 +105,6 @@ def test_explicit_chunks_win(tmp_path):
     )
 
 
-@ISSUE_63
 @pytest.mark.usefixtures("small_chunks")
 def test_a_probe_reads_one_slab_per_file(tmp_path, keys_read):
     convention = _convention()
@@ -120,7 +112,7 @@ def test_a_probe_reads_one_slab_per_file(tmp_path, keys_read):
     ds = convention.open(tmp_path)
 
     with dask.config.set(scheduler="synchronous"):
-        ds.ux.isel(x=5, y=5, z=5).values
+        ds.ux.isel(x=5, y=5, z=5).compute()
 
     assert len(keys_read) == 2  # one read per file
     assert all(_extent(key[0], 32) == 8 for key in keys_read)  # one slab, not 32
@@ -135,7 +127,7 @@ def test_a_probe_reads_every_chunk_it_touches_in_full(tmp_path, keys_read):
     ds = convention.open(tmp_path, chunks={"time": 1})
 
     with dask.config.set(scheduler="synchronous"):
-        ds.ux.isel(x=5, y=5, z=5).values
+        ds.ux.isel(x=5, y=5, z=5).compute()
 
     assert len(keys_read) == 2
     assert all(
@@ -145,7 +137,6 @@ def test_a_probe_reads_every_chunk_it_touches_in_full(tmp_path, keys_read):
     )
 
 
-@ISSUE_63
 @pytest.mark.usefixtures("small_chunks")
 def test_mixed_folders_split_along_the_largest_files_slowest_axis(tmp_path):
     # One ``chunks`` applies to every file, so the largest files decide: here

@@ -502,6 +502,33 @@ class TestReviewFixes:
 
         assert [p.name for p in calls] == ["uy-0000.bin"]
 
+    def test_open_hands_xarray_the_specs_it_already_built(self, tmp_path, monkeypatch):
+        # open() builds every file's specs once to choose the chunks (issue
+        # #63) and gives xarray a reader serving them from that cache. The
+        # specs carry absolute paths even when the folder is given relative,
+        # and a path missing from the cache still gets specs from ``reader``.
+        import xarray_binfile  # noqa: F401  (registers the accessors)
+        from xarray_binfile.conventions import base
+
+        convention = StepIndexedFiles(LAYOUT)
+        _array([0]).rename("ux").binary_engine.to_file(convention.writer, tmp_path)
+        handed = {}
+        monkeypatch.setattr(
+            base,
+            "open_files",
+            lambda paths, reader, **kwargs: handed.setdefault("reader", reader),
+        )
+        monkeypatch.chdir(tmp_path)
+
+        convention.open(".", stack=False)
+        reader = handed["reader"]
+
+        cached = reader(tmp_path / "ux-0000.bin")
+        assert cached.filepath == tmp_path / "ux-0000.bin"
+        assert reader(tmp_path / "ux-0000.bin") is cached
+        missing = tmp_path / "elsewhere" / "ux-0001.bin"
+        assert reader(missing) == convention.reader(missing)
+
 
 class TestPatternField:
     """``pattern`` accepts a string or a FilenamePattern and reads back as a FilenamePattern."""

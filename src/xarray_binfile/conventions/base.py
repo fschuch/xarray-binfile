@@ -14,6 +14,7 @@ from collections.abc import Iterable, Iterator
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 import xarray as xr
 
 from xarray_binfile.conventions.protocol import ConventionProtocol
@@ -49,6 +50,39 @@ def open_files(
     return xr.open_mfdataset(
         paths, engine="binfile", read_specs_getter=reader, **open_mfdataset_kwargs
     )
+
+
+def _slab_chunks(specs: Iterable[ReadSpecs]) -> dict[str, str]:
+    """
+    Chunks that split the files into slabs along their slowest axis on disk.
+
+    Dask reads every chunk a selection touches in full, so with one chunk per
+    file, reading a single value reads the whole file
+    (https://github.com/fschuch/xarray-binfile/issues/63). Slabs along the
+    slowest axis are contiguous in the file, and ``"auto"`` lets Dask size
+    them by its ``array.chunk-size`` setting, so a file that fits in one chunk
+    keeps one chunk. Only one ``chunks`` mapping applies to every file, so
+    the largest file decides the axis; the dimensions not named stay whole,
+    and files without that dimension are not split.
+
+    Args:
+        specs: The read specs of the files to open.
+
+    Returns:
+        ``{axis: "auto"}`` for the slowest axis longer than one element of the
+        largest file, or ``{}`` (one chunk per file) when there is none.
+    """
+    largest = max(
+        specs,
+        key=lambda s: int(np.prod(s.shape)) * np.dtype(s.dtype).itemsize,
+        default=None,
+    )
+    if largest is None:
+        return {}
+    sizes = dict(zip(largest.dims, largest.shape, strict=True))
+    slow_to_fast = largest.dims if largest.order == "C" else largest.dims[::-1]
+    axis = next((dim for dim in slow_to_fast if sizes[dim] > 1), None)
+    return {} if axis is None else {axis: "auto"}
 
 
 def scan_files(directory: str | os.PathLike[str], accepts: Any) -> list[Path]:
@@ -157,13 +191,22 @@ class Convention:
         """
         Open every accepted file in ``directory`` as one lazy dataset.
 
+        Dask reads every chunk a selection touches in full, and holds it in
+        memory while it is processed, so the chunks decide what a selection
+        costs. Without ``chunks``, a file larger than Dask's
+        ``array.chunk-size`` (128 MiB by default) is split into slabs along
+        its slowest axis on disk, which are contiguous in the file; a smaller
+        file stays one chunk. Set ``chunks`` to choose for your access
+        pattern: smaller chunks make points and planes cheaper to read, and
+        larger ones mean fewer tasks when every value is needed.
+
         Args:
             directory: The folder holding the files.
             variables: Optional names to keep, as found on disk (``"ux"``, not
                 ``"u"``); other files are not opened.
             stack: Whether to rebuild the stacked arrays.
             **open_mfdataset_kwargs: Forwarded to :func:`xarray.open_mfdataset`,
-                for example ``chunks={"time": 1}`` or ``parallel=True``.
+                for example ``chunks={"x": 16}`` or ``parallel=True``.
 
         Returns:
             The lazily opened dataset, combined by coordinates.
@@ -175,7 +218,21 @@ class Convention:
         if variables is not None:
             wanted = set(variables)
             paths = [path for path in paths if self.name_of_file(path) in wanted]
-        dataset = open_files(paths, self.reader, **open_mfdataset_kwargs)
+        reader = self.reader
+        if "chunks" not in open_mfdataset_kwargs:
+            # Read each file's specs once, for the chunks and for opening it.
+            # xarray passes absolute paths, so the cache is keyed by them.
+            absolute = [Path(os.path.abspath(path)) for path in paths]
+            specs = {path: self.reader(path) for path in absolute}
+            chunks = _slab_chunks(specs.values())
+            if chunks:
+                open_mfdataset_kwargs["chunks"] = chunks
+
+            def reader(path: Path) -> ReadSpecs:
+                cached = specs.get(Path(os.path.abspath(path)))
+                return cached if cached is not None else self.reader(path)
+
+        dataset = open_files(paths, reader, **open_mfdataset_kwargs)
         return self.stack(dataset) if stack else dataset
 
     @classmethod
