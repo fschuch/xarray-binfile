@@ -18,7 +18,7 @@ import numpy as np
 import xarray as xr
 
 from xarray_binfile.conventions.protocol import ConventionProtocol
-from xarray_binfile.read.file_metadata import ReadSpecs
+from xarray_binfile.read.file_metadata import ReadSpecs, ReadSpecsGetterProtocol
 from xarray_binfile.write.file_metadata import WriteSpecs
 
 
@@ -89,6 +89,42 @@ def _slab_chunks(specs: Iterable[ReadSpecs]) -> dict[str, str]:
     slow_to_fast = largest.dims if largest.order == "C" else largest.dims[::-1]
     axis = next((dim for dim in slow_to_fast if sizes[dim] > 1), None)
     return {} if axis is None else {axis: "auto"}
+
+
+class _SpecsCache:
+    """
+    Each file's specs, read once, for planning the chunks and for opening it.
+
+    xarray passes absolute paths, so the cache is keyed by them, and an
+    unknown path falls back to ``reader``. A file the reader rejects keeps
+    its error, raised again when xarray opens it, so ``errors=`` applies to
+    it as usual.
+    """
+
+    def __init__(self, paths: Iterable[Path], reader: ReadSpecsGetterProtocol):
+        self._reader = reader
+        self._specs: dict[Path, ReadSpecs | Exception] = {}
+        for path in paths:
+            try:
+                self._specs[self._key(path)] = reader(path)
+            except Exception as error:  # noqa: BLE001
+                self._specs[self._key(path)] = error
+
+    @staticmethod
+    def _key(path: Path) -> Path:
+        return Path(os.path.abspath(path))
+
+    def read_specs(self) -> list[ReadSpecs]:
+        """The specs of the files the reader accepted."""
+        return [s for s in self._specs.values() if not isinstance(s, Exception)]
+
+    def __call__(self, path: Path) -> ReadSpecs:
+        cached = self._specs.get(self._key(path))
+        if cached is None:
+            return self._reader(path)
+        if isinstance(cached, Exception):
+            raise cached
+        return cached
 
 
 def scan_files(directory: str | os.PathLike[str], accepts: Any) -> list[Path]:
@@ -227,32 +263,12 @@ class Convention:
         if variables is not None:
             wanted = set(variables)
             paths = [path for path in paths if self.name_of_file(path) in wanted]
-        reader = self.reader
+        reader: ReadSpecsGetterProtocol = self.reader
         if "chunks" not in open_mfdataset_kwargs:
-            # Read each file's specs once, for the chunks and for opening it.
-            # xarray passes absolute paths, so the cache is keyed by them.
-            # A file the reader rejects keeps its error, raised again when
-            # xarray opens it, so ``errors=`` applies to it as usual.
-            specs: dict[Path, ReadSpecs | Exception] = {}
-            for path in (Path(os.path.abspath(path)) for path in paths):
-                try:
-                    specs[path] = self.reader(path)
-                except Exception as error:  # noqa: BLE001
-                    specs[path] = error
-            chunks = _slab_chunks(
-                spec for spec in specs.values() if not isinstance(spec, Exception)
-            )
+            reader = _SpecsCache(paths, self.reader)
+            chunks = _slab_chunks(reader.read_specs())
             if chunks:
                 open_mfdataset_kwargs["chunks"] = chunks
-
-            def reader(path: Path) -> ReadSpecs:
-                cached = specs.get(Path(os.path.abspath(path)))
-                if cached is None:
-                    return self.reader(path)
-                if isinstance(cached, Exception):
-                    raise cached
-                return cached
-
         dataset = open_files(paths, reader, **open_mfdataset_kwargs)
         return self.stack(dataset) if stack else dataset
 

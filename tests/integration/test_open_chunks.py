@@ -242,7 +242,8 @@ def test_open_lets_xarray_skip_a_file_the_reader_rejects(tmp_path, errors):
     convention = _FailsOnStep2(Layout(GRID, dtype="<f4"))
     _write(tmp_path, convention, steps=3)
 
-    with pytest.warns() if errors == "warn" else contextlib.nullcontext():
+    skipped = pytest.warns(UserWarning, match="unreadable header")
+    with skipped if errors == "warn" else contextlib.nullcontext():
         ds = convention.open(tmp_path, errors=errors)
 
     assert ds.sizes["time"] == 2
