@@ -44,7 +44,7 @@ def test_two_folders_at_the_same_step_are_refused(tmp_path, open_kwargs):
             _write(tmp_path / folder / f"ux-{step:04d}.bin", (4, 3), value)
     conventions = FolderConventions({"bottom": PLANES, "top": PLANES})
 
-    with pytest.raises(ValueError, match="'ux'.*same coordinates") as error:
+    with pytest.raises(ValueError, match="'ux'.*same position") as error:
         conventions.open(tmp_path, **open_kwargs)
     assert "bottom" in str(error.value)
     assert "top" in str(error.value)
@@ -55,7 +55,7 @@ def test_two_files_in_one_folder_at_the_same_step_are_refused(tmp_path):
     _write(tmp_path / "ux-0001.bin", (4, 3), 1.0)
     _write(tmp_path / "ux-00001.bin", (4, 3), 2.0)
 
-    with pytest.raises(ValueError, match="'ux'.*same coordinates"):
+    with pytest.raises(ValueError, match="'ux'.*same position"):
         PLANES.open(tmp_path)
 
 
@@ -76,15 +76,10 @@ def test_open_files_checks_with_a_plain_reader(tmp_path):
     _write(tmp_path / "top" / "ux-0001.bin", (4, 3), 2.0)
     paths = sorted(tmp_path.rglob("*.bin"))
 
-    with pytest.raises(ValueError, match="same coordinates"):
+    with pytest.raises(ValueError, match="same position"):
         open_files(paths, PLANES.reader)
 
 
-def _clash_from_review(reason):
-    return pytest.mark.xfail(strict=True, reason=f"PR #88 review: {reason}")
-
-
-@_clash_from_review("xarray orders files by first coordinate values")
 def test_same_first_values_with_different_coordinates_are_refused(tmp_path):
     # xarray places each file by the first value of every coordinate, so both
     # files land at x=0 and one of them is dropped without an error.
@@ -101,7 +96,6 @@ def test_same_first_values_with_different_coordinates_are_refused(tmp_path):
         conventions.open(tmp_path)
 
 
-@_clash_from_review("one date at two datetime resolutions")
 def test_one_date_at_two_resolutions_is_refused(tmp_path):
     _write(tmp_path / "D" / "ux.bin", 2)
     _write(tmp_path / "ns" / "ux.bin", 2)

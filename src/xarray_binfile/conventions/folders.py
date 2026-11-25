@@ -115,7 +115,7 @@ class FolderConventions(Convention):
     path, preferring the most specific (longest) folder when several match.
     The variable name does not keep the folder, so :meth:`open` refuses one
     name whose files have different dimensions in different folders, or two
-    files at the same coordinates.
+    files at the same position (the first value of every coordinate).
     The root of the dataset is registered as ``"."``; it matches any file not
     claimed by a more specific folder. Writing offers the array to every
     convention and requires exactly one of them to accept it, then prefixes

@@ -47,7 +47,7 @@ def open_files(
     Raises:
         FileNotFoundError: If ``paths`` is empty.
         ValueError: If one variable name comes from files with different
-            dimensions, or from two files at the same coordinates.
+            dimensions, or from two files at the same position.
     """
     paths = sorted(paths)
     if not paths:
@@ -68,17 +68,19 @@ def _require_one_variable_per_name(specs: Iterable[ReadSpecs]) -> None:
     A :class:`~xarray_binfile.conventions.FolderConventions` reads
     ``xy_planes/ux-0001.bin`` and ``3d/ux-0001.bin`` both as ``ux``
     (https://github.com/fschuch/xarray-binfile/issues/68). With different
-    dimensions, xarray fails with an error that does not name the clash; at
-    the same coordinates, it silently keeps one of the files. Files of one
-    name with the same dimensions at different coordinates, such as one run
-    split in time across two folders, are still combined.
+    dimensions, xarray fails with an error that does not name the clash.
+    Otherwise xarray places each file by the first value of every coordinate,
+    and silently keeps only one of two files at the same position, even when
+    their coordinates differ after that first value. Files of one name at
+    different positions, such as one run split in time across two folders or
+    tiles of one grid, are still combined.
 
     Args:
         specs: The read specs of the files to open.
 
     Raises:
         ValueError: If one name comes from files with different dimensions,
-            or from two files at the same coordinates.
+            or from two files at the same position.
     """
     by_name: defaultdict[str, list[ReadSpecs]] = defaultdict(list)
     for spec in specs:
@@ -97,25 +99,41 @@ def _require_one_variable_per_name(specs: Iterable[ReadSpecs]) -> None:
             raise ValueError(error_message)
         at: dict[Hashable, Path] = {}
         for spec in group:
-            where = _coordinates_key(spec)
+            where = _position(spec)
             if where in at:
                 error_message = (
                     f"The files {at[where]} and {spec.filepath} both hold "
-                    f"{name!r} at the same coordinates, so only one could be "
-                    f"kept. {advice}"
+                    f"{name!r} at the same position (the first value of every "
+                    f"coordinate), so xarray would keep only one of them. "
+                    f"{advice}"
                 )
                 raise ValueError(error_message)
             at[where] = spec.filepath
 
 
-def _coordinates_key(spec: ReadSpecs) -> Hashable:
-    """Every coordinate's values, comparable across files whatever their order."""
+def _position(spec: ReadSpecs) -> Hashable:
+    """Where xarray places a file: the first value of every coordinate."""
     return tuple(
-        sorted(
-            (dim, tuple(np.asarray(values).tolist()))
-            for dim, values in spec.coords.items()
-        )
+        sorted((dim, _first_value(values)) for dim, values in spec.coords.items())
     )
+
+
+def _first_value(values: Any) -> Hashable:
+    """
+    A coordinate's first value, comparable across files.
+
+    Dates and durations are compared in nanoseconds, as xarray combines them,
+    so one date stored at two resolutions is one position. An empty
+    coordinate has no first value.
+    """
+    array = np.asarray(values)
+    if array.size == 0:
+        return None
+    first = array.reshape(-1)[:1]
+    if array.dtype.kind in "mM":
+        unit = "datetime64[ns]" if array.dtype.kind == "M" else "timedelta64[ns]"
+        return (array.dtype.kind, first.astype(unit).item())
+    return first.item()
 
 
 def _slab_chunks(specs: Iterable[ReadSpecs]) -> dict[str, str]:
@@ -325,7 +343,7 @@ class Convention:
         Raises:
             FileNotFoundError: If no file matches.
             ValueError: If one variable name comes from files with different
-                dimensions, or from two files at the same coordinates, which
+                dimensions, or from two files at the same position, which
                 xarray could not combine or would silently reduce to one.
         """
         paths = self.files(directory)
