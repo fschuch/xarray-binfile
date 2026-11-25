@@ -129,9 +129,10 @@ def test_a_later_invalid_variable_stops_the_call_before_any_file_is_written(
 def test_two_paths_through_a_linked_folder_are_refused(tmp_path):
     _linked_folder(tmp_path / "alias", tmp_path / "real")
     ux = _snapshot(1.0)
+    writer = _writing("alias/ux.bin", "real/ux.bin")
 
     with pytest.raises(ValueError, match="same file"):
-        ux.binary_engine.to_file(_writing("alias/ux.bin", "real/ux.bin"), tmp_path)
+        ux.binary_engine.to_file(writer, tmp_path)
     assert _written(tmp_path / "real") == []
 
 
@@ -151,9 +152,10 @@ def test_unicode_forms_of_one_name_are_refused_where_the_form_is_ignored(
     monkeypatch.setattr(accessor, "_ignores_case", lambda folder: False)
     monkeypatch.setattr(accessor, "_ignores_normalization", lambda folder: True)
     ux = _snapshot(1.0)
+    writer = _writing(CAFE_NFC, CAFE_NFD)
 
     with pytest.raises(ValueError, match="Unicode form"):
-        ux.binary_engine.to_file(_writing(CAFE_NFC, CAFE_NFD), tmp_path)
+        ux.binary_engine.to_file(writer, tmp_path)
     assert _written(tmp_path) == []
 
 
