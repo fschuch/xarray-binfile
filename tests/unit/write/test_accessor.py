@@ -1,5 +1,7 @@
 import os
 
+import dask
+import dask.array
 import numpy as np
 import pytest
 import xarray as xr
@@ -71,10 +73,15 @@ def test_to_file_overwrites_existing_file_completely(tmp_path, data_array):
 
 
 def test_to_file_keeps_completed_files_and_cleans_up_on_failure(tmp_path, data_array):
-    def failing_writer(array: xr.DataArray):
-        yield WriteSpecs(filename="first.bin", sub_array=array)
+    def boom():
         error_message = "boom"
         raise RuntimeError(error_message)
+
+    def failing_writer(array: xr.DataArray):
+        yield WriteSpecs(filename="first.bin", sub_array=array)
+        # Fails while its values are loaded, after the first file is written.
+        lazy = dask.array.from_delayed(dask.delayed(boom)(), array.shape, float)
+        yield WriteSpecs(filename="second.bin", sub_array=array.copy(data=lazy))
 
     with pytest.raises(RuntimeError, match="boom"):
         data_array.binary_engine.to_file(failing_writer, tmp_path)

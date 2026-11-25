@@ -1,0 +1,109 @@
+"""
+One ``to_file`` call must not write two arrays to the same file.
+
+From the pyOpenSci review, https://github.com/fschuch/xarray-binfile/issues/67:
+the duplicate check only looked inside one array's time split, so a stacked
+``u`` and a separate ``ux`` in one Dataset both went to ``ux-0000.bin``, and
+``U`` and ``u`` collided on a filesystem that ignores case. Every destination
+of a call is now checked before the first file is written.
+"""
+
+import numpy as np
+import pytest
+import xarray as xr
+
+from xarray_binfile.conventions import Layout, StepIndexedFiles, VariableStack
+from xarray_binfile.write import WriteSpecs, accessor
+
+XFAIL = pytest.mark.xfail(
+    strict=True, reason="#67: collisions are only checked within one time split"
+)
+LAYOUT = Layout({"x": [0, 1]})
+
+
+def _written(folder) -> list[str]:
+    return sorted(path.name for path in folder.iterdir())
+
+
+def _snapshot(value: float) -> xr.DataArray:
+    return xr.DataArray(
+        np.full((2, 1), value), coords={"x": [0, 1], "time": [0]}, dims=("x", "time")
+    )
+
+
+@XFAIL
+def test_the_reviewers_stack_and_variable_are_refused(tmp_path):
+    velocity = VariableStack("i", "{name}{i}", values=("x", "y", "z"))
+    convention = StepIndexedFiles(LAYOUT, stacks=[velocity])
+    dataset = xr.Dataset(
+        {
+            "u": (("i", "x", "time"), np.ones((2, 2, 1))),
+            "ux": (("x", "time"), np.full((2, 1), 7.0)),
+        },
+        coords={"i": ["x", "y"], "x": [0, 1], "time": [0]},
+    )
+
+    with pytest.raises(ValueError, match="same file"):
+        dataset.binary_engine.to_file(convention.writer, tmp_path)
+    assert _written(tmp_path) == []
+
+
+@XFAIL
+def test_a_relative_and_an_absolute_path_to_one_file_are_refused(tmp_path):
+    def writer(array: xr.DataArray):
+        yield WriteSpecs(filename="ux.bin", sub_array=array)
+        yield WriteSpecs(filename=tmp_path / "ux.bin", sub_array=array * 2)
+
+    with pytest.raises(ValueError, match="same file"):
+        _snapshot(1.0).binary_engine.to_file(writer, tmp_path)
+    assert _written(tmp_path) == []
+
+
+@XFAIL
+def test_names_differing_only_in_case_are_refused_where_case_is_ignored(
+    tmp_path, monkeypatch
+):
+    monkeypatch.setattr(accessor, "_ignores_case", lambda folder: True, raising=False)
+    dataset = xr.Dataset({"U": _snapshot(1.0), "u": _snapshot(7.0)})
+
+    with pytest.raises(ValueError, match="only in case"):
+        dataset.binary_engine.to_file(StepIndexedFiles(LAYOUT).writer, tmp_path)
+    assert _written(tmp_path) == []
+
+
+def test_names_differing_only_in_case_are_written_where_case_matters(
+    tmp_path, monkeypatch
+):
+    monkeypatch.setattr(accessor, "_ignores_case", lambda folder: False, raising=False)
+    dataset = xr.Dataset({"U": _snapshot(1.0), "u": _snapshot(7.0)})
+
+    dataset.binary_engine.to_file(StepIndexedFiles(LAYOUT).writer, tmp_path)
+
+    assert _written(tmp_path)
+
+
+@XFAIL
+def test_the_case_probe_matches_the_filesystem_and_leaves_nothing(tmp_path):
+    (tmp_path / "CaseCheck").touch()
+    expected = (tmp_path / "casecheck").exists()
+    (tmp_path / "CaseCheck").unlink()
+
+    assert accessor._ignores_case(tmp_path / "not" / "yet") is expected
+    assert _written(tmp_path) == []
+
+
+@XFAIL
+def test_a_later_invalid_variable_stops_the_call_before_any_file_is_written(
+    tmp_path,
+):
+    dataset = xr.Dataset(
+        {
+            "ux": _snapshot(1.0),
+            # A dimension the layout does not know.
+            "uy": _snapshot(2.0).expand_dims(y=3),
+        }
+    )
+
+    with pytest.raises(ValueError, match="'y'"):
+        dataset.binary_engine.to_file(StepIndexedFiles(LAYOUT).writer, tmp_path)
+    assert _written(tmp_path) == []
