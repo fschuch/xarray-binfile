@@ -110,10 +110,6 @@ def test_float32_times_near_a_million_steps_write_back_to_their_steps(time_step)
     assert _steps_written(convention, time) == steps.tolist()
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="#65 review: past half a step the float32 allowance accepts any value",
-)
 @pytest.mark.parametrize(
     "step",
     [

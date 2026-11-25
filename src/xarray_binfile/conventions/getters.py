@@ -37,6 +37,8 @@ _STEP_TOLERANCE = 1e-6
 # reader rounds once (0.5 ulp) and values built in single precision drift to
 # about 1.3 ulp (https://github.com/fschuch/xarray-binfile/issues/65).
 _STEP_TOLERANCE_ULPS = 4
+# Past this a value no longer tells neighbouring steps apart.
+_MAX_STEP_TOLERANCE = 0.5
 
 
 def _step_tolerance(value: Any, time_step: float) -> float:
@@ -483,9 +485,10 @@ class StepIndexedFiles(_SplitAlongDimension):
     ``1e-6`` of a step, or within a few units in the last place of the value
     in its own dtype when that is coarser, so float32 times read with
     ``time_dtype=np.float32`` write back to their steps. That allowance grows
-    with the step number; past about a million steps, a float32 time may be
-    off by a sizeable fraction of a step before it is refused, so a wrong
-    ``time_step`` is caught less reliably there.
+    with the step number, and once it reaches half a step the value can no
+    longer tell neighbouring steps apart: writing refuses it and asks for a
+    float64 time coordinate. For float32 that happens between about one and
+    two million steps, depending on ``time_step``.
 
     Examples:
         >>> import numpy as np
@@ -531,9 +534,16 @@ class StepIndexedFiles(_SplitAlongDimension):
         time_step = 1.0 if self.time_step is None else self.time_step
         step = float(value) / time_step
         rounded = round(step)
-        if not math.isclose(
-            step, rounded, rel_tol=0.0, abs_tol=_step_tolerance(value, time_step)
-        ):
+        tolerance = _step_tolerance(value, time_step)
+        if tolerance >= _MAX_STEP_TOLERANCE:
+            error_message = (
+                f"Coordinate value {value} on {self.time_dim!r} is too coarse "
+                f"in {np.asarray(value).dtype} to identify its step (around "
+                f"step {int(rounded)} with time_step={time_step}). Keep the "
+                "time coordinate in float64: leave time_dtype unset on read."
+            )
+            raise ValueError(error_message)
+        if not math.isclose(step, rounded, rel_tol=0.0, abs_tol=tolerance):
             hint = (
                 "Set time_step to the interval between snapshots"
                 if self.time_step is None
