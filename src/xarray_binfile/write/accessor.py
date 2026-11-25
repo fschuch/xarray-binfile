@@ -5,6 +5,8 @@ Provides accessors for writing xarray Dataset and DataArray objects to binary fi
 import contextlib
 import os
 import tempfile
+import unicodedata
+from collections import Counter, defaultdict
 from collections.abc import Callable, Iterable
 from pathlib import Path
 
@@ -51,20 +53,38 @@ class BinaryEngineDataset:
         See that method for guidance on sizing files and on alternatives when
         streaming or partial writes are needed.
 
-        The variables are written one after the other, so the warning there
-        about writing over the inputs also covers one variable computed from
-        another (https://github.com/fschuch/xarray-binfile/issues/64).
+        The write specifications of every variable are collected first, and
+        the call is refused before any file is written when two of them map
+        to the same file, for example a stacked ``u`` whose x component is
+        ``ux-0000.bin`` next to a variable ``ux``, or ``U`` and ``u`` where
+        the filesystem ignores case
+        (https://github.com/fschuch/xarray-binfile/issues/67).
+
+        The variables are then written one after the other, so the warning
+        there about writing over the inputs also covers one variable computed
+        from another (https://github.com/fschuch/xarray-binfile/issues/64).
 
         Args:
             write_specs_getter: A callable that generates write specifications for the data arrays.
             directory: The directory where the binary files will be written. Defaults to the current working directory.
             progress: Optional wrapper applied to the write specs of each
                 variable, for example ``tqdm``, to report progress.
+
+        Raises:
+            FileNotFoundError: If a relative filename is used and ``directory`` does not exist.
+            ValueError: If a relative filename escapes ``directory``, or if
+                two write specifications map to the same file.
         """
-        for data_array in self._data_set.data_vars.values():
-            data_array.binary_engine.to_file(
-                write_specs_getter, directory, progress=progress
-            )
+        _directory = Path(directory) if directory is not None else Path.cwd()
+        planned = [
+            list(write_specs_getter(data_array))
+            for data_array in self._data_set.data_vars.values()
+        ]
+        _require_distinct_files(
+            _directory, [spec for specs in planned for spec in specs]
+        )
+        for specs in planned:
+            _write_specs(_directory, specs, progress)
 
 
 @xr.register_dataarray_accessor("binary_engine")
@@ -144,36 +164,210 @@ class BinaryEngineDataArray:
         so a linked sub-folder is fine). An absolute filename is used as is,
         which lets one call target several locations.
 
+        Every write specification is collected before the first file is
+        written, and the call is refused when two of them map to the same
+        file, including paths that differ only in case where the filesystem
+        ignores case (https://github.com/fschuch/xarray-binfile/issues/67).
+        An error from ``write_specs_getter`` therefore leaves nothing
+        written. The specs hold their ``sub_array`` until written, which is
+        free for the shipped conventions (views of the array), but a custom
+        getter that computes each ``sub_array`` keeps all of them in memory
+        at once. Each call is independent: an existing file is replaced.
+
         Args:
             write_specs_getter: A callable that generates write specifications for the data array.
             directory: The base directory for relative filenames. Defaults to the current working directory.
-            progress: Optional wrapper applied to the iterator of write specs
+            progress: Optional wrapper applied to the collected write specs
                 before files are written, for example ``tqdm`` or
                 ``functools.partial(tqdm, desc="ux")``, to report progress.
-                It receives the specs lazily, so it must not consume them
-                ahead of iteration.
+                It is iterated as the files are written.
 
         Raises:
             FileNotFoundError: If a relative filename is used and ``directory`` does not exist.
-            ValueError: If a relative filename escapes ``directory``.
+            ValueError: If a relative filename escapes ``directory``, or if
+                two write specifications map to the same file.
         """
         _directory = Path(directory) if directory is not None else Path.cwd()
-        specs: Iterable[WriteSpecs] = write_specs_getter(self._data_array)
-        if progress is not None:
-            specs = progress(specs)
-        for details in specs:
-            final_file = _resolve_destination(_directory, details.filename)
-            new_type = (
-                details.dtype if details.dtype is not None else details.sub_array.dtype
-            )
-            final_file.parent.mkdir(parents=True, exist_ok=True)
-            # ``tofile`` always serializes in C order, so Fortran order is
-            # obtained by flattening first. ``astype`` lays the data out in the
-            # target order, so a cast and a reorder cost a single copy.
-            values = details.sub_array.values.astype(
-                new_type, order=details.order, copy=False
-            )
-            _write_atomically(final_file, values.ravel(order=details.order))
+        specs = list(write_specs_getter(self._data_array))
+        _require_distinct_files(_directory, specs)
+        _write_specs(_directory, specs, progress)
+
+
+def _write_specs(
+    directory: Path, specs: Iterable[WriteSpecs], progress: Progress | None
+) -> None:
+    """
+    Write every spec to its file, one after the other.
+
+    Args:
+        directory: Base directory for relative filenames.
+        specs: The write specs, already checked for colliding files.
+        progress: Optional wrapper applied to ``specs``.
+    """
+    if progress is not None:
+        specs = progress(specs)
+    for details in specs:
+        final_file = _resolve_destination(directory, details.filename)
+        new_type = (
+            details.dtype if details.dtype is not None else details.sub_array.dtype
+        )
+        final_file.parent.mkdir(parents=True, exist_ok=True)
+        # ``tofile`` always serializes in C order, so Fortran order is
+        # obtained by flattening first. ``astype`` lays the data out in the
+        # target order, so a cast and a reorder cost a single copy.
+        values = details.sub_array.values.astype(
+            new_type, order=details.order, copy=False
+        )
+        _write_atomically(final_file, values.ravel(order=details.order))
+
+
+def _require_distinct_files(directory: Path, specs: list[WriteSpecs]) -> None:
+    """
+    Fail if two specs would be written to the same file.
+
+    Each destination is compared as its folder, with symbolic links followed,
+    plus its filename, so a relative and an absolute filename for one file
+    collide, as do two paths through a linked folder. Names that differ only
+    in case or in Unicode form (``café`` composed or with a combining accent)
+    collide too where the filesystem ignores that difference, as macOS does
+    for both and Windows for case.
+
+    Args:
+        directory: Base directory for relative filenames.
+        specs: Every write spec of one ``to_file`` call.
+
+    Raises:
+        ValueError: If two specs map to the same file.
+    """
+    paths = [_destination_key(directory, spec) for spec in specs]
+    duplicated = sorted(path for path, count in Counter(paths).items() if count > 1)
+    if duplicated:
+        error_message = (
+            f"Several write specs map to the same file(s) {duplicated}; the later "
+            "ones would silently overwrite the earlier ones. Rename the variables "
+            "or stacked components, or change the filename pattern."
+        )
+        raise ValueError(error_message)
+    by_folded_name: defaultdict[str, list[str]] = defaultdict(list)
+    for path in paths:
+        by_folded_name[_fold(path, case=True, form=True)].append(path)
+    clashes = [
+        sorted(group)
+        for group in by_folded_name.values()
+        if len(group) > 1 and _same_file_there(group)
+    ]
+    if clashes:
+        error_message = (
+            f"The files {clashes} differ only in case or Unicode form, and the "
+            "filesystem there ignores that difference, so they would be the same "
+            "file and the later ones would silently overwrite the earlier ones. "
+            "Rename the variables."
+        )
+        raise ValueError(error_message)
+
+
+def _destination_key(directory: Path, spec: WriteSpecs) -> str:
+    """
+    The destination of ``spec``, with symbolic links in its folder followed.
+
+    Args:
+        directory: Base directory for relative filenames.
+        spec: A write spec.
+
+    Returns:
+        The absolute path of the file, as a string.
+    """
+    path = _resolve_destination(directory, spec.filename)
+    return str(path.parent.resolve() / path.name)
+
+
+def _fold(path: str, *, case: bool, form: bool) -> str:
+    """
+    ``path`` with the differences a filesystem may ignore removed.
+
+    Args:
+        path: An absolute path.
+        case: Whether to ignore case.
+        form: Whether to ignore the Unicode normalization form.
+
+    Returns:
+        The folded path.
+    """
+    if form:
+        path = unicodedata.normalize("NFC", path)
+    if case:
+        path = path.casefold()
+    return path
+
+
+def _same_file_there(paths: list[str]) -> bool:
+    """
+    Whether some of ``paths``, equal up to case and form, are one file.
+
+    Args:
+        paths: Distinct paths that fold to the same name.
+
+    Returns:
+        True if the filesystem holding them ignores the differences.
+    """
+    folder = Path(paths[0]).parent
+    case = _ignores_case(folder)
+    form = _ignores_normalization(folder)
+    return len({_fold(path, case=case, form=form) for path in paths}) < len(paths)
+
+
+def _ignores_case(folder: Path) -> bool:
+    """
+    Whether the filesystem holding ``folder`` ignores case in filenames.
+
+    Args:
+        folder: The folder files will be written to.
+
+    Returns:
+        True if a name and its case-swapped twin are the same file there.
+    """
+    return _probe(folder, str.swapcase)
+
+
+def _ignores_normalization(folder: Path) -> bool:
+    """
+    Whether the filesystem holding ``folder`` ignores the Unicode form.
+
+    Args:
+        folder: The folder files will be written to.
+
+    Returns:
+        True if a name with a composed ``é`` and the same name with ``e``
+        and a combining accent are the same file there.
+    """
+    return _probe(folder, lambda name: unicodedata.normalize("NFD", name))
+
+
+def _probe(folder: Path, twin: Callable[[str], str]) -> bool:
+    """
+    Whether a temporary file can be found under another spelling of its name.
+
+    The file is created in ``folder``, or in its nearest existing parent when
+    it does not exist yet, and removed afterwards.
+
+    Args:
+        folder: The folder files will be written to.
+        twin: Respells the file name, for example swapping its case.
+
+    Returns:
+        True if the respelled name finds the temporary file.
+    """
+    existing = folder
+    while not existing.exists():
+        existing = existing.parent
+    # Mixed case and a composed accent, so both kinds of respelling change it.
+    handle, name = tempfile.mkstemp(dir=existing, prefix=".binary_engine-Probe-\u00e9-")
+    os.close(handle)
+    try:
+        probe = Path(name)
+        return probe.with_name(twin(probe.name)).exists()
+    finally:
+        os.unlink(name)
 
 
 def _resolve_destination(directory: Path, filename: str | os.PathLike[str]) -> Path:
