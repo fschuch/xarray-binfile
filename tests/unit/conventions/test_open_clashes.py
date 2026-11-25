@@ -13,12 +13,11 @@ import numpy as np
 import pytest
 
 from xarray_binfile.conventions import FolderConventions, Layout, StepIndexedFiles
+from xarray_binfile.conventions.base import open_files
 
 X, Y, Z = np.arange(4), np.arange(3), np.arange(2)
 PLANES = StepIndexedFiles(Layout({"x": X, "y": Y}, dtype="<f4"))
 VOLUMES = StepIndexedFiles(Layout({"x": X, "y": Y, "z": Z}, dtype="<f4"))
-
-CLASH = pytest.mark.xfail(strict=True, reason="#68")
 
 
 def _write(path, shape, value=0.0):
@@ -26,7 +25,6 @@ def _write(path, shape, value=0.0):
     np.full(shape, value, "<f4").tofile(path)
 
 
-@CLASH
 def test_the_reviewers_planes_and_volumes_are_refused(tmp_path):
     _write(tmp_path / "xy_planes" / "ux-0001.bin", (4, 3))
     _write(tmp_path / "3d" / "ux-0001.bin", (4, 3, 2))
@@ -38,7 +36,6 @@ def test_the_reviewers_planes_and_volumes_are_refused(tmp_path):
     assert "3d" in str(error.value)
 
 
-@CLASH
 @pytest.mark.parametrize("open_kwargs", [{}, {"chunks": {}}], ids=["default", "chunks"])
 def test_two_folders_at_the_same_step_are_refused(tmp_path, open_kwargs):
     for folder, value in (("bottom", 1.0), ("top", 2.0)):
@@ -52,7 +49,6 @@ def test_two_folders_at_the_same_step_are_refused(tmp_path, open_kwargs):
     assert "top" in str(error.value)
 
 
-@CLASH
 def test_two_files_in_one_folder_at_the_same_step_are_refused(tmp_path):
     # A zero-fill width is a minimum, so both names read as step 1.
     _write(tmp_path / "ux-0001.bin", (4, 3), 1.0)
@@ -72,3 +68,12 @@ def test_one_name_split_in_time_across_folders_is_opened(tmp_path):
 
     np.testing.assert_array_equal(ux.time, [0, 1, 2, 3])
     np.testing.assert_array_equal(ux.isel(x=0, y=0), [0, 1, 2, 3])
+
+
+def test_open_files_checks_with_a_plain_reader(tmp_path):
+    _write(tmp_path / "bottom" / "ux-0001.bin", (4, 3), 1.0)
+    _write(tmp_path / "top" / "ux-0001.bin", (4, 3), 2.0)
+    paths = sorted(tmp_path.rglob("*.bin"))
+
+    with pytest.raises(ValueError, match="same coordinates"):
+        open_files(paths, PLANES.reader)

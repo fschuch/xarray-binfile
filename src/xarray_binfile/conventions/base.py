@@ -10,7 +10,8 @@ joins a composite, so the defaults apply to it as well.
 """
 
 import os
-from collections.abc import Iterable, Iterator
+from collections import defaultdict
+from collections.abc import Hashable, Iterable, Iterator
 from pathlib import Path
 from typing import Any
 
@@ -28,8 +29,11 @@ def open_files(
     """
     Open binary files as one lazy dataset with the ``binfile`` engine.
 
-    Thin wrapper over :func:`xarray.open_mfdataset` that fills in the engine
-    and the read specs getter.
+    Wrapper over :func:`xarray.open_mfdataset` that fills in the engine and
+    the read specs getter. Before opening, it reads every file's specs and
+    refuses files that cannot be combined into one variable (see
+    :func:`_require_one_variable_per_name`); xarray only sees one file at a
+    time, so it cannot tell.
 
     Args:
         paths: The files to open.
@@ -42,13 +46,75 @@ def open_files(
 
     Raises:
         FileNotFoundError: If ``paths`` is empty.
+        ValueError: If one variable name comes from files with different
+            dimensions, or from two files at the same coordinates.
     """
     paths = sorted(paths)
     if not paths:
         error_message = "No file matches the convention; nothing to open."
         raise FileNotFoundError(error_message)
+    if not isinstance(reader, _SpecsCache):
+        reader = _SpecsCache(paths, reader)
+    _require_one_variable_per_name(reader.read_specs())
     return xr.open_mfdataset(
         paths, engine="binfile", read_specs_getter=reader, **open_mfdataset_kwargs
+    )
+
+
+def _require_one_variable_per_name(specs: Iterable[ReadSpecs]) -> None:
+    """
+    Refuse files that share a variable name but cannot be one variable.
+
+    A :class:`~xarray_binfile.conventions.FolderConventions` reads
+    ``xy_planes/ux-0001.bin`` and ``3d/ux-0001.bin`` both as ``ux``
+    (https://github.com/fschuch/xarray-binfile/issues/68). With different
+    dimensions, xarray fails with an error that does not name the clash; at
+    the same coordinates, it silently keeps one of the files. Files of one
+    name with the same dimensions at different coordinates, such as one run
+    split in time across two folders, are still combined.
+
+    Args:
+        specs: The read specs of the files to open.
+
+    Raises:
+        ValueError: If one name comes from files with different dimensions,
+            or from two files at the same coordinates.
+    """
+    by_name: defaultdict[str, list[ReadSpecs]] = defaultdict(list)
+    for spec in specs:
+        by_name[spec.name].append(spec)
+    advice = "Give them distinct names, or open them separately."
+    for name, group in by_name.items():
+        by_dims = {frozenset(spec.dims): spec for spec in group}
+        if len(by_dims) > 1:
+            examples = "; ".join(
+                f"{spec.filepath} {spec.dims}" for spec in by_dims.values()
+            )
+            error_message = (
+                f"The variable {name!r} comes from files with different "
+                f"dimensions: {examples}. {advice}"
+            )
+            raise ValueError(error_message)
+        at: dict[Hashable, Path] = {}
+        for spec in group:
+            where = _coordinates_key(spec)
+            if where in at:
+                error_message = (
+                    f"The files {at[where]} and {spec.filepath} both hold "
+                    f"{name!r} at the same coordinates, so only one could be "
+                    f"kept. {advice}"
+                )
+                raise ValueError(error_message)
+            at[where] = spec.filepath
+
+
+def _coordinates_key(spec: ReadSpecs) -> Hashable:
+    """Every coordinate's values, comparable across files whatever their order."""
+    return tuple(
+        sorted(
+            (dim, tuple(np.asarray(values).tolist()))
+            for dim, values in spec.coords.items()
+        )
     )
 
 
@@ -258,14 +324,16 @@ class Convention:
 
         Raises:
             FileNotFoundError: If no file matches.
+            ValueError: If one variable name comes from files with different
+                dimensions, or from two files at the same coordinates, which
+                xarray could not combine or would silently reduce to one.
         """
         paths = self.files(directory)
         if variables is not None:
             wanted = set(variables)
             paths = [path for path in paths if self.name_of_file(path) in wanted]
-        reader: ReadSpecsGetterProtocol = self.reader
+        reader = _SpecsCache(paths, self.reader)
         if "chunks" not in open_mfdataset_kwargs:
-            reader = _SpecsCache(paths, self.reader)
             chunks = _slab_chunks(reader.read_specs())
             if chunks:
                 open_mfdataset_kwargs["chunks"] = chunks
