@@ -49,8 +49,10 @@ def test_a_relative_and_an_absolute_path_to_one_file_are_refused(tmp_path):
         yield WriteSpecs(filename="ux.bin", sub_array=array)
         yield WriteSpecs(filename=tmp_path / "ux.bin", sub_array=array * 2)
 
+    ux = _snapshot(1.0)
+
     with pytest.raises(ValueError, match="same file"):
-        _snapshot(1.0).binary_engine.to_file(writer, tmp_path)
+        ux.binary_engine.to_file(writer, tmp_path)
     assert _written(tmp_path) == []
 
 
@@ -59,9 +61,10 @@ def test_names_differing_only_in_case_are_refused_where_case_is_ignored(
 ):
     monkeypatch.setattr(accessor, "_ignores_case", lambda folder: True)
     dataset = xr.Dataset({"U": _snapshot(1.0), "u": _snapshot(7.0)})
+    writer = StepIndexedFiles(LAYOUT).writer
 
     with pytest.raises(ValueError, match="only in case"):
-        dataset.binary_engine.to_file(StepIndexedFiles(LAYOUT).writer, tmp_path)
+        dataset.binary_engine.to_file(writer, tmp_path)
     assert _written(tmp_path) == []
 
 
@@ -95,7 +98,8 @@ def test_a_later_invalid_variable_stops_the_call_before_any_file_is_written(
             "uy": _snapshot(2.0).expand_dims(y=3),
         }
     )
+    writer = StepIndexedFiles(LAYOUT).writer
 
     with pytest.raises(ValueError, match="'y'"):
-        dataset.binary_engine.to_file(StepIndexedFiles(LAYOUT).writer, tmp_path)
+        dataset.binary_engine.to_file(writer, tmp_path)
     assert _written(tmp_path) == []
