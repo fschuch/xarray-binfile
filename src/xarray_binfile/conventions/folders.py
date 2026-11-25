@@ -110,9 +110,12 @@ class FolderConventions(Convention):
     Dispatch to one convention per sub-folder.
 
     Projects often keep arrays of different shapes in different folders, for
-    example ``xy_planes/ux-0001.bin`` next to ``3d/ux-0001.bin``. Reading
+    example ``xy_planes/uxy-0001.bin`` next to ``3d/ux-0001.bin``. Reading
     picks the convention whose folder matches the end of the file's parent
     path, preferring the most specific (longest) folder when several match.
+    The variable name does not keep the folder, so :meth:`open` refuses one
+    name whose files have different dimensions in different folders, or two
+    files at the same position (the first value of every coordinate).
     The root of the dataset is registered as ``"."``; it matches any file not
     claimed by a more specific folder. Writing offers the array to every
     convention and requires exactly one of them to accept it, then prefixes

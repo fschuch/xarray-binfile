@@ -10,7 +10,8 @@ joins a composite, so the defaults apply to it as well.
 """
 
 import os
-from collections.abc import Iterable, Iterator
+from collections import defaultdict
+from collections.abc import Hashable, Iterable, Iterator
 from pathlib import Path
 from typing import Any
 
@@ -28,8 +29,11 @@ def open_files(
     """
     Open binary files as one lazy dataset with the ``binfile`` engine.
 
-    Thin wrapper over :func:`xarray.open_mfdataset` that fills in the engine
-    and the read specs getter.
+    Wrapper over :func:`xarray.open_mfdataset` that fills in the engine and
+    the read specs getter. Before opening, it reads every file's specs and
+    refuses files that cannot be combined into one variable (see
+    :func:`_require_one_variable_per_name`); xarray only sees one file at a
+    time, so it cannot tell.
 
     Args:
         paths: The files to open.
@@ -42,14 +46,94 @@ def open_files(
 
     Raises:
         FileNotFoundError: If ``paths`` is empty.
+        ValueError: If one variable name comes from files with different
+            dimensions, or from two files at the same position.
     """
     paths = sorted(paths)
     if not paths:
         error_message = "No file matches the convention; nothing to open."
         raise FileNotFoundError(error_message)
+    if not isinstance(reader, _SpecsCache):
+        reader = _SpecsCache(paths, reader)
+    _require_one_variable_per_name(reader.read_specs())
     return xr.open_mfdataset(
         paths, engine="binfile", read_specs_getter=reader, **open_mfdataset_kwargs
     )
+
+
+def _require_one_variable_per_name(specs: Iterable[ReadSpecs]) -> None:
+    """
+    Refuse files that share a variable name but cannot be one variable.
+
+    A :class:`~xarray_binfile.conventions.FolderConventions` reads
+    ``xy_planes/ux-0001.bin`` and ``3d/ux-0001.bin`` both as ``ux``
+    (https://github.com/fschuch/xarray-binfile/issues/68). With different
+    dimensions, xarray fails with an error that does not name the clash.
+    Otherwise xarray places each file by the first value of every coordinate,
+    and silently keeps only one of two files at the same position, even when
+    their coordinates differ after that first value. Files of one name at
+    different positions, such as one run split in time across two folders or
+    tiles of one grid, are still combined.
+
+    Args:
+        specs: The read specs of the files to open.
+
+    Raises:
+        ValueError: If one name comes from files with different dimensions,
+            or from two files at the same position.
+    """
+    by_name: defaultdict[str, list[ReadSpecs]] = defaultdict(list)
+    for spec in specs:
+        by_name[spec.name].append(spec)
+    advice = "Give them distinct names, or open them separately."
+    for name, group in by_name.items():
+        by_dims = {frozenset(spec.dims): spec for spec in group}
+        if len(by_dims) > 1:
+            examples = "; ".join(
+                f"{spec.filepath} {spec.dims}" for spec in by_dims.values()
+            )
+            error_message = (
+                f"The variable {name!r} comes from files with different "
+                f"dimensions: {examples}. {advice}"
+            )
+            raise ValueError(error_message)
+        at: dict[Hashable, Path] = {}
+        for spec in group:
+            where = _position(spec)
+            if where in at:
+                error_message = (
+                    f"The files {at[where]} and {spec.filepath} both hold "
+                    f"{name!r} at the same position (the first value of every "
+                    f"coordinate), so xarray would keep only one of them. "
+                    f"{advice}"
+                )
+                raise ValueError(error_message)
+            at[where] = spec.filepath
+
+
+def _position(spec: ReadSpecs) -> Hashable:
+    """Where xarray places a file: the first value of every coordinate."""
+    return tuple(
+        sorted((dim, _first_value(values)) for dim, values in spec.coords.items())
+    )
+
+
+def _first_value(values: Any) -> Hashable | None:
+    """
+    A coordinate's first value, comparable across files.
+
+    Dates and durations are compared in nanoseconds, as xarray combines them,
+    so one date stored at two resolutions is one position. An empty
+    coordinate has no first value.
+    """
+    array = np.asarray(values)
+    if array.size == 0:
+        return None
+    first = array.reshape(-1)[:1]
+    if array.dtype.kind in "mM":
+        unit = "datetime64[ns]" if array.dtype.kind == "M" else "timedelta64[ns]"
+        return (array.dtype.kind, first.astype(unit).item())
+    return first.item()
 
 
 def _slab_chunks(specs: Iterable[ReadSpecs]) -> dict[str, str]:
@@ -258,14 +342,16 @@ class Convention:
 
         Raises:
             FileNotFoundError: If no file matches.
+            ValueError: If one variable name comes from files with different
+                dimensions, or from two files at the same position, which
+                xarray could not combine or would silently reduce to one.
         """
         paths = self.files(directory)
         if variables is not None:
             wanted = set(variables)
             paths = [path for path in paths if self.name_of_file(path) in wanted]
-        reader: ReadSpecsGetterProtocol = self.reader
+        reader = _SpecsCache(paths, self.reader)
         if "chunks" not in open_mfdataset_kwargs:
-            reader = _SpecsCache(paths, self.reader)
             chunks = _slab_chunks(reader.read_specs())
             if chunks:
                 open_mfdataset_kwargs["chunks"] = chunks
