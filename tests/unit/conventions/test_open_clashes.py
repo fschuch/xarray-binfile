@@ -12,6 +12,7 @@ opening anything.
 import numpy as np
 import pytest
 
+from xarray_binfile import ReadSpecs
 from xarray_binfile.conventions import FolderConventions, Layout, StepIndexedFiles
 from xarray_binfile.conventions.base import open_files
 
@@ -77,3 +78,54 @@ def test_open_files_checks_with_a_plain_reader(tmp_path):
 
     with pytest.raises(ValueError, match="same coordinates"):
         open_files(paths, PLANES.reader)
+
+
+def _clash_from_review(reason):
+    return pytest.mark.xfail(strict=True, reason=f"PR #88 review: {reason}")
+
+
+@_clash_from_review("xarray orders files by first coordinate values")
+def test_same_first_values_with_different_coordinates_are_refused(tmp_path):
+    # xarray places each file by the first value of every coordinate, so both
+    # files land at x=0 and one of them is dropped without an error.
+    _write(tmp_path / "a" / "ux-0001.bin", 2, 1.0)
+    _write(tmp_path / "b" / "ux-0001.bin", 2, 2.0)
+    conventions = FolderConventions(
+        {
+            "a": StepIndexedFiles(Layout({"x": [0, 1]}, dtype="<f4")),
+            "b": StepIndexedFiles(Layout({"x": [0, 2]}, dtype="<f4")),
+        }
+    )
+
+    with pytest.raises(ValueError, match="'ux'.*same position"):
+        conventions.open(tmp_path)
+
+
+@_clash_from_review("one date at two datetime resolutions")
+def test_one_date_at_two_resolutions_is_refused(tmp_path):
+    _write(tmp_path / "D" / "ux.bin", 2)
+    _write(tmp_path / "ns" / "ux.bin", 2)
+    paths = sorted(tmp_path.rglob("*.bin"))
+
+    def reader(path):
+        time = np.array(["2020-01-01"], f"datetime64[{path.parent.name}]")
+        return ReadSpecs(path.resolve(), "<f4", {"x": [0, 1], "time": time}, "ux")
+
+    with pytest.raises(ValueError, match="'ux'.*same position"):
+        open_files(paths, reader)
+
+
+def test_tiles_of_one_grid_are_opened(tmp_path):
+    _write(tmp_path / "left" / "ux-0001.bin", 2, 1.0)
+    _write(tmp_path / "right" / "ux-0001.bin", 2, 2.0)
+    conventions = FolderConventions(
+        {
+            "left": StepIndexedFiles(Layout({"x": [0, 1]}, dtype="<f4")),
+            "right": StepIndexedFiles(Layout({"x": [2, 3]}, dtype="<f4")),
+        }
+    )
+
+    ux = conventions.open(tmp_path)["ux"]
+
+    np.testing.assert_array_equal(ux.x, [0, 1, 2, 3])
+    np.testing.assert_array_equal(ux.isel(time=0), [1, 1, 2, 2])
