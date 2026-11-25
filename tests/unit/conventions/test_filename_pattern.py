@@ -1,8 +1,10 @@
+import numpy as np
 import pytest
+import xarray as xr
 from hypothesis import given
 from hypothesis import strategies as st
 
-from xarray_binfile.conventions import FilenamePattern
+from xarray_binfile.conventions import FilenamePattern, Layout, StepIndexedFiles
 
 NAMES = st.from_regex(r"\A[A-Za-z_][A-Za-z0-9_]{0,7}\Z")
 STEPS = st.integers(min_value=-(10**9), max_value=10**9)
@@ -221,3 +223,119 @@ class TestFolderPrefix:
 
         assert not pattern.matches("geometry/epsi.bin")
         assert pattern.parse("epsi.bin") == {"name": "epsi"}
+
+
+class TestFormatParsesBackToTheSameFields:
+    """
+    A formatted filename must read back as the fields it was built from.
+
+    From the pyOpenSci review, https://github.com/fschuch/xarray-binfile/issues/66:
+    ``format`` only checked that the filename matched the pattern. Without a
+    separator after ``{name}``, ``ux`` at step 1000 was written as ``ux1000``
+    and read back as a new variable ``ux1`` at step 0.
+    """
+
+    @pytest.mark.xfail(strict=True, reason="#66: format only checks the match")
+    def test_the_reviewers_step_is_refused_before_any_file_is_written(self):
+        convention = StepIndexedFiles(
+            Layout({"x": [0, 1]}),
+            pattern=FilenamePattern("{name}{step:03d}", exact_width=True),
+        )
+        ux = xr.DataArray(
+            np.ones((2, 2)), coords={"x": [0, 1], "time": [999, 1000]}, name="ux"
+        )
+
+        with pytest.raises(ValueError, match="read back as"):
+            next(iter(convention.writer(ux)))
+
+    @pytest.mark.xfail(strict=True, reason="#66: format only checks the match")
+    @pytest.mark.parametrize(
+        ("pattern", "fields"),
+        [
+            pytest.param(
+                FilenamePattern("{name}{step:03d}", exact_width=True),
+                {"name": "ux", "step": 1000},
+                id="wider-step-exact-width",
+            ),
+            pytest.param(
+                FilenamePattern("{name}{step:03d}"),
+                {"name": "phi1", "step": 5},
+                id="name-ending-in-a-digit",
+            ),
+            pytest.param(
+                FilenamePattern("{name}{time:.3f}"),
+                {"name": "phi1", "time": 0.25},
+                id="fixed-point-time",
+            ),
+            pytest.param(
+                FilenamePattern("{name}{time:g}"),
+                {"name": "u1", "time": 0.5},
+                id="general-time",
+            ),
+            pytest.param(
+                FilenamePattern("{name}_{step}"),
+                {"name": "a_b", "step": 3},
+                id="string-field",
+            ),
+        ],
+    )
+    def test_filenames_that_read_back_differently_are_refused(self, pattern, fields):
+        with pytest.raises(ValueError, match="read back as"):
+            pattern.format(**fields)
+
+    @pytest.mark.parametrize(
+        ("pattern", "fields", "expected"),
+        [
+            pytest.param(
+                FilenamePattern("{name}{step:03d}", exact_width=True),
+                {"name": "phi1", "step": 999},
+                "phi1999",
+                id="exact-width-name-ending-in-a-digit",
+            ),
+            pytest.param(
+                FilenamePattern("{name}-{time:.3f}.bin"),
+                {"name": "ux", "time": 0.12345},
+                "ux-0.123.bin",
+                id="rounded-by-the-format",
+            ),
+            pytest.param(
+                FilenamePattern("{name}{time:.3f}"),
+                {"name": "phi", "time": np.float32(0.12345)},
+                "phi0.123",
+                id="float32",
+            ),
+            pytest.param(
+                FilenamePattern("{name}{step:03d}"),
+                {"name": "ux", "step": np.int64(5)},
+                "ux005",
+                id="int64",
+            ),
+            pytest.param(
+                FilenamePattern("{name}-{time:e}.bin"),
+                {"name": "ux", "time": 1 / 3},
+                "ux-3.333333e-01.bin",
+                id="exponent",
+            ),
+            pytest.param(
+                FilenamePattern("{name}-{step:04d}.bin"),
+                {"name": "geometry/epsi", "step": 0},
+                "geometry/epsi-0000.bin",
+                id="folder-prefix",
+            ),
+        ],
+    )
+    def test_filenames_that_read_back_the_same_are_accepted(
+        self, pattern, fields, expected
+    ):
+        assert pattern.format(**fields) == expected
+
+    @pytest.mark.xfail(strict=True, reason="#66: format only checks the match")
+    @given(name=NAMES, step=st.integers(min_value=0, max_value=10**5))
+    def test_without_a_separator_a_filename_is_refused_or_reads_back(self, name, step):
+        pattern = FilenamePattern("{name}{step:03d}")
+
+        try:
+            filename = pattern.format(name=name, step=step)
+        except ValueError:
+            return
+        assert pattern.parse(filename) == {"name": name, "step": step}
