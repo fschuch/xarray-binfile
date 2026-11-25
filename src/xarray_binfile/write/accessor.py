@@ -5,6 +5,7 @@ Provides accessors for writing xarray Dataset and DataArray objects to binary fi
 import contextlib
 import os
 import tempfile
+import unicodedata
 from collections import Counter, defaultdict
 from collections.abc import Callable, Iterable
 from pathlib import Path
@@ -224,9 +225,12 @@ def _require_distinct_files(directory: Path, specs: list[WriteSpecs]) -> None:
     """
     Fail if two specs would be written to the same file.
 
-    Paths are compared once made absolute, so a relative and an absolute
-    filename for one file collide. Paths that differ only in case collide
-    too where the filesystem ignores case (the default on macOS and Windows).
+    Each destination is compared as its folder, with symbolic links followed,
+    plus its filename, so a relative and an absolute filename for one file
+    collide, as do two paths through a linked folder. Names that differ only
+    in case or in Unicode form (``café`` composed or with a combining accent)
+    collide too where the filesystem ignores that difference, as macOS does
+    for both and Windows for case.
 
     Args:
         directory: Base directory for relative filenames.
@@ -235,10 +239,7 @@ def _require_distinct_files(directory: Path, specs: list[WriteSpecs]) -> None:
     Raises:
         ValueError: If two specs map to the same file.
     """
-    paths = [
-        os.path.abspath(_resolve_destination(directory, spec.filename))
-        for spec in specs
-    ]
+    paths = [_destination_key(directory, spec) for spec in specs]
     duplicated = sorted(path for path, count in Counter(paths).items() if count > 1)
     if duplicated:
         error_message = (
@@ -247,29 +248,77 @@ def _require_distinct_files(directory: Path, specs: list[WriteSpecs]) -> None:
             "or stacked components, or change the filename pattern."
         )
         raise ValueError(error_message)
-    by_folded_case: defaultdict[str, list[str]] = defaultdict(list)
+    by_folded_name: defaultdict[str, list[str]] = defaultdict(list)
     for path in paths:
-        by_folded_case[path.casefold()].append(path)
+        by_folded_name[_fold(path, case=True, form=True)].append(path)
     clashes = [
         sorted(group)
-        for group in by_folded_case.values()
-        if len(group) > 1 and _ignores_case(Path(group[0]).parent)
+        for group in by_folded_name.values()
+        if len(group) > 1 and _same_file_there(group)
     ]
     if clashes:
         error_message = (
-            f"The files {clashes} differ only in case, and the filesystem there "
-            "ignores case, so they would be the same file and the later ones "
-            "would silently overwrite the earlier ones. Rename the variables."
+            f"The files {clashes} differ only in case or Unicode form, and the "
+            "filesystem there ignores that difference, so they would be the same "
+            "file and the later ones would silently overwrite the earlier ones. "
+            "Rename the variables."
         )
         raise ValueError(error_message)
+
+
+def _destination_key(directory: Path, spec: WriteSpecs) -> str:
+    """
+    The destination of ``spec``, with symbolic links in its folder followed.
+
+    Args:
+        directory: Base directory for relative filenames.
+        spec: A write spec.
+
+    Returns:
+        The absolute path of the file, as a string.
+    """
+    path = _resolve_destination(directory, spec.filename)
+    return str(path.parent.resolve() / path.name)
+
+
+def _fold(path: str, *, case: bool, form: bool) -> str:
+    """
+    ``path`` with the differences a filesystem may ignore removed.
+
+    Args:
+        path: An absolute path.
+        case: Whether to ignore case.
+        form: Whether to ignore the Unicode normalization form.
+
+    Returns:
+        The folded path.
+    """
+    if form:
+        path = unicodedata.normalize("NFC", path)
+    if case:
+        path = path.casefold()
+    return path
+
+
+def _same_file_there(paths: list[str]) -> bool:
+    """
+    Whether some of ``paths``, equal up to case and form, are one file.
+
+    Args:
+        paths: Distinct paths that fold to the same name.
+
+    Returns:
+        True if the filesystem holding them ignores the differences.
+    """
+    folder = Path(paths[0]).parent
+    case = _ignores_case(folder)
+    form = _ignores_normalization(folder)
+    return len({_fold(path, case=case, form=form) for path in paths}) < len(paths)
 
 
 def _ignores_case(folder: Path) -> bool:
     """
     Whether the filesystem holding ``folder`` ignores case in filenames.
-
-    A temporary file is created in ``folder``, or in its nearest existing
-    parent when it does not exist yet, and looked up with its case swapped.
 
     Args:
         folder: The folder files will be written to.
@@ -277,14 +326,46 @@ def _ignores_case(folder: Path) -> bool:
     Returns:
         True if a name and its case-swapped twin are the same file there.
     """
+    return _probe(folder, str.swapcase)
+
+
+def _ignores_normalization(folder: Path) -> bool:
+    """
+    Whether the filesystem holding ``folder`` ignores the Unicode form.
+
+    Args:
+        folder: The folder files will be written to.
+
+    Returns:
+        True if a name with a composed ``é`` and the same name with ``e``
+        and a combining accent are the same file there.
+    """
+    return _probe(folder, lambda name: unicodedata.normalize("NFD", name))
+
+
+def _probe(folder: Path, twin: Callable[[str], str]) -> bool:
+    """
+    Whether a temporary file can be found under another spelling of its name.
+
+    The file is created in ``folder``, or in its nearest existing parent when
+    it does not exist yet, and removed afterwards.
+
+    Args:
+        folder: The folder files will be written to.
+        twin: Respells the file name, for example swapping its case.
+
+    Returns:
+        True if the respelled name finds the temporary file.
+    """
     existing = folder
     while not existing.exists():
         existing = existing.parent
-    handle, name = tempfile.mkstemp(dir=existing, prefix=".binary_engine-CaseProbe-")
+    # Mixed case and a composed accent, so both kinds of respelling change it.
+    handle, name = tempfile.mkstemp(dir=existing, prefix=".binary_engine-Probe-\u00e9-")
     os.close(handle)
     try:
         probe = Path(name)
-        return probe.with_name(probe.name.swapcase()).exists()
+        return probe.with_name(twin(probe.name)).exists()
     finally:
         os.unlink(name)
 

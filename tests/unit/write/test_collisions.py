@@ -19,11 +19,6 @@ from xarray_binfile.conventions import Layout, StepIndexedFiles, VariableStack
 from xarray_binfile.write import WriteSpecs, accessor
 
 LAYOUT = Layout({"x": [0, 1]})
-# From CodeRabbit on https://github.com/fschuch/xarray-binfile/pull/86.
-REVIEW_XFAIL = pytest.mark.xfail(
-    strict=True,
-    reason="#86 review: links and Unicode forms are compared as written",
-)
 CAFE_NFC = unicodedata.normalize("NFC", "café.bin")
 CAFE_NFD = unicodedata.normalize("NFD", "café.bin")
 
@@ -131,7 +126,6 @@ def test_a_later_invalid_variable_stops_the_call_before_any_file_is_written(
     assert _written(tmp_path) == []
 
 
-@REVIEW_XFAIL
 def test_two_paths_through_a_linked_folder_are_refused(tmp_path):
     _linked_folder(tmp_path / "alias", tmp_path / "real")
     ux = _snapshot(1.0)
@@ -151,14 +145,11 @@ def test_linked_folders_to_different_places_are_written(tmp_path):
     assert _written(tmp_path / "second") == ["ux.bin"]
 
 
-@REVIEW_XFAIL
 def test_unicode_forms_of_one_name_are_refused_where_the_form_is_ignored(
     tmp_path, monkeypatch
 ):
     monkeypatch.setattr(accessor, "_ignores_case", lambda folder: False)
-    monkeypatch.setattr(
-        accessor, "_ignores_normalization", lambda folder: True, raising=False
-    )
+    monkeypatch.setattr(accessor, "_ignores_normalization", lambda folder: True)
     ux = _snapshot(1.0)
 
     with pytest.raises(ValueError, match="Unicode form"):
@@ -170,16 +161,13 @@ def test_unicode_forms_of_one_name_are_written_where_the_form_matters(
     tmp_path, monkeypatch
 ):
     monkeypatch.setattr(accessor, "_ignores_case", lambda folder: False)
-    monkeypatch.setattr(
-        accessor, "_ignores_normalization", lambda folder: False, raising=False
-    )
+    monkeypatch.setattr(accessor, "_ignores_normalization", lambda folder: False)
 
     _snapshot(1.0).binary_engine.to_file(_writing(CAFE_NFC, CAFE_NFD), tmp_path)
 
     assert _written(tmp_path)
 
 
-@REVIEW_XFAIL
 def test_the_normalization_probe_matches_the_filesystem_and_leaves_nothing(
     tmp_path,
 ):
