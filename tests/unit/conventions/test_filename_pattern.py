@@ -243,9 +243,10 @@ class TestFormatParsesBackToTheSameFields:
         ux = xr.DataArray(
             np.ones((2, 2)), coords={"x": [0, 1], "time": [999, 1000]}, name="ux"
         )
+        specs = convention.writer(ux)  # a generator: nothing is formatted yet
 
         with pytest.raises(ValueError, match="read back as"):
-            next(iter(convention.writer(ux)))
+            next(specs)
 
     @pytest.mark.parametrize(
         ("pattern", "fields"),
