@@ -118,7 +118,7 @@ def _position(spec: ReadSpecs) -> Hashable:
     )
 
 
-def _first_value(values: Any) -> Hashable:
+def _first_value(values: Any) -> Hashable | None:
     """
     A coordinate's first value, comparable across files.
 
