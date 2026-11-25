@@ -15,9 +15,6 @@ import xarray as xr
 from xarray_binfile.conventions import Layout, StepIndexedFiles, VariableStack
 from xarray_binfile.write import WriteSpecs, accessor
 
-XFAIL = pytest.mark.xfail(
-    strict=True, reason="#67: collisions are only checked within one time split"
-)
 LAYOUT = Layout({"x": [0, 1]})
 
 
@@ -31,7 +28,6 @@ def _snapshot(value: float) -> xr.DataArray:
     )
 
 
-@XFAIL
 def test_the_reviewers_stack_and_variable_are_refused(tmp_path):
     velocity = VariableStack("i", "{name}{i}", values=("x", "y", "z"))
     convention = StepIndexedFiles(LAYOUT, stacks=[velocity])
@@ -48,7 +44,6 @@ def test_the_reviewers_stack_and_variable_are_refused(tmp_path):
     assert _written(tmp_path) == []
 
 
-@XFAIL
 def test_a_relative_and_an_absolute_path_to_one_file_are_refused(tmp_path):
     def writer(array: xr.DataArray):
         yield WriteSpecs(filename="ux.bin", sub_array=array)
@@ -59,11 +54,10 @@ def test_a_relative_and_an_absolute_path_to_one_file_are_refused(tmp_path):
     assert _written(tmp_path) == []
 
 
-@XFAIL
 def test_names_differing_only_in_case_are_refused_where_case_is_ignored(
     tmp_path, monkeypatch
 ):
-    monkeypatch.setattr(accessor, "_ignores_case", lambda folder: True, raising=False)
+    monkeypatch.setattr(accessor, "_ignores_case", lambda folder: True)
     dataset = xr.Dataset({"U": _snapshot(1.0), "u": _snapshot(7.0)})
 
     with pytest.raises(ValueError, match="only in case"):
@@ -74,7 +68,7 @@ def test_names_differing_only_in_case_are_refused_where_case_is_ignored(
 def test_names_differing_only_in_case_are_written_where_case_matters(
     tmp_path, monkeypatch
 ):
-    monkeypatch.setattr(accessor, "_ignores_case", lambda folder: False, raising=False)
+    monkeypatch.setattr(accessor, "_ignores_case", lambda folder: False)
     dataset = xr.Dataset({"U": _snapshot(1.0), "u": _snapshot(7.0)})
 
     dataset.binary_engine.to_file(StepIndexedFiles(LAYOUT).writer, tmp_path)
@@ -82,7 +76,6 @@ def test_names_differing_only_in_case_are_written_where_case_matters(
     assert _written(tmp_path)
 
 
-@XFAIL
 def test_the_case_probe_matches_the_filesystem_and_leaves_nothing(tmp_path):
     (tmp_path / "CaseCheck").touch()
     expected = (tmp_path / "casecheck").exists()
@@ -92,7 +85,6 @@ def test_the_case_probe_matches_the_filesystem_and_leaves_nothing(tmp_path):
     assert _written(tmp_path) == []
 
 
-@XFAIL
 def test_a_later_invalid_variable_stops_the_call_before_any_file_is_written(
     tmp_path,
 ):
