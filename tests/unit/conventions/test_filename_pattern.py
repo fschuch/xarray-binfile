@@ -235,7 +235,6 @@ class TestFormatParsesBackToTheSameFields:
     and read back as a new variable ``ux1`` at step 0.
     """
 
-    @pytest.mark.xfail(strict=True, reason="#66: format only checks the match")
     def test_the_reviewers_step_is_refused_before_any_file_is_written(self):
         convention = StepIndexedFiles(
             Layout({"x": [0, 1]}),
@@ -248,7 +247,6 @@ class TestFormatParsesBackToTheSameFields:
         with pytest.raises(ValueError, match="read back as"):
             next(iter(convention.writer(ux)))
 
-    @pytest.mark.xfail(strict=True, reason="#66: format only checks the match")
     @pytest.mark.parametrize(
         ("pattern", "fields"),
         [
@@ -329,7 +327,6 @@ class TestFormatParsesBackToTheSameFields:
     ):
         assert pattern.format(**fields) == expected
 
-    @pytest.mark.xfail(strict=True, reason="#66: format only checks the match")
     @given(name=NAMES, step=st.integers(min_value=0, max_value=10**5))
     def test_without_a_separator_a_filename_is_refused_or_reads_back(self, name, step):
         pattern = FilenamePattern("{name}{step:03d}")

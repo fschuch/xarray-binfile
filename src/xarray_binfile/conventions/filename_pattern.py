@@ -123,10 +123,16 @@ class FilenamePattern:
       treated as a minimum width, matching ``str.format`` semantics, so step
       ``12345`` written with ``04d`` can still be read back. Without a
       separator, names ending in a digit are then ambiguous (``phi1000`` reads
-      as ``phi`` + ``1000``); set ``exact_width=True`` to match exactly the
-      declared width instead, so ``phi1000`` reads as ``phi1`` + ``000`` and
-      steps wider than the template are refused at write time.
+      as ``phi`` + ``1000``), so :meth:`format` refuses them; set
+      ``exact_width=True`` to match exactly the declared width instead, so
+      ``phi1000`` reads as ``phi1`` + ``000``, and steps wider than the
+      template are refused instead.
     - ``{time:.3f}``, ``{time:f}``, ``{time:e}``, ``{time:g}``: a float.
+
+    :meth:`format` refuses any filename that :meth:`parse` would read back as
+    other field values, such as ``phi1`` at ``0.25`` written as ``phi10.250``
+    by ``"{name}{time:.3f}"``. A separator between the fields (``-``, ``.``)
+    avoids that.
 
     Examples:
         >>> pattern = FilenamePattern("{name}-{step:04d}.bin")
@@ -161,6 +167,7 @@ class FilenamePattern:
     fields: tuple[str, ...] = field(init=False, repr=False)
     regex: re.Pattern[str] = field(init=False, repr=False)
     _types: dict[str, type] = field(init=False, repr=False)
+    _specs: dict[str, str] = field(init=False, repr=False)
 
     def __post_init__(self) -> None:
         """
@@ -173,6 +180,7 @@ class FilenamePattern:
         parts: list[str] = []
         fields: list[str] = []
         types: dict[str, type] = {}
+        specs: dict[str, str] = {}
         for literal, name, spec, conversion in string.Formatter().parse(self.template):
             parts.append(re.escape(literal))
             if name is None:
@@ -192,20 +200,26 @@ class FilenamePattern:
             parts.append(f"(?P<{name}>{fragment})")
             fields.append(name)
             types[name] = type_
+            specs[name] = spec or ""
         if not fields:
             error_message = f"Template {self.template!r} does not declare any field."
             raise ValueError(error_message)
         object.__setattr__(self, "fields", tuple(fields))
         object.__setattr__(self, "regex", re.compile("".join(parts)))
         object.__setattr__(self, "_types", types)
+        object.__setattr__(self, "_specs", specs)
 
     def format(self, **fields: Any) -> str:
         """
         Build a filename from field values.
 
-        The result is checked against the derived regular expression, so a
-        filename that :meth:`parse` could not read back (for example a name
-        containing ``.`` or ``-``) is rejected here, at write time. A ``name``
+        The result is parsed back with the derived regular expression, so a
+        filename that :meth:`parse` could not read (for example a name
+        containing ``.`` or ``-``), or would read as other values (``ux`` at
+        step ``1000`` written as ``ux1000`` by ``"{name}{step:03d}"`` with
+        ``exact_width=True``, read as ``ux1`` at step ``0``), is rejected
+        here, at write time. Each field is compared as written, so a value
+        the format rounds (``0.12345`` with ``.3f``) is accepted. A ``name``
         value may start with folder segments (``"geometry/epsi"``); they are
         kept in front of the checked filename (``"geometry/epsi.bin"``).
 
@@ -216,8 +230,9 @@ class FilenamePattern:
             The formatted filename.
 
         Raises:
-            ValueError: If the formatted filename does not match the pattern,
-                or if the folder prefix of ``name`` is malformed.
+            ValueError: If the formatted filename does not match the pattern
+                or would be read back as other field values, or if the folder
+                prefix of ``name`` is malformed.
         """
         folder = ""
         if "name" in fields and "/" in str(fields["name"]):
@@ -237,7 +252,38 @@ class FilenamePattern:
                 f"pattern {self.template!r}; check the field values {fields!r}."
             )
             raise ValueError(error_message)
+        self._check_reads_back(filename, fields)
         return folder + filename
+
+    def _check_reads_back(self, filename: str, fields: dict[str, Any]) -> None:
+        """
+        Refuse a filename that :meth:`parse` reads as other field values.
+
+        Each field is compared as written, formatted with its own
+        specification, so a value the format rounds (``0.12345`` written
+        with ``.3f``) still counts as reading back.
+
+        Args:
+            filename: The formatted filename, without folder prefix.
+            fields: The field values it was formatted from.
+
+        Raises:
+            ValueError: If a parsed field formats differently from its value.
+        """
+        parsed = self.parse(filename)
+        if all(
+            format(parsed[name], spec) == format(fields[name], spec)
+            for name, spec in self._specs.items()
+        ):
+            return
+        expected = {name: fields[name] for name in self.fields}
+        error_message = (
+            f"Formatted filename {filename!r} would be read back as {parsed!r}, "
+            f"not {expected!r}. Separate the fields in the pattern "
+            f"{self.template!r} with a character the values cannot contain, "
+            "such as '-' or '.'."
+        )
+        raise ValueError(error_message)
 
     def glob(self, **fixed: Any) -> str:
         """
