@@ -37,7 +37,7 @@ _STEP_TOLERANCE = 1e-6
 # reader rounds once (0.5 ulp) and values built in single precision drift to
 # about 1.3 ulp (https://github.com/fschuch/xarray-binfile/issues/65).
 _STEP_TOLERANCE_ULPS = 4
-# Past this a value no longer tells neighbouring steps apart.
+# Past this the allowance could accept a value that rounds to another step.
 _MAX_STEP_TOLERANCE = 0.5
 
 
@@ -485,10 +485,12 @@ class StepIndexedFiles(_SplitAlongDimension):
     ``1e-6`` of a step, or within a few units in the last place of the value
     in its own dtype when that is coarser, so float32 times read with
     ``time_dtype=np.float32`` write back to their steps. That allowance grows
-    with the step number, and once it reaches half a step the value can no
-    longer tell neighbouring steps apart: writing refuses it and asks for a
-    float64 time coordinate. For float32 that happens between about one and
-    two million steps, depending on ``time_step``.
+    with the step number. Once it reaches half a step it could accept a value
+    that rounds to a neighbouring step, so writing refuses the value and asks
+    for a float64 time coordinate; the cutoff is conservative, and refuses
+    some values that would still map to the right step. For float32 it
+    starts between about one and two million steps, depending on
+    ``time_step``.
 
     Examples:
         >>> import numpy as np
@@ -538,7 +540,7 @@ class StepIndexedFiles(_SplitAlongDimension):
         if tolerance >= _MAX_STEP_TOLERANCE:
             error_message = (
                 f"Coordinate value {value} on {self.time_dim!r} is too coarse "
-                f"in {np.asarray(value).dtype} to identify its step (around "
+                f"in {np.asarray(value).dtype} to match its step safely (around "
                 f"step {int(rounded)} with time_step={time_step}). Keep the "
                 "time coordinate in float64: leave time_dtype unset on read."
             )
