@@ -8,6 +8,9 @@ the duplicate check only looked inside one array's time split, so a stacked
 of a call is now checked before the first file is written.
 """
 
+import os
+import unicodedata
+
 import numpy as np
 import pytest
 import xarray as xr
@@ -16,6 +19,29 @@ from xarray_binfile.conventions import Layout, StepIndexedFiles, VariableStack
 from xarray_binfile.write import WriteSpecs, accessor
 
 LAYOUT = Layout({"x": [0, 1]})
+# From CodeRabbit on https://github.com/fschuch/xarray-binfile/pull/86.
+REVIEW_XFAIL = pytest.mark.xfail(
+    strict=True,
+    reason="#86 review: links and Unicode forms are compared as written",
+)
+CAFE_NFC = unicodedata.normalize("NFC", "café.bin")
+CAFE_NFD = unicodedata.normalize("NFD", "café.bin")
+
+
+def _writing(*filenames):
+    def writer(array: xr.DataArray):
+        for value, filename in enumerate(filenames):
+            yield WriteSpecs(filename=filename, sub_array=array + value)
+
+    return writer
+
+
+def _linked_folder(link, target):
+    target.mkdir()
+    try:
+        os.symlink(target, link, target_is_directory=True)
+    except OSError:  # no cover - Windows without symlink rights
+        pytest.skip("symbolic links are not available")
 
 
 def _written(folder) -> list[str]:
@@ -102,4 +128,64 @@ def test_a_later_invalid_variable_stops_the_call_before_any_file_is_written(
 
     with pytest.raises(ValueError, match="'y'"):
         dataset.binary_engine.to_file(writer, tmp_path)
+    assert _written(tmp_path) == []
+
+
+@REVIEW_XFAIL
+def test_two_paths_through_a_linked_folder_are_refused(tmp_path):
+    _linked_folder(tmp_path / "alias", tmp_path / "real")
+    ux = _snapshot(1.0)
+
+    with pytest.raises(ValueError, match="same file"):
+        ux.binary_engine.to_file(_writing("alias/ux.bin", "real/ux.bin"), tmp_path)
+    assert _written(tmp_path / "real") == []
+
+
+def test_linked_folders_to_different_places_are_written(tmp_path):
+    _linked_folder(tmp_path / "a", tmp_path / "first")
+    _linked_folder(tmp_path / "b", tmp_path / "second")
+
+    _snapshot(1.0).binary_engine.to_file(_writing("a/ux.bin", "b/ux.bin"), tmp_path)
+
+    assert _written(tmp_path / "first") == ["ux.bin"]
+    assert _written(tmp_path / "second") == ["ux.bin"]
+
+
+@REVIEW_XFAIL
+def test_unicode_forms_of_one_name_are_refused_where_the_form_is_ignored(
+    tmp_path, monkeypatch
+):
+    monkeypatch.setattr(accessor, "_ignores_case", lambda folder: False)
+    monkeypatch.setattr(
+        accessor, "_ignores_normalization", lambda folder: True, raising=False
+    )
+    ux = _snapshot(1.0)
+
+    with pytest.raises(ValueError, match="Unicode form"):
+        ux.binary_engine.to_file(_writing(CAFE_NFC, CAFE_NFD), tmp_path)
+    assert _written(tmp_path) == []
+
+
+def test_unicode_forms_of_one_name_are_written_where_the_form_matters(
+    tmp_path, monkeypatch
+):
+    monkeypatch.setattr(accessor, "_ignores_case", lambda folder: False)
+    monkeypatch.setattr(
+        accessor, "_ignores_normalization", lambda folder: False, raising=False
+    )
+
+    _snapshot(1.0).binary_engine.to_file(_writing(CAFE_NFC, CAFE_NFD), tmp_path)
+
+    assert _written(tmp_path)
+
+
+@REVIEW_XFAIL
+def test_the_normalization_probe_matches_the_filesystem_and_leaves_nothing(
+    tmp_path,
+):
+    (tmp_path / CAFE_NFC).touch()
+    expected = (tmp_path / CAFE_NFD).exists()
+    (tmp_path / CAFE_NFC).unlink()
+
+    assert accessor._ignores_normalization(tmp_path / "not" / "yet") is expected
     assert _written(tmp_path) == []
