@@ -26,7 +26,9 @@ class WriteSpecs(NamedTuple):
         sub_array: The portion of the DataArray to be written.
         dtype: Optional on-disk data type. When set, the sub-array is cast to
             this dtype (including byte order, for example ``"<f4"``) right
-            before serialization. When ``None``, the in-memory dtype and
+            before serialization. A cast that changes the kind of the data
+            (float to integer, complex to float) is refused; cast the array
+            first if that is intended. When ``None``, the in-memory dtype and
             native byte order are written as-is, so make sure they match what
             your read specs getter declares.
         order: Memory layout of the file: ``"C"`` (default, last axis of

@@ -4,6 +4,7 @@ Provides accessors for writing xarray Dataset and DataArray objects to binary fi
 
 import contextlib
 import os
+import secrets
 import tempfile
 import unicodedata
 from collections import Counter, defaultdict
@@ -58,7 +59,8 @@ class BinaryEngineDataset:
         to the same file, for example a stacked ``u`` whose x component is
         ``ux-0000.bin`` next to a variable ``ux``, or ``U`` and ``u`` where
         the filesystem ignores case
-        (https://github.com/fschuch/xarray-binfile/issues/67).
+        (https://github.com/fschuch/xarray-binfile/issues/67), or when a
+        ``dtype`` would change the kind of a variable's data.
 
         The variables are then written one after the other, so the warning
         there about writing over the inputs also covers one variable computed
@@ -74,15 +76,15 @@ class BinaryEngineDataset:
             FileNotFoundError: If a relative filename is used and ``directory`` does not exist.
             ValueError: If a relative filename escapes ``directory``, or if
                 two write specifications map to the same file.
+            TypeError: If a write specification's ``dtype`` would change the
+                kind of its data.
         """
         _directory = Path(directory) if directory is not None else Path.cwd()
         planned = [
             list(write_specs_getter(data_array))
             for data_array in self._data_set.data_vars.values()
         ]
-        _require_distinct_files(
-            _directory, [spec for specs in planned for spec in specs]
-        )
+        _require_writable(_directory, [spec for specs in planned for spec in specs])
         for specs in planned:
             _write_specs(_directory, specs, progress)
 
@@ -152,7 +154,11 @@ class BinaryEngineDataArray:
 
         Each file is written with the in-memory dtype and native byte order,
         unless the write specification sets ``dtype``, in which case the
-        values are cast right before serialization. Bytes are laid out in
+        values are cast right before serialization. That cast may narrow
+        within a kind (``f8`` to ``f4``, ``i8`` to ``i4``, without a range
+        check) or widen (``i4`` to ``f8``), but a cast that changes the kind
+        (float to integer, which truncates and turns NaN into 0, or complex
+        to float) is refused before any file is written. Bytes are laid out in
         the memory order declared by ``WriteSpecs.order``: ``"C"`` (last
         axis fastest, the default) or ``"F"`` (first axis fastest).
 
@@ -172,7 +178,10 @@ class BinaryEngineDataArray:
         written. The specs hold their ``sub_array`` until written, which is
         free for the shipped conventions (views of the array), but a custom
         getter that computes each ``sub_array`` keeps all of them in memory
-        at once. Each call is independent: an existing file is replaced.
+        at once. Each call is independent: an existing file is replaced. A
+        symbolic link at the destination is followed, so the file it points
+        to is replaced and the link stays. New files get the permissions the
+        process umask allows, as with any other new file.
 
         Args:
             write_specs_getter: A callable that generates write specifications for the data array.
@@ -186,11 +195,59 @@ class BinaryEngineDataArray:
             FileNotFoundError: If a relative filename is used and ``directory`` does not exist.
             ValueError: If a relative filename escapes ``directory``, or if
                 two write specifications map to the same file.
+            TypeError: If a write specification's ``dtype`` would change the
+                kind of its data.
         """
         _directory = Path(directory) if directory is not None else Path.cwd()
         specs = list(write_specs_getter(self._data_array))
-        _require_distinct_files(_directory, specs)
+        _require_writable(_directory, specs)
         _write_specs(_directory, specs, progress)
+
+
+def _require_writable(directory: Path, specs: list[WriteSpecs]) -> None:
+    """
+    Check every spec of one ``to_file`` call before the first file is written.
+
+    Args:
+        directory: Base directory for relative filenames.
+        specs: Every write spec of the call.
+
+    Raises:
+        ValueError: If two specs map to the same file.
+        TypeError: If a cast would change the kind of the data.
+    """
+    _require_distinct_files(directory, specs)
+    _require_same_kind_casts(specs)
+
+
+def _require_same_kind_casts(specs: Iterable[WriteSpecs]) -> None:
+    """
+    Fail if a spec's ``dtype`` would change the kind of its data.
+
+    Only the dtypes are compared, so a lazy ``sub_array`` is not computed.
+    Casts within a kind (``f8`` to ``f4``, ``i8`` to ``i4``) or to a wider
+    kind (``i4`` to ``f8``) are allowed, as ``casting="same_kind"`` does;
+    float to integer, which truncates and turns NaN into 0, is refused.
+
+    Args:
+        specs: Every write spec of one ``to_file`` call.
+
+    Raises:
+        TypeError: If a cast would change the kind of the data.
+    """
+    for spec in specs:
+        source = spec.sub_array.dtype
+        if spec.dtype is None or np.can_cast(source, spec.dtype, "same_kind"):
+            continue
+        target = np.dtype(spec.dtype)
+        error_message = (
+            f"Writing {str(spec.filename)!r} would cast {source} to {target}, "
+            "which can change the values (floats are truncated to integers and "
+            "NaN becomes 0, complex numbers lose their imaginary part). Cast the "
+            f"array first if that is intended, for example with "
+            f".astype({target.str!r})."
+        )
+        raise TypeError(error_message)
 
 
 def _write_specs(
@@ -268,7 +325,10 @@ def _require_distinct_files(directory: Path, specs: list[WriteSpecs]) -> None:
 
 def _destination_key(directory: Path, spec: WriteSpecs) -> str:
     """
-    The destination of ``spec``, with symbolic links in its folder followed.
+    The destination of ``spec``, with symbolic links followed.
+
+    Links are followed in its folders and at the file itself, as the write
+    does, so a link and the file it points to are one destination.
 
     Args:
         directory: Base directory for relative filenames.
@@ -277,8 +337,7 @@ def _destination_key(directory: Path, spec: WriteSpecs) -> str:
     Returns:
         The absolute path of the file, as a string.
     """
-    path = _resolve_destination(directory, spec.filename)
-    return str(path.parent.resolve() / path.name)
+    return os.path.realpath(_resolve_destination(directory, spec.filename))
 
 
 def _fold(path: str, *, case: bool, form: bool) -> str:
@@ -408,18 +467,74 @@ def _write_atomically(final_file: Path, values: np.ndarray) -> None:
     """
     Serialize ``values`` to a temporary sibling file and move it into place.
 
+    A symbolic link at ``final_file`` is followed, so the file it points to
+    is replaced and the link stays; a dangling link creates that file, and
+    its folder when missing, as sub-folders of a filename are. The temporary
+    file sits next to the real destination, so the move stays on one
+    filesystem.
+
     Args:
         final_file: Destination path; its parent directory must exist.
         values: Array to serialize with :meth:`numpy.ndarray.tofile`.
     """
-    handle, temporary_name = tempfile.mkstemp(
-        dir=final_file.parent, prefix=f".{final_file.name}.", suffix=".binary_engine"
-    )
-    os.close(handle)
+    destination = Path(os.path.realpath(final_file))
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    handle, temporary_name = _create_temporary(destination)
     try:
-        values.tofile(temporary_name)
-        os.replace(temporary_name, final_file)
+        with os.fdopen(handle, "wb") as file:
+            values.tofile(file)
+        os.replace(temporary_name, destination)
     except BaseException:
         with contextlib.suppress(FileNotFoundError):
             os.unlink(temporary_name)
         raise
+
+
+def _create_temporary(destination: Path) -> tuple[int, str]:
+    """
+    Create an empty, hidden file next to ``destination``, open for writing.
+
+    Unlike :func:`tempfile.mkstemp`, which always uses mode 0600, the file
+    is created with 0666 and the process umask applies, so the written file
+    gets the same permissions as any other new file. The name is short and
+    fixed in length (35 bytes), so a destination name close to the
+    filesystem's limit still gets a temporary file. As ``mkstemp`` does, a
+    name that is already taken (a file left behind by a crash, say) is
+    retried with a new random one; any other error is raised at once.
+
+    Args:
+        destination: The file the temporary one will replace.
+
+    Returns:
+        The open file descriptor and the path of the temporary file.
+
+    Raises:
+        FileExistsError: If every name tried is taken.
+    """
+    for _ in range(_TEMPORARY_ATTEMPTS - 1):
+        with contextlib.suppress(FileExistsError):
+            return _open_new_temporary(destination.parent)
+    return _open_new_temporary(destination.parent)  # raises if taken again
+
+
+# 64 random bits per name make a clash all but impossible, so this bound only
+# matters with a broken random source; mkstemp uses TMP_MAX (10000).
+_TEMPORARY_ATTEMPTS = 100
+
+
+def _open_new_temporary(folder: Path) -> tuple[int, str]:
+    """
+    Create a new temporary file with a random name in ``folder``.
+
+    Args:
+        folder: Where to create it.
+
+    Returns:
+        The open file descriptor and the path of the file.
+
+    Raises:
+        FileExistsError: If the name drawn is taken.
+    """
+    flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY | getattr(os, "O_BINARY", 0)
+    name = folder / f".binary_engine-{secrets.token_hex(8)}.tmp"
+    return os.open(name, flags, 0o666), str(name)

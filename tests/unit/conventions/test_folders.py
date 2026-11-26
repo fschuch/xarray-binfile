@@ -274,7 +274,7 @@ class TestUnrelatedFilesAreNeverOpened:
             "notes.txt",
             "input.i3d",
             ".DS_Store",
-            ".ux-0000.bin.tmp123.binary_engine",
+            ".binary_engine-0123456789abcdef.tmp",  # a leftover temporary file
             "ux-0000.bin.bak",
         ):
             (tmp_path / extra).write_bytes(b"\0" * 8)
