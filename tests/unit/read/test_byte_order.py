@@ -14,6 +14,7 @@ import numpy as np
 import pytest
 import xarray as xr
 
+from xarray_binfile.conventions import Layout, StaticFiles
 from xarray_binfile.read.file_metadata import ReadSpecs
 
 FOREIGN = ">f8" if sys.byteorder == "little" else "<f8"
@@ -69,6 +70,20 @@ def test_the_reviewers_mean_through_pandas_works(foreign):
     frame = _open(foreign).to_dataframe()
 
     assert frame["u"].mean() == VALUES.mean()
+
+
+def test_a_convention_writes_the_layouts_byte_order_back(tmp_path):
+    convention = StaticFiles(Layout({"x": range(3), "y": range(4)}, dtype=FOREIGN))
+    VALUES.astype(FOREIGN).tofile(tmp_path / "u.bin")
+    original = (tmp_path / "u.bin").read_bytes()
+    out = tmp_path / "out"
+    out.mkdir()
+
+    dataset = convention.open(tmp_path).load()
+    dataset.binary_engine.to_file(convention.writer, out)
+
+    assert dataset["u"].dtype.isnative
+    assert (out / "u.bin").read_bytes() == original
 
 
 def test_a_native_file_reads_as_before(tmp_path):
