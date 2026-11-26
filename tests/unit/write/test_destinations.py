@@ -125,3 +125,75 @@ def test_an_existing_regular_file_is_still_replaced(tmp_path):
     assert not (tmp_path / "ux.bin").is_symlink()
     np.testing.assert_array_equal(np.fromfile(tmp_path / "ux.bin"), [4.0, 4.0, 4.0])
     assert sorted(p.name for p in tmp_path.iterdir()) == ["ux.bin"]
+
+
+RETRY = pytest.mark.xfail(strict=True, reason="a name clash is not retried (#90)")
+TAKEN = "0" * 16
+
+
+def _tokens(monkeypatch, *tokens):
+    """Make the temporary names use ``tokens``, then repeat the last one."""
+    drawn = []
+
+    def token_hex(nbytes):
+        drawn.append(tokens[min(len(drawn), len(tokens) - 1)])
+        return drawn[-1]
+
+    monkeypatch.setattr("xarray_binfile.write.accessor.secrets.token_hex", token_hex)
+    return drawn
+
+
+def _leftover(folder):
+    """A temporary file left behind, for example by a crash."""
+    path = folder / f".binary_engine-{TAKEN}.tmp"
+    path.write_bytes(b"leftover")
+    return path
+
+
+@RETRY
+def test_a_temporary_name_already_taken_is_retried_with_a_new_one(
+    tmp_path, monkeypatch
+):
+    leftover = _leftover(tmp_path)
+    drawn = _tokens(monkeypatch, TAKEN, "1" * 16)
+
+    _ux(7.0).binary_engine.to_file(_to("ux.bin"), tmp_path)
+
+    assert drawn == [TAKEN, "1" * 16]
+    np.testing.assert_array_equal(np.fromfile(tmp_path / "ux.bin"), [7.0, 7.0, 7.0])
+    assert leftover.read_bytes() == b"leftover"  # never touched
+
+
+@RETRY
+def test_a_temporary_name_always_taken_fails_after_a_bounded_number_of_tries(
+    tmp_path, monkeypatch
+):
+    leftover = _leftover(tmp_path)
+    drawn = _tokens(monkeypatch, TAKEN)
+    array, writer = _ux(), _to("ux.bin")
+
+    with pytest.raises(FileExistsError):
+        array.binary_engine.to_file(writer, tmp_path)
+    assert 1 < len(drawn) <= 1000
+    assert leftover.read_bytes() == b"leftover"
+    assert not (tmp_path / "ux.bin").exists()
+
+
+def test_other_errors_creating_the_temporary_file_are_not_retried(
+    tmp_path, monkeypatch
+):
+    drawn = _tokens(monkeypatch, "1" * 16, "2" * 16)
+    real_open = os.open
+
+    def denied(path, *args, **kwargs):
+        # ``os.open`` is the global function: fail only our temporary file.
+        if ".binary_engine-" not in str(path):
+            return real_open(path, *args, **kwargs)  # no cover - other callers
+        raise PermissionError("denied")
+
+    monkeypatch.setattr("xarray_binfile.write.accessor.os.open", denied)
+    array, writer = _ux(), _to("ux.bin")
+
+    with pytest.raises(PermissionError, match="denied"):
+        array.binary_engine.to_file(writer, tmp_path)
+    assert drawn == ["1" * 16]
