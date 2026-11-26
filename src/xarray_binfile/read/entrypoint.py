@@ -14,7 +14,7 @@ from typing import Any
 from xarray import Dataset
 from xarray.backends import BackendEntrypoint
 
-from xarray_binfile.read.array import BinaryEngineBackendArray
+from xarray_binfile.read.array import BinaryEngineBackendArray, coordinates_dataset
 from xarray_binfile.read.file_metadata import ReadSpecsGetterProtocol
 
 
@@ -45,7 +45,12 @@ class RawBinaryEntrypoint(BackendEntrypoint):
         Args:
             filename_or_obj: Path to the binary file or a file-like object.
             read_specs_getter: A callable that generates read specifications for the binary file.
-            drop_variables: Variables to drop from the dataset. Defaults to None.
+            drop_variables: A name or names of variables to drop. A dropped
+                file is not read and keeps only its coordinates, so that
+                ``open_mfdataset`` can still combine it with the others;
+                coordinate values only the dropped variable has (extra time
+                steps) then reach the dataset, as with netCDF. ``open()`` on a
+                convention skips dropped files instead. Defaults to None.
 
         Returns:
             The opened Xarray dataset.
@@ -64,13 +69,12 @@ class RawBinaryEntrypoint(BackendEntrypoint):
         except Exception as err:
             error_message = f"Error reading metadata from {file_path}: {err}"
             raise ValueError(error_message) from err
-        if (
-            isinstance(drop_variables, str) and file_metadata.name == drop_variables
-        ) or (
-            isinstance(drop_variables, Iterable)
-            and file_metadata.name in drop_variables
-        ):
-            dataset = Dataset()
+        if isinstance(drop_variables, str):
+            drop_variables = (drop_variables,)
+        if file_metadata.name in (drop_variables or ()):
+            # Keeping the coordinates lets xarray combine dropped files with
+            # the others, as a netCDF file keeps its dimensions.
+            dataset = coordinates_dataset(file_metadata)
         else:
             dataset = BinaryEngineBackendArray(
                 metadata=file_metadata

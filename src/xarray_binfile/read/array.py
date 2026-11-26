@@ -216,17 +216,31 @@ class BinaryEngineBackendArray(BackendArray):
         Returns:
             The Xarray Dataset representation of the backend array.
         """
-        dataset = xr.Dataset(
-            data_vars={
+        return coordinates_dataset(self.metadata).assign(
+            {
                 self.metadata.name: (
                     self.metadata.dims,
                     indexing.LazilyIndexedArray(self),
                 )
-            },
-            coords=self.metadata.coords,
-            attrs=self.metadata.attrs,
+            }
         )
-        for coord, attrs in (self.metadata.coord_attrs or {}).items():
-            if coord in dataset.coords:
-                dataset[coord].attrs.update(attrs)
-        return dataset
+
+
+def coordinates_dataset(metadata: ReadSpecs) -> xr.Dataset:
+    """
+    The Dataset a file describes, without its variable.
+
+    It carries the coordinates, their attributes and the Dataset attributes,
+    all taken from the read specs, so the file itself is not read.
+
+    Args:
+        metadata: The read specs of the file.
+
+    Returns:
+        A Dataset with coordinates and no data variables.
+    """
+    dataset = xr.Dataset(coords=metadata.coords, attrs=metadata.attrs)
+    for coord, attrs in (metadata.coord_attrs or {}).items():
+        if coord in dataset.coords:
+            dataset[coord].attrs.update(attrs)
+    return dataset
