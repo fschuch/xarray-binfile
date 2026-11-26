@@ -23,6 +23,7 @@ from xarray_binfile.conventions.layout import Layout, LayoutMismatchError
 from xarray_binfile.conventions.stacking import (
     VariableStack,
     split_variables,
+    stack_listed,
     stack_variables,
     stacked_names,
 )
@@ -313,13 +314,19 @@ class _ConventionBase(Convention):
         """
         Rebuild the stacked arrays declared in ``stacks`` from their split variables.
 
+        When ``names`` is set, a variable that reads more than one way takes
+        the reading that leads to a listed name, so ``names=("phi1",)``
+        reads ``phi11`` as ``phi1`` + ``1`` rather than ``phi`` + ``11``.
+
         Args:
             dataset: A dataset as returned by the ``binfile`` engine.
 
         Returns:
             The dataset with ``ux``, ``uy``, ``uz`` replaced by ``u`` and so on.
         """
-        return stack_variables(dataset, self.stacks)
+        if self.names is None:
+            return stack_variables(dataset, self.stacks)
+        return stack_listed(dataset, self.stacks, self.names)
 
     def _extra_coords(self, fields: Mapping[str, Any]) -> dict[str, Any]:  # no cov
         """

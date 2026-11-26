@@ -12,7 +12,7 @@ one array on read.
 
 import re
 import string
-from collections.abc import Collection, Iterator, Mapping, Sequence
+from collections.abc import Callable, Collection, Iterator, Mapping, Sequence
 from dataclasses import dataclass
 from functools import cached_property
 from typing import Any
@@ -247,7 +247,29 @@ class VariableStack:
             ValueError: If a group's base name is already a variable of the
                 dataset, which would silently overwrite it.
         """
-        groups = self._groups(dataset)
+        return self._stack(dataset)
+
+    def _stack(
+        self, dataset: xr.Dataset, prefer: Callable[[str], bool] | None = None
+    ) -> xr.Dataset:
+        """
+        :meth:`stack`, preferring the readings whose base name ``prefer`` accepts.
+
+        Args:
+            dataset: The dataset holding the split variables.
+            prefer: Optional test on a base name. A variable read more than
+                one way (``phi11`` as ``phi`` + ``11`` or ``phi1`` + ``1``)
+                takes the first reading it accepts, or the longest value
+                when it accepts none.
+
+        Returns:
+            A new dataset where each group is replaced by its stacked array.
+
+        Raises:
+            ValueError: If a group's base name is already a variable of the
+                dataset, which would silently overwrite it.
+        """
+        groups = self._groups(dataset, prefer)
         to_drop: list[str] = []
         stacked: dict[str, xr.DataArray] = {}
         for name, members in groups.items():
@@ -264,22 +286,27 @@ class VariableStack:
             to_drop.extend(members.values())
         return dataset.drop_vars(to_drop).assign(stacked)
 
-    def _groups(self, dataset: xr.Dataset) -> dict[str, dict[Any, str]]:
+    def _groups(
+        self, dataset: xr.Dataset, prefer: Callable[[str], bool] | None = None
+    ) -> dict[str, dict[Any, str]]:
         """
         Group the variables encoding ``dim`` by base name.
 
         Args:
             dataset: The dataset holding the split variables.
+            prefer: Optional test on a base name, see :meth:`_stack`.
 
         Returns:
             ``{base name: {value: variable name}}`` for the accepted names.
         """
         groups: dict[str, dict[Any, str]] = {}
         for variable in map(str, dataset.data_vars):
-            reading = next(self._bases(variable), None)
-            if reading is not None:
-                value, name = reading
-                groups.setdefault(name, {})[value] = variable
+            readings = list(self._bases(variable))
+            if not readings:
+                continue
+            preferred = (r for r in readings if prefer is not None and prefer(r[1]))
+            value, name = next(preferred, readings[0])
+            groups.setdefault(name, {})[value] = variable
         return groups
 
     def _concat(self, dataset: xr.Dataset, members: Mapping[Any, str]) -> xr.DataArray:
@@ -359,4 +386,35 @@ def stack_variables(dataset: xr.Dataset, stacks: Sequence[VariableStack]) -> xr.
     """
     for stack in reversed(stacks):
         dataset = stack.stack(dataset)
+    return dataset
+
+
+def stack_listed(
+    dataset: xr.Dataset, stacks: Sequence[VariableStack], names: Collection[str]
+) -> xr.Dataset:
+    """
+    :func:`stack_variables`, preferring readings that lead to one of ``names``.
+
+    A convention restricted to ``names=("phi1",)`` writes ``phi11`` for
+    ``phi1`` at ``n=1``. Read on its own, ``phi11`` is ``phi`` + ``11``; here
+    ``phi1`` + ``1`` wins because ``phi1`` is listed. A base name counts when
+    it is listed or when the stacks still to apply turn it into a listed
+    name (``ux`` for ``u``). Variables with no such reading are stacked as
+    :func:`stack_variables` would.
+
+    Args:
+        dataset: The dataset holding the split variables.
+        stacks: The stacks that were used to split.
+        names: The names the variables are expected to end up under.
+
+    Returns:
+        The stacked dataset.
+    """
+    for index in reversed(range(len(stacks))):
+        outer = stacks[:index]
+
+        def prefer(base: str, outer: Sequence[VariableStack] = outer) -> bool:
+            return any(name in names for name in stacked_names(base, outer))
+
+        dataset = stacks[index]._stack(dataset, prefer)
     return dataset
