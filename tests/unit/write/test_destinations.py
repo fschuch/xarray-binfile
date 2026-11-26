@@ -85,8 +85,10 @@ def test_a_link_and_the_file_it_points_to_are_one_file(tmp_path):
     (tmp_path / "b.bin").write_bytes(b"")
     _link(tmp_path / "a.bin", tmp_path / "b.bin")
 
+    array, writer = _ux(), _to("a.bin", "b.bin")
+
     with pytest.raises(ValueError, match="same file"):
-        _ux().binary_engine.to_file(_to("a.bin", "b.bin"), tmp_path)
+        array.binary_engine.to_file(writer, tmp_path)
     assert (tmp_path / "b.bin").read_bytes() == b""
 
 

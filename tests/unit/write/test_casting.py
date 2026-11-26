@@ -39,8 +39,10 @@ def _written(folder) -> list[str]:
 def test_a_cast_that_changes_the_kind_is_refused(tmp_path, values, dtype):
     array = xr.DataArray(np.array(values), dims=("x",), name="ux")
 
+    writer = _through(dtype)
+
     with pytest.raises(TypeError, match="ux.bin") as error:
-        array.binary_engine.to_file(_through(dtype), tmp_path)
+        array.binary_engine.to_file(writer, tmp_path)
     assert str(array.dtype) in str(error.value)
     assert _written(tmp_path) == []  # refused before the first file
 
@@ -54,8 +56,10 @@ def test_a_lazy_array_is_refused_without_being_computed(tmp_path):
     lazy = dask.ones(2, chunks=1).map_blocks(never, dtype="<f8")
     array = xr.DataArray(lazy, dims=("x",))
 
+    writer = _through("<i4")
+
     with pytest.raises(TypeError, match="ux.bin"):
-        array.binary_engine.to_file(_through("<i4"), tmp_path)
+        array.binary_engine.to_file(writer, tmp_path)
     assert _written(tmp_path) == []
 
 
