@@ -4,6 +4,7 @@ Provides accessors for writing xarray Dataset and DataArray objects to binary fi
 
 import contextlib
 import os
+import secrets
 import tempfile
 import unicodedata
 from collections import Counter, defaultdict
@@ -268,7 +269,10 @@ def _require_distinct_files(directory: Path, specs: list[WriteSpecs]) -> None:
 
 def _destination_key(directory: Path, spec: WriteSpecs) -> str:
     """
-    The destination of ``spec``, with symbolic links in its folder followed.
+    The destination of ``spec``, with symbolic links followed.
+
+    Links are followed in its folders and at the file itself, as the write
+    does, so a link and the file it points to are one destination.
 
     Args:
         directory: Base directory for relative filenames.
@@ -277,8 +281,7 @@ def _destination_key(directory: Path, spec: WriteSpecs) -> str:
     Returns:
         The absolute path of the file, as a string.
     """
-    path = _resolve_destination(directory, spec.filename)
-    return str(path.parent.resolve() / path.name)
+    return os.path.realpath(_resolve_destination(directory, spec.filename))
 
 
 def _fold(path: str, *, case: bool, form: bool) -> str:
@@ -408,18 +411,41 @@ def _write_atomically(final_file: Path, values: np.ndarray) -> None:
     """
     Serialize ``values`` to a temporary sibling file and move it into place.
 
+    A symbolic link at ``final_file`` is followed, so the file it points to
+    is replaced and the link stays; a dangling link creates that file. The
+    temporary file sits next to the real destination, so the move stays on
+    one filesystem.
+
     Args:
         final_file: Destination path; its parent directory must exist.
         values: Array to serialize with :meth:`numpy.ndarray.tofile`.
     """
-    handle, temporary_name = tempfile.mkstemp(
-        dir=final_file.parent, prefix=f".{final_file.name}.", suffix=".binary_engine"
-    )
-    os.close(handle)
+    destination = Path(os.path.realpath(final_file))
+    handle, temporary_name = _create_temporary(destination)
     try:
-        values.tofile(temporary_name)
-        os.replace(temporary_name, final_file)
+        with os.fdopen(handle, "wb") as file:
+            values.tofile(file)
+        os.replace(temporary_name, destination)
     except BaseException:
         with contextlib.suppress(FileNotFoundError):
             os.unlink(temporary_name)
         raise
+
+
+def _create_temporary(destination: Path) -> tuple[int, str]:
+    """
+    Create an empty, hidden file next to ``destination``, open for writing.
+
+    Unlike :func:`tempfile.mkstemp`, which always uses mode 0600, the file
+    is created with 0666 and the process umask applies, so the written file
+    gets the same permissions as any other new file.
+
+    Args:
+        destination: The file the temporary one will replace.
+
+    Returns:
+        The open file descriptor and the path of the temporary file.
+    """
+    flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY | getattr(os, "O_BINARY", 0)
+    name = destination.parent / f".{destination.name}.{secrets.token_hex(8)}.binary_engine"
+    return os.open(name, flags, 0o666), str(name)

@@ -19,7 +19,6 @@ import xarray as xr
 
 from xarray_binfile.write import WriteSpecs
 
-WRITE = pytest.mark.xfail(strict=True, reason="fixed in the next commit (#69)")
 
 
 def _ux(value: float = 1.0) -> xr.DataArray:
@@ -49,7 +48,6 @@ def umask():
     os.umask(previous)
 
 
-@WRITE
 @pytest.mark.skipif(sys.platform == "win32", reason="POSIX permissions")
 def test_a_new_file_gets_the_permissions_the_umask_allows(tmp_path, umask):
     _ux().binary_engine.to_file(_to("ux.bin"), tmp_path)
@@ -58,7 +56,6 @@ def test_a_new_file_gets_the_permissions_the_umask_allows(tmp_path, umask):
     assert mode == 0o666 & ~umask
 
 
-@WRITE
 def test_a_linked_destination_is_written_through(tmp_path):
     target = tmp_path / "elsewhere" / "ux-real.bin"
     target.parent.mkdir()
@@ -73,7 +70,6 @@ def test_a_linked_destination_is_written_through(tmp_path):
     np.testing.assert_array_equal(np.fromfile(target), [2.0, 2.0, 2.0])
 
 
-@WRITE
 def test_a_dangling_link_creates_the_file_it_points_to(tmp_path):
     target = tmp_path / "ux-real.bin"
     out = tmp_path / "out"
@@ -86,7 +82,6 @@ def test_a_dangling_link_creates_the_file_it_points_to(tmp_path):
     np.testing.assert_array_equal(np.fromfile(target), [3.0, 3.0, 3.0])
 
 
-@WRITE
 def test_a_link_and_the_file_it_points_to_are_one_file(tmp_path):
     (tmp_path / "b.bin").write_bytes(b"")
     _link(tmp_path / "a.bin", tmp_path / "b.bin")
