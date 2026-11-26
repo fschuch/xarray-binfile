@@ -31,9 +31,10 @@ def _write(folder, files):
 
 def test_a_missing_step_is_refused_by_name(tmp_path):
     _write(tmp_path, {"a": [0, 1, 2], "b": [0, 2]})
+    convention = StepIndexedFiles(LAYOUT)
 
     with pytest.raises(ValueError, match=r"'b' has no file at time=1") as info:
-        StepIndexedFiles(LAYOUT).open(tmp_path)
+        convention.open(tmp_path)
 
     assert "join='outer'" in str(info.value)
 
