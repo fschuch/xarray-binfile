@@ -15,6 +15,7 @@ import xarray as xr
 from xarray_binfile.conventions import Layout, StepIndexedFiles
 from xarray_binfile.read.file_metadata import ReadSpecs
 
+
 def _reader(path):
     return ReadSpecs(filepath=path, dtype="<f4", coords={"x": range(3)}, name="ux")
 
