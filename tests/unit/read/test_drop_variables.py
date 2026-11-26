@@ -40,7 +40,6 @@ def _open(paths, **kwargs):
     )
 
 
-@pytest.mark.xfail(strict=True, reason="#69: a string is checked with `in`")
 def test_a_string_drops_that_name_only(tmp_path):
     (path,) = _write(tmp_path, {"rho": [0]})
 
@@ -51,7 +50,6 @@ def test_a_string_drops_that_name_only(tmp_path):
     assert list(opened.data_vars) == ["rho"]
 
 
-@pytest.mark.xfail(strict=True, reason="#69: empty Datasets cannot be combined")
 @pytest.mark.parametrize("drop", ["uy", ["uy"]])
 def test_a_variable_spanning_files_is_dropped(tmp_path, drop):
     paths = _write(tmp_path, {"ux": [0, 1], "uy": [0, 1]})
@@ -63,7 +61,6 @@ def test_a_variable_spanning_files_is_dropped(tmp_path, drop):
     assert opened.attrs == {"case": "demo"}
 
 
-@pytest.mark.xfail(strict=True, reason="#69: empty Datasets cannot be combined")
 def test_a_dropped_file_keeps_its_coordinates(tmp_path):
     paths = _write(tmp_path, {"ux": [0, 1], "uy": [0, 1, 2]})
 

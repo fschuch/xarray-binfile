@@ -56,9 +56,20 @@ def open_files(
     if not isinstance(reader, _SpecsCache):
         reader = _SpecsCache(paths, reader)
     _require_one_variable_per_name(reader.read_specs())
+    if "join" not in open_mfdataset_kwargs:
+        _require_same_positions(reader.read_specs())
     return xr.open_mfdataset(
         paths, engine="binfile", read_specs_getter=reader, **open_mfdataset_kwargs
     )
+
+
+# Where xarray places a file: (dimension, first value) pairs.
+_Position = tuple[tuple[Hashable, Hashable | None], ...]
+
+
+def _name_set(names: str | Iterable[str]) -> set[str]:
+    """A bare string is one name, not the set of its characters."""
+    return {names} if isinstance(names, str) else set(names)
 
 
 def _require_one_variable_per_name(specs: Iterable[ReadSpecs]) -> None:
@@ -111,7 +122,55 @@ def _require_one_variable_per_name(specs: Iterable[ReadSpecs]) -> None:
             at[where] = spec.filepath
 
 
-def _position(spec: ReadSpecs) -> Hashable:
+def _require_same_positions(specs: Iterable[ReadSpecs]) -> None:
+    """
+    Refuse variables that miss a file the others have.
+
+    Variables with the same dimensions are expected at the same positions,
+    such as every snapshot of a run. When one misses a snapshot, xarray fills
+    it with NaN, which turns integers into floats, and writing the dataset
+    back would create the missing file. Passing ``join`` to ``open()`` opts
+    in to that, and skips this check. Variables with other dimensions (a
+    static mask next to a time series) are not compared.
+
+    Args:
+        specs: The read specs of the files to open.
+
+    Raises:
+        ValueError: If a variable has no file at a position where another
+            variable with the same dimensions has one.
+    """
+    by_dims: defaultdict[frozenset[Hashable], defaultdict[str, set[_Position]]]
+    by_dims = defaultdict(lambda: defaultdict(set))
+    for spec in specs:
+        by_dims[frozenset(spec.dims)][spec.name].add(_position(spec))
+    for positions in by_dims.values():
+        everywhere: set[_Position] = set().union(*positions.values())
+        for name, found in sorted(positions.items()):
+            missing = sorted(everywhere - found, key=repr)
+            if missing:
+                where = _describe(missing[0], everywhere)
+                error_message = (
+                    f"The variable {name!r} has no file at {where}, where other "
+                    f"variables with its dimensions have one ({len(missing)} "
+                    "position(s) missing in all). xarray would fill the gap with "
+                    "NaN, turning integers into floats. Pass join='outer' to "
+                    "open() to accept that, or leave the variable out with "
+                    "drop_variables."
+                )
+                raise ValueError(error_message)
+
+
+def _describe(position: _Position, everywhere: set[_Position]) -> str:
+    """Name a position by the coordinates whose first value varies."""
+    return ", ".join(
+        f"{dim}={value}"
+        for dim, value in position
+        if len({dict(other).get(dim) for other in everywhere}) > 1
+    )
+
+
+def _position(spec: ReadSpecs) -> _Position:
     """Where xarray places a file: the first value of every coordinate."""
     return tuple(
         sorted((dim, _first_value(values)) for dim, values in spec.coords.items())
@@ -264,6 +323,21 @@ class Convention:
         """
         return self.reader(path).name
 
+    def _names_of_file(self, path: Path) -> set[str]:
+        """
+        The names ``path`` can be selected by in :meth:`open`.
+
+        The default is the name on disk. Conventions with stacks add the
+        names it is stacked into (``u`` for ``ux``).
+
+        Args:
+            path: An accepted file.
+
+        Returns:
+            The names.
+        """
+        return {self.name_of_file(path)}
+
     def accepts(self, path: Path) -> bool:
         """
         Tell whether the convention can decode ``path``.
@@ -310,7 +384,8 @@ class Convention:
         self,
         directory: str | os.PathLike[str],
         *,
-        variables: Iterable[str] | None = None,
+        variables: str | Iterable[str] | None = None,
+        drop_variables: str | Iterable[str] | None = None,
         stack: bool = True,
         **open_mfdataset_kwargs: Any,
     ) -> xr.Dataset:
@@ -331,8 +406,12 @@ class Convention:
 
         Args:
             directory: The folder holding the files.
-            variables: Optional names to keep, as found on disk (``"ux"``, not
-                ``"u"``); other files are not opened.
+            variables: Optional name or names to keep; other files are not
+                opened. A name as found on disk (``"ux"``) or as stacked
+                (``"u"``, for ``ux``, ``uy`` and ``uz``) selects its files.
+            drop_variables: Optional name or names to leave out, matched as
+                ``variables`` are. Their files are not opened, so their
+                coordinates do not reach the dataset either.
             stack: Whether to rebuild the stacked arrays.
             **open_mfdataset_kwargs: Forwarded to :func:`xarray.open_mfdataset`,
                 for example ``chunks={"x": 16}`` or ``parallel=True``.
@@ -348,8 +427,11 @@ class Convention:
         """
         paths = self.files(directory)
         if variables is not None:
-            wanted = set(variables)
-            paths = [path for path in paths if self.name_of_file(path) in wanted]
+            wanted = _name_set(variables)
+            paths = [path for path in paths if self._names_of_file(path) & wanted]
+        if drop_variables is not None:
+            dropped = _name_set(drop_variables)
+            paths = [path for path in paths if not self._names_of_file(path) & dropped]
         reader = _SpecsCache(paths, self.reader)
         if "chunks" not in open_mfdataset_kwargs:
             chunks = _slab_chunks(reader.read_specs())

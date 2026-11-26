@@ -278,6 +278,18 @@ class _ConventionBase(Convention):
         """
         return self._parse(path)["name"]
 
+    def _names_of_file(self, path: Path) -> set[str]:
+        """
+        The name on disk and the names ``stacks`` turn it into.
+
+        Args:
+            path: An accepted file.
+
+        Returns:
+            The names ``path`` can be selected by.
+        """
+        return stacked_names(self.name_of_file(path), self.stacks)
+
     def _named(self, data_array: xr.DataArray) -> xr.DataArray:
         """
         Apply the ``name_of`` hook, returning an array that carries its output name.

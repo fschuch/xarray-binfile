@@ -12,6 +12,7 @@ import numpy as np
 import pytest
 
 from xarray_binfile.conventions import (
+    Convention,
     FolderConventions,
     Layout,
     StaticFiles,
@@ -29,18 +30,7 @@ def _write(folder, *filenames):
         np.zeros(3).tofile(folder / filename)
 
 
-@pytest.mark.parametrize(
-    "drop",
-    [
-        pytest.param(
-            "rhou",
-            marks=pytest.mark.xfail(
-                strict=True, reason="#69: a string is checked with `in`"
-            ),
-        ),
-        ["rhou"],
-    ],
-)
+@pytest.mark.parametrize("drop", ["rhou", ["rhou"]])
 def test_drop_variables_skips_that_name_only(tmp_path, drop):
     _write(tmp_path, "rho.bin", "rhou.bin", "e.bin")
 
@@ -49,7 +39,16 @@ def test_drop_variables_skips_that_name_only(tmp_path, drop):
     assert sorted(opened.data_vars) == ["e", "rho"]
 
 
-@pytest.mark.xfail(strict=True, reason="#69: dropped files are opened")
+@pytest.mark.parametrize("keep", ["rhou", ["rhou"]])
+def test_variables_keeps_that_name_only(tmp_path, keep):
+    _write(tmp_path, "rho.bin", "rhou.bin", "u.bin")
+
+    opened = StaticFiles(LAYOUT).open(tmp_path, variables=keep)
+
+    # A bare string is one name, not the set of its characters.
+    assert list(opened.data_vars) == ["rhou"]
+
+
 def test_drop_variables_skips_the_files_of_a_variable(tmp_path):
     _write(tmp_path, "ux-0000.bin", "ux-0001.bin", "uy-0000.bin", "uy-0001.bin")
     _write(tmp_path, "uy-0002.bin")
@@ -60,7 +59,6 @@ def test_drop_variables_skips_the_files_of_a_variable(tmp_path):
     assert opened["time"].values.tolist() == [0, 1]
 
 
-@pytest.mark.xfail(strict=True, reason="#69: selection takes on-disk names only")
 @pytest.mark.parametrize(
     ("selection", "expected"),
     [
@@ -76,7 +74,6 @@ def test_stacked_names_select_their_components(tmp_path, selection, expected):
     assert sorted(convention.open(tmp_path, **selection).data_vars) == expected
 
 
-@pytest.mark.xfail(strict=True, reason="#69: selection takes on-disk names only")
 def test_folders_select_by_stacked_names_too(tmp_path):
     _write(tmp_path / "flow", "ux.bin", "uy.bin")
     _write(tmp_path / "mesh", "dx.bin", "dy.bin")
@@ -99,3 +96,18 @@ def test_names_on_disk_still_select(tmp_path, selection, expected):
     convention = StaticFiles(LAYOUT, stacks=(VELOCITY,))
 
     assert sorted(convention.open(tmp_path, **selection).data_vars) == expected
+
+
+def test_a_bare_reader_selects_by_the_name_on_disk(tmp_path):
+    _write(tmp_path, "ux.bin", "uy.bin")
+
+    class Bare:
+        def reader(self, path):
+            return StaticFiles(LAYOUT).reader(path)
+
+        def writer(self, data_array):  # no cov
+            raise NotImplementedError
+
+    opened = Convention.adapt(Bare()).open(tmp_path, drop_variables="uy")
+
+    assert list(opened.data_vars) == ["ux"]

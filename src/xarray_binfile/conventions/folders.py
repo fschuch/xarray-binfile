@@ -283,6 +283,18 @@ class FolderConventions(Convention):
         """
         return self._member(self._folder_of(path)).name_of_file(path)
 
+    def _names_of_file(self, path: Path) -> set[str]:
+        """
+        The names ``path`` can be selected by, from the convention of its folder.
+
+        Args:
+            path: An accepted file.
+
+        Returns:
+            The names.
+        """
+        return self._member(self._folder_of(path))._names_of_file(path)
+
     def writer(self, data_array: xr.DataArray) -> Iterator[WriteSpecs]:
         """
         Yield write specs from the single convention that accepts the array.
@@ -423,6 +435,19 @@ class PatternConventions(Convention):
                 errors.append(str(err))
         error_message = f"No convention accepts the file {path}: {errors}"
         raise ValueError(error_message)
+
+    def _names_of_file(self, path: Path) -> set[str]:
+        """
+        The names ``path`` can be selected by, from the first member accepting it.
+
+        Args:
+            path: An accepted file.
+
+        Returns:
+            The names.
+        """
+        member = next(member for member in self._members if member.accepts(path))
+        return member._names_of_file(path)
 
     def reader(self, path: Path) -> ReadSpecs:
         """

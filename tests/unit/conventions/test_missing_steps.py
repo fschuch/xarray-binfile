@@ -29,7 +29,6 @@ def _write(folder, files):
             np.arange(3, dtype="int32").tofile(folder / f"{name}-{step:04d}.bin")
 
 
-@pytest.mark.xfail(strict=True, reason="#69: gaps are filled with NaN")
 def test_a_missing_step_is_refused_by_name(tmp_path):
     _write(tmp_path, {"a": [0, 1, 2], "b": [0, 2]})
 
@@ -64,8 +63,6 @@ def test_variables_with_the_same_steps_open(tmp_path):
 def test_variables_with_other_dimensions_are_not_compared(tmp_path):
     _write(tmp_path, {"a": [0, 1]})
     np.arange(3, dtype="int32").tofile(tmp_path / "mask.bin")
-    conventions = PatternConventions(
-        [StepIndexedFiles(LAYOUT), StaticFiles(LAYOUT)]
-    )
+    conventions = PatternConventions([StepIndexedFiles(LAYOUT), StaticFiles(LAYOUT)])
 
     assert sorted(conventions.open(tmp_path).data_vars) == ["a", "mask"]
