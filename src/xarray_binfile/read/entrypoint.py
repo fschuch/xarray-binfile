@@ -70,5 +70,12 @@ class RawBinaryEntrypoint(BackendEntrypoint):
             isinstance(drop_variables, Iterable)
             and file_metadata.name in drop_variables
         ):
-            return Dataset()
-        return BinaryEngineBackendArray(metadata=file_metadata).get_xarray_dataset()
+            dataset = Dataset()
+        else:
+            dataset = BinaryEngineBackendArray(
+                metadata=file_metadata
+            ).get_xarray_dataset()
+        # Each read opens and closes its own file handle, so there is nothing
+        # to release; xarray still calls the closer of every Dataset it combines.
+        dataset.set_close(lambda: None)
+        return dataset
