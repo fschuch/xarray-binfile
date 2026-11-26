@@ -99,7 +99,7 @@ convention = StepIndexedFiles(layout, pattern="{name}-{step:04d}.bin")
 
 By default the `time` coordinate is the integer step. When the interval between snapshots is known, pass `time_step` and the coordinate becomes `step * time_step` on read, while on write the coordinate is divided back into a step. Values that do not land on an integer step raise instead of being truncated, so two snapshots can never silently overwrite each other:
 
-```python
+```python continuation
 convention = StepIndexedFiles(layout, pattern="{name}.{step:06d}", time_step=0.05)
 ```
 
@@ -115,7 +115,7 @@ caseB/
 	ux-0.500.bin
 ```
 
-```python
+```python continuation
 from xarray_binfile.conventions import TimeStampedFiles
 
 convention = TimeStampedFiles(layout, pattern="{name}-{time:.3f}.bin")
@@ -127,7 +127,7 @@ The `time` coordinate is the float parsed from the filename. On write, each valu
 
 Fields without a time dimension, such as a geometry or a mask, use one file per variable:
 
-```python
+```python continuation
 from xarray_binfile.conventions import StaticFiles
 
 static = StaticFiles(layout, pattern="{name}.bin")
@@ -137,7 +137,7 @@ static = StaticFiles(layout, pattern="{name}.bin")
 
 Solvers often store a vector field as one file per component (`ux`, `uy`, `uz`) and a set of scalar fractions as numbered variables (`phi1`, `phi2`). A `VariableStack` declares that encoding once: the dimension it stands for, the template that builds a variable name from `{name}` and the value, and the values it may take. Conventions split arrays along those dimensions on write and stack the variables back on read:
 
-```python
+```python continuation fixture:dataset fixture:output_dir
 from xarray_binfile.conventions import VariableStack
 
 velocity = VariableStack("i", "{name}{i}", values=("x", "y", "z"))
@@ -158,7 +158,7 @@ raw = convention.open(output_dir, stack=False)  # ux, uy, uz as on disk
 
 When files following different conventions share a folder, for example `ux-0001.bin` next to `epsi.bin`, `PatternConventions` tries its members in order on read and keeps the first whose pattern accepts the filename, so list the most specific pattern first. On write it offers the array to every member and requires exactly one to accept it, based on dimensions and coordinates:
 
-```python
+```python continuation fixture:dataset fixture:output_dir
 from xarray_binfile.conventions import PatternConventions
 
 conventions = PatternConventions([StepIndexedFiles(layout), StaticFiles(layout)])
@@ -182,7 +182,7 @@ caseC/
 
 Reading keeps only the filename's name, not its folder, so `xy_planes/ux-0001.bin` and `3d/ux-0001.bin` would both be `ux`. One name may span several folders when its files have the same dimensions at different positions, for example one run split in time across `early/` and `late/`, or tiles of one grid. Otherwise `open()` refuses the files before opening them: a name whose files have different dimensions (a plane and a volume) cannot be one variable, and xarray places files by the first value of every coordinate, so two files at the same position (the same step in two folders, or grids that start at the same point) would silently keep only one of them. Dates are compared in nanoseconds, as xarray does. Give such files distinct names, as in the tree above, or open each folder with its own convention. The check runs in `open()`; a direct `xr.open_mfdataset(..., read_specs_getter=conventions.reader)` call opens one file at a time and cannot detect it. Keeping the folder in the variable name is tracked in [#87](https://github.com/fschuch/xarray-binfile/issues/87).
 
-```python
+```python continuation fixture:dataset fixture:output_dir fixture:case_dir
 from xarray_binfile.conventions import FolderConventions
 
 x, y, z = np.arange(64), np.arange(32), np.arange(16)
