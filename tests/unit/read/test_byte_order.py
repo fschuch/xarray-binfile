@@ -16,7 +16,6 @@ import xarray as xr
 
 from xarray_binfile.read.file_metadata import ReadSpecs
 
-NATIVE = pytest.mark.xfail(strict=True, reason="fixed in the next commit (#69)")
 FOREIGN = ">f8" if sys.byteorder == "little" else "<f8"
 VALUES = np.arange(12.0).reshape(3, 4)
 
@@ -39,7 +38,6 @@ def _open(path, **kwargs):
     return xr.open_dataset(path, engine="binfile", read_specs_getter=_reader, **kwargs)
 
 
-@NATIVE
 def test_the_variable_is_native_before_it_is_loaded(foreign):
     dataset = _open(foreign)
 
@@ -47,7 +45,6 @@ def test_the_variable_is_native_before_it_is_loaded(foreign):
     assert dataset["u"].dtype.isnative
 
 
-@NATIVE
 @pytest.mark.parametrize(
     "select",
     [lambda u: u, lambda u: u.isel(x=slice(1, 3))],
@@ -60,7 +57,6 @@ def test_loaded_values_are_native_and_correct(foreign, select):
     np.testing.assert_array_equal(loaded, select(xr.DataArray(VALUES, dims=("x", "y"))))
 
 
-@NATIVE
 def test_a_chunked_variable_is_native(foreign):
     pytest.importorskip("dask")
     u = _open(foreign, chunks={})["u"]
@@ -69,7 +65,6 @@ def test_a_chunked_variable_is_native(foreign):
     assert u.compute().dtype.isnative
 
 
-@NATIVE
 def test_the_reviewers_mean_through_pandas_works(foreign):
     frame = _open(foreign).to_dataframe()
 

@@ -29,7 +29,7 @@ Contract:
 `ReadSpecs` fields:
 
 - `filepath`: path to the binary file
-- `dtype`: data type (for example `np.float32`, `"<f4"`, `">f8"`)
+- `dtype`: data type on disk (for example `np.float32`, `"<f4"`, `">f8"`). The values come back in the machine's native byte order, as with xarray's netCDF and zarr backends, so a `">f8"` file reads as `float64`
 - `coords`: mapping of dimension name to coordinate array, in on-disk order
 - `name`: variable name
 - `attrs`: optional attributes
