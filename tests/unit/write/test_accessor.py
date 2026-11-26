@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 import dask
 import dask.array
@@ -194,7 +195,13 @@ def test_to_file_allows_dotdot_that_stays_inside_directory(tmp_path, data_array)
 def test_to_file_cleans_temporary_file_when_move_fails(
     tmp_path, data_array, monkeypatch
 ):
-    def boom(*args, **kwargs):
+    real_replace = os.replace
+
+    def boom(src, dst, *args, **kwargs):
+        # ``os.replace`` is the global function, which plugins such as
+        # pytest-memray also call: fail only the moves into this test's folder.
+        if Path(dst).parent != tmp_path:
+            return real_replace(src, dst, *args, **kwargs)  # no cover - memray only
         raise OSError("disk full")
 
     monkeypatch.setattr("xarray_binfile.write.accessor.os.replace", boom)

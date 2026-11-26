@@ -67,7 +67,7 @@ addopts = [
     "--doctest-continue-on-failure",
     "--doctest-report=ndiff",
 ]
-testpaths = ["tests"]
+testpaths = ["tests", "src"]
 
 [tool.coverage.run]
 branch = true

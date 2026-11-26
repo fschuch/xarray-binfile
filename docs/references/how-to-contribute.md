@@ -69,8 +69,9 @@ The file [.pre-commit-config.yaml](https://github.com/fschuch/xarray-binfile/blo
 The [pytest](https://docs.pytest.org/en/stable/index.html) test suite can be run from the default environment with `hatch run test`
 or `hatch run test-no-cov` (the latter without coverage check).
 
-Code examples on docstrings and documentation are tested by the `doctest` module (configured on the file [pyproject.toml](https://github.com/fschuch/xarray-binfile/blob/main/pyproject.toml)).
+Code examples in docstrings are tested by the `doctest` module (configured on the file [pyproject.toml](https://github.com/fschuch/xarray-binfile/blob/main/pyproject.toml)).
 It is integrated with pytest, so the previous test commands will also run the doctests.
+The tutorial notebooks are executed when the documentation is built (`hatch run docs:build`), which fails on any error; code blocks in the Markdown pages are not run.
 
 To run all the quality checks, you can use the command `hatch run qa`.
 
