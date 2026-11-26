@@ -81,6 +81,33 @@ def test_a_dangling_link_creates_the_file_it_points_to(tmp_path):
     np.testing.assert_array_equal(np.fromfile(target), [3.0, 3.0, 3.0])
 
 
+@pytest.mark.xfail(strict=True, reason="the link's folder is not created (#90)")
+def test_a_dangling_link_into_a_missing_folder_creates_that_folder(tmp_path):
+    target = tmp_path / "new" / "ux-real.bin"
+    out = tmp_path / "out"
+    out.mkdir()
+    _link(out / "ux.bin", target)
+
+    _ux(5.0).binary_engine.to_file(_to("ux.bin"), out)
+
+    assert (out / "ux.bin").is_symlink()
+    np.testing.assert_array_equal(np.fromfile(target), [5.0, 5.0, 5.0])
+
+
+@pytest.mark.xfail(strict=True, reason="the temporary name is too long (#90)")
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="the whole path exceeds MAX_PATH by default"
+)
+def test_a_long_filename_that_fits_the_filesystem_is_written(tmp_path):
+    # 229 bytes, under the usual 255-byte limit for one path component. On
+    # main the temporary name for it was 253 bytes, so it was written.
+    name = "x" * 225 + ".bin"
+
+    _ux(6.0).binary_engine.to_file(_to(name), tmp_path)
+
+    assert [path.name for path in tmp_path.iterdir()] == [name]
+
+
 def test_a_link_and_the_file_it_points_to_are_one_file(tmp_path):
     (tmp_path / "b.bin").write_bytes(b"")
     _link(tmp_path / "a.bin", tmp_path / "b.bin")
