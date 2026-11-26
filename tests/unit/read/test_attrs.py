@@ -4,7 +4,8 @@ Where ``ReadSpecs.attrs`` end up.
 From the pyOpenSci review, https://github.com/fschuch/xarray-binfile/issues/69:
 the docstring said "dataset or variable". They are Dataset attributes, and
 across files xarray keeps the first file's. Per-variable attributes are
-tracked in a feature request; until then they can be set after loading.
+tracked in https://github.com/fschuch/xarray-binfile/issues/91; until then
+they can be set after loading.
 """
 
 import numpy as np
