@@ -29,10 +29,10 @@ Contract:
 `ReadSpecs` fields:
 
 - `filepath`: path to the binary file
-- `dtype`: data type (for example `np.float32`, `"<f4"`, `">f8"`)
+- `dtype`: data type on disk (for example `np.float32`, `"<f4"`, `">f8"`). The values come back in the machine's native byte order, as with xarray's netCDF and zarr backends, so a `">f8"` file reads as `float64`
 - `coords`: mapping of dimension name to coordinate array, in on-disk order
 - `name`: variable name
-- `attrs`: optional attributes
+- `attrs`: optional attributes of the Dataset, not of the variable. When several files are opened together, xarray keeps one file's, chosen by how it orders and combines the files (not necessarily the first path), so give every file the same ones. Attributes of a variable, such as its `units`, can be set after loading (`dataset["ux"].attrs["units"] = "m/s"`); setting them from the read specs is tracked in [#91](https://github.com/fschuch/xarray-binfile/issues/91)
 - `order`: memory layout of the file, `"C"` (default, last dimension varies fastest, as NumPy's `tofile` and C programs write) or `"F"` (first dimension varies fastest, as Fortran programs such as 2DECOMP&FFT and Xcompact3d write). Both describe the same bytes: a Fortran file with dims `(x, y, z)` is also a C file with dims `(z, y, x)`. Pick the one that keeps your dimension names in their natural order
 - `coord_attrs`: optional attributes per coordinate, attached on read (for example `{"x": {"units": "m"}}`)
 
@@ -51,7 +51,7 @@ Contract:
 
 - `filename`: output path. A relative path is resolved against the directory passed to `to_file`, which must exist, and may include sub-folders, which are created on demand, but it must stay inside that directory (`..` escaping it is rejected; symbolic links are not followed for this check). An absolute path is used as is, so one call can target several locations. A symbolic link at the destination is followed: the file it points to is replaced and the link stays. New files get the permissions the umask allows
 - `sub_array`: array slice to write into that file, already transposed to on-disk order
-- `dtype`: optional on-disk data type; when set, the sub-array is cast right before serialization (including byte order, for example `"<f4"`). The cast may narrow within a kind (`f8` to `f4`, `i8` to `i4`, with no range check) or widen (`i4` to `f8`), but `to_file` refuses, before writing any file, a cast that changes the kind: float to integer would truncate and turn NaN into 0, and complex to float would drop the imaginary part. Cast the array yourself first if that is what you want. When omitted, the in-memory dtype and native byte order are written as-is, so make sure they match what your read specs getter declares.
+- `dtype`: optional on-disk data type; when set, the sub-array is cast right before serialization (including byte order, for example `"<f4"`). The cast may narrow within a kind (`f8` to `f4`, `i8` to `i4`, with no range check) or widen (`i4` to `f8`), but `to_file` refuses, before writing any file, a cast that changes the kind: float to integer would truncate and turn NaN into 0, and complex to float would drop the imaginary part. Cast the array yourself first if that is what you want. When omitted, the in-memory dtype and native byte order are written as-is, so make sure they match what your read specs getter declares. Reading returns native arrays, so a file in the other byte order (for example `">f8"` on a little-endian machine) keeps that byte order on write only when `dtype` says so; the conventions always pass their layout's `dtype`, so their round trips keep it.
 - `order`: memory layout of the file, `"C"` (default) or `"F"`, with the same meaning as on `ReadSpecs`. `tofile` always serializes in C order, so Fortran order is obtained by flattening the array first.
 
 `to_file` also accepts a `progress` wrapper applied to the iterator of write specs, for example `progress=tqdm` or `progress=functools.partial(tqdm, desc="ux")`, to report progress without the library depending on a progress-bar package.

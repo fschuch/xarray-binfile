@@ -39,7 +39,7 @@ class BinaryEngineBackendArray(BackendArray):
 
     Attributes:
         metadata: Metadata describing the binary file.
-        dtype: Data type of the array.
+        dtype: Data type of the array in memory, in native byte order.
         shape: Shape of the array.
     """
 
@@ -57,8 +57,10 @@ class BinaryEngineBackendArray(BackendArray):
         """
         self.metadata = metadata
 
-        # Attributes required by BackendArray
-        self.dtype = np.dtype(self.metadata.dtype)
+        # Attributes required by BackendArray. Values are returned in the
+        # machine's byte order, as xarray's netCDF and zarr backends do;
+        # ``metadata.dtype`` keeps the byte order on disk for the reads.
+        self.dtype = np.dtype(self.metadata.dtype).newbyteorder("=")
         self.shape = self.metadata.shape
 
         self._validate_file_size()
@@ -143,9 +145,14 @@ class BinaryEngineBackendArray(BackendArray):
         Returns:
             The data read from the file.
         """
-        return np.fromfile(
-            file, dtype=self.metadata.dtype, count=np.prod(self.metadata.shape)
-        ).reshape(self.metadata.shape, order=self.metadata.order)
+        # ``astype`` copies only when the file is not in native byte order.
+        return (
+            np.fromfile(
+                file, dtype=self.metadata.dtype, count=np.prod(self.metadata.shape)
+            )
+            .astype(self.dtype, copy=False)
+            .reshape(self.metadata.shape, order=self.metadata.order)
+        )
 
     def _wrap_numpy_memmap(
         self, file, key: tuple[slice | int, ...]
@@ -176,8 +183,9 @@ class BinaryEngineBackendArray(BackendArray):
             shape=self.metadata.shape,
             order=self.metadata.order,
         )
-        # np.array copies; np.asarray would return a view of the mapped file
-        return np.array(memory_map[key])
+        # np.array copies (np.asarray would return a view of the mapped file),
+        # converting to native byte order in that same copy.
+        return np.array(memory_map[key], dtype=self.dtype)
 
     def _read_binary_at_slices(
         self, file, key: tuple[slice | int, ...]

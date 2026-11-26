@@ -30,7 +30,9 @@ class WriteSpecs(NamedTuple):
             (float to integer, complex to float) is refused; cast the array
             first if that is intended. When ``None``, the in-memory dtype and
             native byte order are written as-is, so make sure they match what
-            your read specs getter declares.
+            your read specs getter declares. Reading returns native arrays,
+            so a file in the other byte order keeps it on write only when
+            ``dtype`` says so, as the conventions do with their layout's.
         order: Memory layout of the file: ``"C"`` (default, last axis of
             ``sub_array`` varies fastest) or ``"F"`` (first axis varies
             fastest, as Fortran programs expect). Must match the ``order``

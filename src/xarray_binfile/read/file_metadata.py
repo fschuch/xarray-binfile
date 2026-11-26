@@ -39,8 +39,11 @@ class ReadSpecs:
         filepath: Path to the binary file.
         dtype: Data type of the binary file.
         coords: Coordinates of the data in the binary file.
-        name: Name of the dataset or variable.
-        attrs: Additional attributes for the dataset or variable.
+        name: Name of the variable the file holds.
+        attrs: Attributes of the Dataset, not of the variable. Across
+            files xarray keeps one file's, chosen by how it orders and
+            combines them (not necessarily the first path), so give every
+            file the same ones. Set variable attributes after loading.
         order: Memory layout of the file, ``"C"`` (default) or ``"F"``.
         coord_attrs: Optional attributes attached to each coordinate, keyed
             by coordinate name (for example ``{"x": {"units": "m"}}``).
