@@ -503,5 +503,7 @@ def _create_temporary(destination: Path) -> tuple[int, str]:
         The open file descriptor and the path of the temporary file.
     """
     flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY | getattr(os, "O_BINARY", 0)
-    name = destination.parent / f".{destination.name}.{secrets.token_hex(8)}.binary_engine"
+    name = (
+        destination.parent / f".{destination.name}.{secrets.token_hex(8)}.binary_engine"
+    )
     return os.open(name, flags, 0o666), str(name)

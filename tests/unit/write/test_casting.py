@@ -15,7 +15,6 @@ import xarray as xr
 from xarray_binfile.write import WriteSpecs
 
 
-
 def _through(dtype):
     def writer(array: xr.DataArray):
         yield WriteSpecs(filename="first.bin", sub_array=array.astype("<f8"))

@@ -20,7 +20,6 @@ import xarray as xr
 from xarray_binfile.write import WriteSpecs
 
 
-
 def _ux(value: float = 1.0) -> xr.DataArray:
     return xr.DataArray(np.full(3, value), dims=("x",), name="ux")
 
