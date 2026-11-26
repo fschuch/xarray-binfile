@@ -191,7 +191,38 @@ class BinaryEngineDataArray:
         _directory = Path(directory) if directory is not None else Path.cwd()
         specs = list(write_specs_getter(self._data_array))
         _require_distinct_files(_directory, specs)
+        _require_same_kind_casts(specs)
         _write_specs(_directory, specs, progress)
+
+
+def _require_same_kind_casts(specs: Iterable[WriteSpecs]) -> None:
+    """
+    Fail if a spec's ``dtype`` would change the kind of its data.
+
+    Only the dtypes are compared, so a lazy ``sub_array`` is not computed.
+    Casts within a kind (``f8`` to ``f4``, ``i8`` to ``i4``) or to a wider
+    kind (``i4`` to ``f8``) are allowed, as ``casting="same_kind"`` does;
+    float to integer, which truncates and turns NaN into 0, is refused.
+
+    Args:
+        specs: Every write spec of one ``to_file`` call.
+
+    Raises:
+        TypeError: If a cast would change the kind of the data.
+    """
+    for spec in specs:
+        source = spec.sub_array.dtype
+        if spec.dtype is None or np.can_cast(source, spec.dtype, "same_kind"):
+            continue
+        target = np.dtype(spec.dtype)
+        error_message = (
+            f"Writing {str(spec.filename)!r} would cast {source} to {target}, "
+            "which can change the values (floats are truncated to integers and "
+            "NaN becomes 0, complex numbers lose their imaginary part). Cast the "
+            f"array first if that is intended, for example with "
+            f".astype({target.str!r})."
+        )
+        raise TypeError(error_message)
 
 
 def _write_specs(

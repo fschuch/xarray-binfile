@@ -14,7 +14,6 @@ import xarray as xr
 
 from xarray_binfile.write import WriteSpecs
 
-CAST = pytest.mark.xfail(strict=True, reason="fixed in the next commit (#69)")
 
 
 def _through(dtype):
@@ -29,7 +28,6 @@ def _written(folder) -> list[str]:
     return sorted(path.name for path in folder.iterdir())
 
 
-@CAST
 @pytest.mark.parametrize(
     ("values", "dtype"),
     [
@@ -48,10 +46,14 @@ def test_a_cast_that_changes_the_kind_is_refused(tmp_path, values, dtype):
     assert _written(tmp_path) == []  # refused before the first file
 
 
-@CAST
 def test_a_lazy_array_is_refused_without_being_computed(tmp_path):
     dask = pytest.importorskip("dask.array")
-    array = xr.DataArray(dask.from_array(np.array([1.9, 2.5])), dims=("x",))
+
+    def never(block):  # no cover - only runs if the array is computed
+        raise AssertionError("the array was computed")
+
+    lazy = dask.ones(2, chunks=1).map_blocks(never, dtype="<f8")
+    array = xr.DataArray(lazy, dims=("x",))
 
     with pytest.raises(TypeError, match="ux.bin"):
         array.binary_engine.to_file(_through("<i4"), tmp_path)
