@@ -71,6 +71,25 @@ def test_other_files_are_still_rejected(filename):
     assert not convention.accepts(pathlib.Path(filename))
 
 
+@pytest.mark.xfail(strict=True, reason="PR #93 review: stacking ignores names")
+@pytest.mark.parametrize("with_velocity", [False, True], ids=["numbers", "nested"])
+def test_a_listed_name_ending_in_a_digit_opens_back(tmp_path, with_velocity):
+    numbers = VariableStack("n", "{name}{n:d}", values=range(1, 13))
+    stacks = (numbers, VELOCITY) if with_velocity else (numbers,)
+    convention = StaticFiles(LAYOUT, stacks=stacks, names=("phi1",))
+    phi1 = xr.DataArray(
+        np.arange(6.0).reshape(2, 3), coords={"n": [1, 2], "x": X}, name="phi1"
+    )
+    if with_velocity:
+        phi1 = phi1.expand_dims(i=["x", "y"]).copy()
+
+    phi1.to_dataset().binary_engine.to_file(convention.writer, tmp_path)
+    opened = convention.open(tmp_path).load()
+
+    assert list(opened.data_vars) == ["phi1"]
+    xr.testing.assert_equal(opened["phi1"].transpose(*phi1.dims), phi1)
+
+
 def test_names_on_disk_still_read(tmp_path):
     convention = StaticFiles(LAYOUT, stacks=(VELOCITY,), names=("ux", "uy", "uz"))
     for index, component in enumerate("xyz"):

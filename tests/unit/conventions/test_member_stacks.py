@@ -103,6 +103,39 @@ def test_a_variable_spanning_folders_is_stacked_once(tmp_path):
     assert dict(opened["u"].sizes) == {"i": 2, "x": 3, "time": 2}
 
 
+@pytest.mark.xfail(strict=True, reason="PR #93 review: claims are stacked apart")
+@pytest.mark.parametrize("shared", [True, False], ids=["one member", "equal members"])
+def test_components_spread_over_folders_are_stacked_together(tmp_path, shared):
+    _write(tmp_path / "early", "ux-0000.bin", "uy-0000.bin")
+    _write(tmp_path / "late", "ux-0001.bin", "uz-0001.bin")
+    early = StepIndexedFiles(LAYOUT, stacks=(VELOCITY,))
+    late = early if shared else StepIndexedFiles(LAYOUT, stacks=(VELOCITY,))
+    conventions = FolderConventions({"early": early, "late": late})
+
+    opened = conventions.open(tmp_path)
+
+    assert list(opened.data_vars) == ["u"]
+    assert opened["i"].values.tolist() == ["x", "y", "z"]
+
+
+@pytest.mark.xfail(strict=True, reason="PR #93 review: assign drops new values")
+def test_members_with_different_components_keep_them_all(tmp_path):
+    _write(tmp_path / "flow", "ux.bin", "uy.bin")
+    _write(tmp_path / "wake", "vx.bin", "vy.bin", "vz.bin")
+    conventions = FolderConventions(
+        {
+            "flow": StaticFiles(LAYOUT, stacks=(VELOCITY,)),
+            "wake": StaticFiles(LAYOUT, stacks=(VELOCITY,)),
+        }
+    )
+
+    opened = conventions.open(tmp_path).load()
+
+    assert opened["i"].values.tolist() == ["x", "y", "z"]
+    assert opened["v"].notnull().all()
+    assert opened["u"].sel(i="z").isnull().all()
+
+
 @pytest.mark.parametrize(
     "conventions",
     [
