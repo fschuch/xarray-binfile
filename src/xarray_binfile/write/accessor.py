@@ -498,14 +498,43 @@ def _create_temporary(destination: Path) -> tuple[int, str]:
     is created with 0666 and the process umask applies, so the written file
     gets the same permissions as any other new file. The name is short and
     fixed in length (35 bytes), so a destination name close to the
-    filesystem's limit still gets a temporary file.
+    filesystem's limit still gets a temporary file. As ``mkstemp`` does, a
+    name that is already taken (a file left behind by a crash, say) is
+    retried with a new random one; any other error is raised at once.
 
     Args:
         destination: The file the temporary one will replace.
 
     Returns:
         The open file descriptor and the path of the temporary file.
+
+    Raises:
+        FileExistsError: If every name tried is taken.
+    """
+    for _ in range(_TEMPORARY_ATTEMPTS - 1):
+        with contextlib.suppress(FileExistsError):
+            return _open_new_temporary(destination.parent)
+    return _open_new_temporary(destination.parent)  # raises if taken again
+
+
+# 64 random bits per name make a clash all but impossible, so this bound only
+# matters with a broken random source; mkstemp uses TMP_MAX (10000).
+_TEMPORARY_ATTEMPTS = 100
+
+
+def _open_new_temporary(folder: Path) -> tuple[int, str]:
+    """
+    Create a new temporary file with a random name in ``folder``.
+
+    Args:
+        folder: Where to create it.
+
+    Returns:
+        The open file descriptor and the path of the file.
+
+    Raises:
+        FileExistsError: If the name drawn is taken.
     """
     flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY | getattr(os, "O_BINARY", 0)
-    name = destination.parent / f".binary_engine-{secrets.token_hex(8)}.tmp"
+    name = folder / f".binary_engine-{secrets.token_hex(8)}.tmp"
     return os.open(name, flags, 0o666), str(name)

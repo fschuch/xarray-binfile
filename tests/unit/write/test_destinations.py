@@ -127,7 +127,6 @@ def test_an_existing_regular_file_is_still_replaced(tmp_path):
     assert sorted(p.name for p in tmp_path.iterdir()) == ["ux.bin"]
 
 
-RETRY = pytest.mark.xfail(strict=True, reason="a name clash is not retried (#90)")
 TAKEN = "0" * 16
 
 
@@ -150,7 +149,6 @@ def _leftover(folder):
     return path
 
 
-@RETRY
 def test_a_temporary_name_already_taken_is_retried_with_a_new_one(
     tmp_path, monkeypatch
 ):
@@ -164,7 +162,6 @@ def test_a_temporary_name_already_taken_is_retried_with_a_new_one(
     assert leftover.read_bytes() == b"leftover"  # never touched
 
 
-@RETRY
 def test_a_temporary_name_always_taken_fails_after_a_bounded_number_of_tries(
     tmp_path, monkeypatch
 ):
