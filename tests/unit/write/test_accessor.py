@@ -150,13 +150,15 @@ def test_to_file_requires_existing_directory_for_relative_paths(tmp_path, data_a
     assert not (tmp_path / "missing").exists()
 
 
-@pytest.mark.skipif(not hasattr(os, "symlink"), reason="symlinks unsupported")
 def test_to_file_follows_symlinked_sub_folder_inside_directory(tmp_path, data_array):
     target = tmp_path / "big_disk"
     target.mkdir()
     out = tmp_path / "out"
     out.mkdir()
-    (out / "3d").symlink_to(target, target_is_directory=True)
+    try:
+        (out / "3d").symlink_to(target, target_is_directory=True)
+    except OSError:  # no cover - Windows without symlink rights (WinError 1314)
+        pytest.skip("symbolic links are not available")
 
     def linked(array):
         yield WriteSpecs(filename="3d/ux.bin", sub_array=array)
