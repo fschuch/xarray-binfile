@@ -32,7 +32,6 @@ def _velocity():
     )
 
 
-@pytest.mark.xfail(strict=True, reason="#69: names are checked on disk when reading")
 def test_what_is_written_opens_back(tmp_path):
     convention = StaticFiles(LAYOUT, stacks=(VELOCITY,), names=("u", "pp"))
     dataset = xr.Dataset({"u": _velocity(), "pp": ("x", np.ones(3))}, coords={"x": X})
@@ -44,7 +43,6 @@ def test_what_is_written_opens_back(tmp_path):
     xr.testing.assert_equal(opened["u"], dataset["u"])
 
 
-@pytest.mark.xfail(strict=True, reason="#69: names are checked on disk when reading")
 def test_the_reader_keeps_the_name_on_disk():
     convention = StaticFiles(LAYOUT, stacks=(VELOCITY,), names=("u",))
 
@@ -52,7 +50,6 @@ def test_the_reader_keeps_the_name_on_disk():
     assert convention.accepts(pathlib.Path("uz.bin"))
 
 
-@pytest.mark.xfail(strict=True, reason="#69: names are checked on disk when reading")
 def test_nested_stacks_decode_to_the_listed_name():
     convention = StaticFiles(LAYOUT, stacks=(VELOCITY, SCALARS), names=("u",))
 

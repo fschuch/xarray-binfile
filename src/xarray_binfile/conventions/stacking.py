@@ -76,7 +76,10 @@ class VariableStack:
         template: ``str.format`` template building a variable name from
             ``{name}`` and ``{dim}`` (``"{name}{i}"``, ``"{name}{n:d}"``).
             Format specifications apply both ways, so integer values can use
-            zero-fill (``"{name}{n:02d}"``).
+            zero-fill (``"{name}{n:02d}"``). Without it, longer values are
+            tried first, so ``phi11`` reads as ``phi`` + ``11``; for a base
+            name that ends in a digit itself (``phi1`` + ``1``), list it in
+            ``names`` or use zero-fill.
         values: The values the dimension may take, in the order the stacked
             coordinate should follow (``("x", "y", "z")``, ``range(1, 10)``).
             Splitting refuses coordinate values outside this set, so every
@@ -141,7 +144,9 @@ class VariableStack:
 
         ``{name}`` and ``{dim}`` are usually adjacent (``"{name}{i}"``), so a
         generic pattern cannot tell where the name ends; matching the value
-        literally (``vort`` + ``x``) removes the ambiguity.
+        literally (``vort`` + ``x``) removes the ambiguity. Longer values come
+        first, so that without zero padding ``phi11`` is tried as ``phi`` +
+        ``11`` before ``phi1`` + ``1``.
 
         Returns:
             Pairs of value and compiled pattern capturing ``name``.
@@ -150,14 +155,35 @@ class VariableStack:
         matchers = []
         for value in self.values:
             parts = []
+            spelled = ""
             for literal, field_name, spec, _ in parsed:
                 parts.append(re.escape(literal))
                 if field_name == "name":
                     parts.append(r"(?P<name>\w+)")
                 elif field_name == self.dim:
-                    parts.append(re.escape(format(value, spec or "")))
-            matchers.append((value, re.compile("".join(parts))))
-        return tuple(matchers)
+                    spelled = format(value, spec or "")
+                    parts.append(re.escape(spelled))
+            matchers.append((len(spelled), value, re.compile("".join(parts))))
+        matchers.sort(key=lambda matcher: -matcher[0])
+        return tuple((value, pattern) for _, value, pattern in matchers)
+
+    def _bases(self, variable: str) -> Iterator[tuple[Any, str]]:
+        """
+        Yield every accepted reading of ``variable``, longest value first.
+
+        Args:
+            variable: A variable name.
+
+        Yields:
+            Pairs of value and base name that ``names`` accepts.
+        """
+        for value, matcher in self._matchers:
+            match = matcher.fullmatch(variable)
+            if match is None:
+                continue
+            name = match.group("name")
+            if self.names is None or name in self.names:
+                yield value, name
 
     def split(self, data_array: xr.DataArray) -> Iterator[xr.DataArray]:
         """
@@ -250,14 +276,10 @@ class VariableStack:
         """
         groups: dict[str, dict[Any, str]] = {}
         for variable in map(str, dataset.data_vars):
-            for value, matcher in self._matchers:
-                match = matcher.fullmatch(variable)
-                if match is None:
-                    continue
-                name = match.group("name")
-                if self.names is None or name in self.names:
-                    groups.setdefault(name, {})[value] = variable
-                break
+            reading = next(self._bases(variable), None)
+            if reading is not None:
+                value, name = reading
+                groups.setdefault(name, {})[value] = variable
         return groups
 
     def _concat(self, dataset: xr.Dataset, members: Mapping[Any, str]) -> xr.DataArray:
@@ -299,6 +321,27 @@ def split_variables(
     first, rest = stacks[0], stacks[1:]
     for piece in first.split(data_array):
         yield from split_variables(piece, rest)
+
+
+def stacked_names(variable: str, stacks: Sequence[VariableStack]) -> set[str]:
+    """
+    Every name ``variable`` could end up under once the stacks are applied.
+
+    Stacks are undone in reverse order, as :func:`stack_variables` does, and
+    every accepted reading is kept, so ``uy2`` gives ``{"uy2", "uy", "u"}``
+    with a velocity stack followed by a numbered one.
+
+    Args:
+        variable: A variable name as found on disk.
+        stacks: The stacks that were used to split.
+
+    Returns:
+        ``variable`` and the base names it may decode into.
+    """
+    names = {variable}
+    for stack in reversed(stacks):
+        names |= {base for name in names for _, base in stack._bases(name)}
+    return names
 
 
 def stack_variables(dataset: xr.Dataset, stacks: Sequence[VariableStack]) -> xr.Dataset:

@@ -24,7 +24,6 @@ def dataset():
     return xr.Dataset({f"phi{n}": ("x", np.full(2, float(n))) for n in NUMBERS})
 
 
-@pytest.mark.xfail(strict=True, reason="#69: phi11 is only tried as phi1 + 1")
 @pytest.mark.parametrize("names", [None, {"phi"}], ids=["guessing", "names"])
 def test_all_twelve_are_stacked(dataset, names):
     stack = VariableStack("n", "{name}{n:d}", values=NUMBERS, names=names)

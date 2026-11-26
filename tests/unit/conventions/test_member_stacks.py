@@ -31,7 +31,6 @@ def _write(folder, *filenames):
         np.zeros(3).tofile(folder / filename)
 
 
-@pytest.mark.xfail(strict=True, reason="#69: stacks apply across members")
 def test_folder_stacks_stay_in_their_folder(tmp_path):
     _write(tmp_path / "flow", "ux.bin", "uy.bin")
     _write(tmp_path / "mesh", "dx.bin", "dy.bin")
@@ -45,7 +44,6 @@ def test_folder_stacks_stay_in_their_folder(tmp_path):
     assert opened["u"]["i"].values.tolist() == ["x", "y"]
 
 
-@pytest.mark.xfail(strict=True, reason="#69: stacks apply across members")
 def test_pattern_stacks_stay_with_their_member(tmp_path):
     _write(tmp_path, "ux-0000.bin", "uy-0000.bin", "dx.bin", "dy.bin")
     conventions = PatternConventions(
@@ -55,7 +53,6 @@ def test_pattern_stacks_stay_with_their_member(tmp_path):
     assert sorted(conventions.open(tmp_path).data_vars) == ["dx", "dy", "u"]
 
 
-@pytest.mark.xfail(strict=True, reason="#69: stacks apply across members")
 def test_nested_members_keep_their_own_stacks(tmp_path):
     _write(tmp_path, "ux-0000.bin", "uy-0000.bin", "dx.bin", "dy.bin")
     _write(tmp_path / "planes", "vx.bin", "vy.bin")
@@ -92,3 +89,40 @@ def test_without_stacking_nothing_changes(tmp_path):
     opened = conventions.open(tmp_path, stack=False)
 
     assert sorted(opened.data_vars) == ["dx", "dy", "ux", "uy"]
+
+
+def test_a_variable_spanning_folders_is_stacked_once(tmp_path):
+    _write(tmp_path / "early", "ux-0000.bin", "uy-0000.bin")
+    _write(tmp_path / "late", "ux-0001.bin", "uy-0001.bin")
+    member = StepIndexedFiles(LAYOUT, stacks=(VELOCITY,))
+    conventions = FolderConventions({"early": member, "late": member})
+
+    opened = conventions.open(tmp_path)
+
+    assert list(opened.data_vars) == ["u"]
+    assert dict(opened["u"].sizes) == {"i": 2, "x": 3, "time": 2}
+
+
+@pytest.mark.parametrize(
+    "conventions",
+    [
+        FolderConventions(
+            {
+                "flow": StaticFiles(LAYOUT, stacks=(VELOCITY,)),
+                "mesh": StaticFiles(LAYOUT),
+            }
+        ),
+        PatternConventions(
+            [StaticFiles(LAYOUT, stacks=(VELOCITY,)), StaticFiles(LAYOUT)]
+        ),
+    ],
+    ids=["folders", "patterns"],
+)
+def test_stack_by_hand_applies_every_members_stacks(tmp_path, conventions):
+    _write(tmp_path / "flow", "ux.bin", "uy.bin")
+    _write(tmp_path / "mesh", "dx.bin", "dy.bin")
+    plain = StaticFiles(LAYOUT)
+    opened = plain.open(tmp_path / "flow").merge(plain.open(tmp_path / "mesh"))
+
+    # A dataset does not record where its variables came from.
+    assert sorted(conventions.stack(opened).data_vars) == ["d", "u"]
