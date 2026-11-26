@@ -11,7 +11,7 @@ joins a composite, so the defaults apply to it as well.
 
 import os
 from collections import defaultdict
-from collections.abc import Hashable, Iterable, Iterator
+from collections.abc import Hashable, Iterable, Iterator, Sequence
 from pathlib import Path
 from typing import Any
 
@@ -356,7 +356,26 @@ class Convention:
             if chunks:
                 open_mfdataset_kwargs["chunks"] = chunks
         dataset = open_files(paths, reader, **open_mfdataset_kwargs)
-        return self.stack(dataset) if stack else dataset
+        return self._stack_files(dataset, paths) if stack else dataset
+
+    def _stack_files(
+        self, dataset: xr.Dataset, _paths: Sequence[Path], /
+    ) -> xr.Dataset:
+        """
+        Stack a dataset knowing the files it was read from.
+
+        The default ignores the paths and calls :meth:`stack`. Conventions
+        made of members override it so that each member stacks only the
+        variables of the files it claimed.
+
+        Args:
+            dataset: The dataset read from the paths.
+            _paths: The files the dataset was read from.
+
+        Returns:
+            The stacked dataset.
+        """
+        return self.stack(dataset)
 
     @classmethod
     def adapt(cls, convention: ConventionProtocol) -> "Convention":

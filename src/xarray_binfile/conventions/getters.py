@@ -23,7 +23,9 @@ from xarray_binfile.conventions.layout import Layout, LayoutMismatchError
 from xarray_binfile.conventions.stacking import (
     VariableStack,
     split_variables,
+    stack_listed,
     stack_variables,
+    stacked_names,
 )
 from xarray_binfile.conventions.stacking import (
     coordinate_or_index as _coordinate_or_index,
@@ -176,9 +178,12 @@ class _ConventionBase(Convention):
         name_of: Optional hook returning the name to write an array under,
             in place of ``data_array.name``; for example
             ``lambda da: da.attrs["file_name"]``.
-        names: Optional variable names the convention accepts. When set,
-            :meth:`reader` and :meth:`files` ignore files whose parsed name
-            is not listed, and :meth:`writer` refuses other arrays. Use it
+        names: Optional variable names the convention accepts, as they are
+            once stacked (``"u"`` for ``ux``, ``uy`` and ``uz``). When set,
+            :meth:`reader` and :meth:`files` ignore files whose parsed name,
+            or the name ``stacks`` turn it into, is not listed, and
+            :meth:`writer` refuses other arrays. Names as found on disk
+            (``"ux"``) are accepted when reading too. Use it
             when the pattern alone is too permissive, for example a bare
             ``"{name}"`` template (no extension) that would otherwise match
             ``README`` or ``Makefile`` in the same folder.
@@ -231,18 +236,26 @@ class _ConventionBase(Convention):
                 name is not listed in ``names``.
         """
         fields = self.pattern.parse(path.name)
-        self._check_name(fields["name"], ValueError)
+        self._check_name(fields["name"], ValueError, on_disk=True)
         return fields
 
-    def _check_name(self, name: str, error: type[Exception]) -> None:
+    def _check_name(
+        self, name: str, error: type[Exception], *, on_disk: bool = False
+    ) -> None:
         """
         Raise ``error`` when ``name`` is not among the accepted ``names``.
 
         Args:
             name: A bare variable name (no folder prefix).
             error: The exception class to raise.
+            on_disk: Whether ``name`` comes from a file, in which case the
+                name it is stacked into may be the one listed (``ux`` for
+                ``u``).
         """
-        if self.names is not None and name not in self.names:
+        if self.names is None:
+            return
+        candidates = stacked_names(name, self.stacks) if on_disk else {name}
+        if not any(candidate in self.names for candidate in candidates):
             error_message = (
                 f"Variable {name!r} is not among the names accepted by this "
                 f"convention: {sorted(self.names)}."
@@ -301,13 +314,19 @@ class _ConventionBase(Convention):
         """
         Rebuild the stacked arrays declared in ``stacks`` from their split variables.
 
+        When ``names`` is set, a variable that reads more than one way takes
+        the reading that leads to a listed name, so ``names=("phi1",)``
+        reads ``phi11`` as ``phi1`` + ``1`` rather than ``phi`` + ``11``.
+
         Args:
             dataset: A dataset as returned by the ``binfile`` engine.
 
         Returns:
             The dataset with ``ux``, ``uy``, ``uz`` replaced by ``u`` and so on.
         """
-        return stack_variables(dataset, self.stacks)
+        if self.names is None:
+            return stack_variables(dataset, self.stacks)
+        return stack_listed(dataset, self.stacks, self.names)
 
     def _extra_coords(self, fields: Mapping[str, Any]) -> dict[str, Any]:  # no cov
         """

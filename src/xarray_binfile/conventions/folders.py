@@ -83,6 +83,80 @@ def _single_acceptor(
     raise LayoutMismatchError(error_message)
 
 
+def _stack_by_member(
+    dataset: xr.Dataset, claims: Iterable[tuple[Convention, list[Path]]]
+) -> xr.Dataset:
+    """
+    Let each member stack only the variables of the files it claimed.
+
+    Members that read a common variable (one run split in time across
+    folders) are stacked together, by the first of them, so components
+    spread over their folders end up in one array.
+
+    Args:
+        dataset: The dataset read from every claimed file.
+        claims: Each member with the files it read.
+
+    Returns:
+        The stacked dataset.
+
+    Raises:
+        ValueError: If a member stacks variables into a name that another
+            member's variable already has.
+    """
+    for group in _sharing_groups(dataset, claims):
+        own = sorted(set().union(*(names for _, _, names in group)))
+        member, paths, _ = group[0]
+        if len(group) == 1:
+            stacked = member._stack_files(dataset[own], paths)
+        else:
+            stacked = member.stack(dataset[own])
+        rest = dataset.drop_vars(own)
+        for name in map(str, stacked.data_vars):
+            if name not in own and name in rest.variables:
+                error_message = (
+                    f"Cannot stack into {name!r}: a variable {name!r} already exists "
+                    "in the dataset, read by another convention. Rename it, restrict "
+                    "``names``, or open with stack=False."
+                )
+                raise ValueError(error_message)
+        # An outer join keeps stacked values the other members did not have
+        # (a z component), as stacking within one member does.
+        dataset = xr.merge(
+            [rest, stacked],
+            join="outer",
+            compat="no_conflicts",
+            combine_attrs="override",
+        )
+    return dataset
+
+
+def _sharing_groups(
+    dataset: xr.Dataset, claims: Iterable[tuple[Convention, list[Path]]]
+) -> list[list[tuple[Convention, list[Path], set[str]]]]:
+    """
+    Group the claims whose members read a common variable, in claim order.
+
+    Args:
+        dataset: The dataset read from every claimed file.
+        claims: Each member with the files it read.
+
+    Returns:
+        Groups of ``(member, paths, variable names)``; members that share no
+        variable are alone in their group.
+    """
+    present = set(map(str, dataset.data_vars))
+    groups: list[list[tuple[Convention, list[Path], set[str]]]] = []
+    for member, paths in claims:
+        names = {member.name_of_file(path) for path in paths} & present
+        sharing = [any(names & n for _, _, n in group) for group in groups]
+        merged = [entry for group, s in zip(groups, sharing) if s for entry in group]
+        merged.append((member, paths, names))
+        groups = [group for group, s in zip(groups, sharing) if not s]
+        groups.append(merged)
+    return groups
+
+
 def _longest(
     folders: Iterable[str], predicate: Callable[[tuple[str, ...]], bool]
 ) -> str | None:
@@ -267,6 +341,10 @@ class FolderConventions(Convention):
         """
         Rebuild the stacked arrays declared by the member conventions.
 
+        A dataset does not record the folder each variable came from, so
+        every member's stacks apply to all of it. :meth:`open` knows the
+        files, and stacks each folder's variables with its own member only.
+
         Args:
             dataset: A dataset as returned by the ``binfile`` engine.
 
@@ -276,6 +354,25 @@ class FolderConventions(Convention):
         for folder in self.conventions:
             dataset = self._member(folder).stack(dataset)
         return dataset
+
+    def _stack_files(self, dataset: xr.Dataset, paths: Sequence[Path], /) -> xr.Dataset:
+        """
+        Stack each folder's variables with the convention of that folder.
+
+        Args:
+            dataset: The dataset read from ``paths``.
+            paths: The files the dataset was read from.
+
+        Returns:
+            The stacked dataset.
+        """
+        claimed: dict[str, list[Path]] = {}
+        for path in paths:
+            claimed.setdefault(self._folder_of(path), []).append(path)
+        return _stack_by_member(
+            dataset,
+            [(self._member(folder), files) for folder, files in claimed.items()],
+        )
 
 
 @dataclass(frozen=True)
@@ -387,6 +484,10 @@ class PatternConventions(Convention):
         """
         Rebuild the stacked arrays declared by the member conventions.
 
+        A dataset does not record which member read each variable, so every
+        member's stacks apply to all of it. :meth:`open` knows the files, and
+        stacks each member's variables with that member only.
+
         Args:
             dataset: A dataset as returned by the ``binfile`` engine.
 
@@ -396,3 +497,23 @@ class PatternConventions(Convention):
         for member in self._members:
             dataset = member.stack(dataset)
         return dataset
+
+    def _stack_files(self, dataset: xr.Dataset, paths: Sequence[Path], /) -> xr.Dataset:
+        """
+        Stack each member's variables with that member, as :meth:`reader` picks it.
+
+        Args:
+            dataset: The dataset read from ``paths``.
+            paths: The files the dataset was read from.
+
+        Returns:
+            The stacked dataset.
+        """
+        members = self._members
+        claimed: dict[int, list[Path]] = {}
+        for path in paths:
+            index = next(i for i, member in enumerate(members) if member.accepts(path))
+            claimed.setdefault(index, []).append(path)
+        return _stack_by_member(
+            dataset, [(members[index], files) for index, files in claimed.items()]
+        )
