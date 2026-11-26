@@ -111,7 +111,8 @@ def test_components_spread_over_folders_are_stacked_together(tmp_path, shared):
     late = early if shared else StepIndexedFiles(LAYOUT, stacks=(VELOCITY,))
     conventions = FolderConventions({"early": early, "late": late})
 
-    opened = conventions.open(tmp_path)
+    # uy has no step 1 and uz no step 0: filling those gaps is opted in.
+    opened = conventions.open(tmp_path, join="outer")
 
     assert list(opened.data_vars) == ["u"]
     assert opened["i"].values.tolist() == ["x", "y", "z"]
