@@ -60,6 +60,20 @@ def test_a_lazy_array_is_refused_without_being_computed(tmp_path):
     assert _written(tmp_path) == []
 
 
+@pytest.mark.xfail(strict=True, reason="Dataset.to_file skips the check (#69)")
+def test_a_dataset_is_refused_before_its_first_variable_is_written(tmp_path):
+    dataset = xr.Dataset(
+        {"a": ("x", np.array([1, 2], "<i4")), "b": ("x", np.array([1.9, 2.5]))}
+    )
+
+    def writer(array: xr.DataArray):
+        yield WriteSpecs(filename=f"{array.name}.bin", sub_array=array, dtype="<i4")
+
+    with pytest.raises(TypeError, match="b.bin"):
+        dataset.binary_engine.to_file(writer, tmp_path)
+    assert _written(tmp_path) == []
+
+
 @pytest.mark.parametrize(
     ("source", "dtype"),
     [("<f8", "<f4"), ("<f8", ">f8"), ("<i8", "<i4"), ("<i4", "<f8"), ("|b1", "<i4")],
