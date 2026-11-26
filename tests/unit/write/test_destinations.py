@@ -81,7 +81,6 @@ def test_a_dangling_link_creates_the_file_it_points_to(tmp_path):
     np.testing.assert_array_equal(np.fromfile(target), [3.0, 3.0, 3.0])
 
 
-@pytest.mark.xfail(strict=True, reason="the link's folder is not created (#90)")
 def test_a_dangling_link_into_a_missing_folder_creates_that_folder(tmp_path):
     target = tmp_path / "new" / "ux-real.bin"
     out = tmp_path / "out"
@@ -94,7 +93,6 @@ def test_a_dangling_link_into_a_missing_folder_creates_that_folder(tmp_path):
     np.testing.assert_array_equal(np.fromfile(target), [5.0, 5.0, 5.0])
 
 
-@pytest.mark.xfail(strict=True, reason="the temporary name is too long (#90)")
 @pytest.mark.skipif(
     sys.platform == "win32", reason="the whole path exceeds MAX_PATH by default"
 )

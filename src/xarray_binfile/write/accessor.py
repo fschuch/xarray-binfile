@@ -468,15 +468,17 @@ def _write_atomically(final_file: Path, values: np.ndarray) -> None:
     Serialize ``values`` to a temporary sibling file and move it into place.
 
     A symbolic link at ``final_file`` is followed, so the file it points to
-    is replaced and the link stays; a dangling link creates that file. The
-    temporary file sits next to the real destination, so the move stays on
-    one filesystem.
+    is replaced and the link stays; a dangling link creates that file, and
+    its folder when missing, as sub-folders of a filename are. The temporary
+    file sits next to the real destination, so the move stays on one
+    filesystem.
 
     Args:
         final_file: Destination path; its parent directory must exist.
         values: Array to serialize with :meth:`numpy.ndarray.tofile`.
     """
     destination = Path(os.path.realpath(final_file))
+    destination.parent.mkdir(parents=True, exist_ok=True)
     handle, temporary_name = _create_temporary(destination)
     try:
         with os.fdopen(handle, "wb") as file:
@@ -494,7 +496,9 @@ def _create_temporary(destination: Path) -> tuple[int, str]:
 
     Unlike :func:`tempfile.mkstemp`, which always uses mode 0600, the file
     is created with 0666 and the process umask applies, so the written file
-    gets the same permissions as any other new file.
+    gets the same permissions as any other new file. The name is short and
+    fixed in length (35 bytes), so a destination name close to the
+    filesystem's limit still gets a temporary file.
 
     Args:
         destination: The file the temporary one will replace.
@@ -503,7 +507,5 @@ def _create_temporary(destination: Path) -> tuple[int, str]:
         The open file descriptor and the path of the temporary file.
     """
     flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY | getattr(os, "O_BINARY", 0)
-    name = (
-        destination.parent / f".{destination.name}.{secrets.token_hex(8)}.binary_engine"
-    )
+    name = destination.parent / f".binary_engine-{secrets.token_hex(8)}.tmp"
     return os.open(name, flags, 0o666), str(name)
