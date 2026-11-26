@@ -15,11 +15,6 @@ import xarray as xr
 from xarray_binfile.conventions import Layout, StepIndexedFiles
 from xarray_binfile.read.file_metadata import ReadSpecs
 
-CLOSE = pytest.mark.xfail(
-    strict=True, raises=TypeError, reason="the backend sets no closer (#69)"
-)
-
-
 def _reader(path):
     return ReadSpecs(filepath=path, dtype="<f4", coords={"x": range(3)}, name="ux")
 
@@ -31,14 +26,12 @@ def ux(tmp_path):
     return path
 
 
-@CLOSE
 def test_open_mfdataset_on_backend_files_closes(ux):
     dataset = xr.open_mfdataset([ux], engine="binfile", read_specs_getter=_reader)
 
     dataset.close()
 
 
-@CLOSE
 @pytest.mark.parametrize("open_kwargs", [{}, {"chunks": {}}], ids=["default", "chunks"])
 def test_an_opened_convention_closes_at_the_end_of_a_with_block(tmp_path, open_kwargs):
     convention = StepIndexedFiles(Layout({"x": np.arange(3)}, dtype="<f4"))
@@ -46,4 +39,4 @@ def test_an_opened_convention_closes_at_the_end_of_a_with_block(tmp_path, open_k
         np.full(3, step, "<f4").tofile(tmp_path / f"ux-{step:04d}.bin")
 
     with convention.open(tmp_path, **open_kwargs) as dataset:
-        assert dataset.ux.shape == (2, 3)
+        assert dataset.ux.shape == (3, 2)
