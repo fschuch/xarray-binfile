@@ -320,7 +320,7 @@ class FolderConventions(Convention):
             dataset = self._member(folder).stack(dataset)
         return dataset
 
-    def _stack_files(self, dataset: xr.Dataset, paths: Sequence[Path]) -> xr.Dataset:
+    def _stack_files(self, dataset: xr.Dataset, paths: Sequence[Path], /) -> xr.Dataset:
         """
         Stack each folder's variables with the convention of that folder.
 
@@ -463,7 +463,7 @@ class PatternConventions(Convention):
             dataset = member.stack(dataset)
         return dataset
 
-    def _stack_files(self, dataset: xr.Dataset, paths: Sequence[Path]) -> xr.Dataset:
+    def _stack_files(self, dataset: xr.Dataset, paths: Sequence[Path], /) -> xr.Dataset:
         """
         Stack each member's variables with that member, as :meth:`reader` picks it.
 

@@ -358,17 +358,19 @@ class Convention:
         dataset = open_files(paths, reader, **open_mfdataset_kwargs)
         return self._stack_files(dataset, paths) if stack else dataset
 
-    def _stack_files(self, dataset: xr.Dataset, paths: Sequence[Path]) -> xr.Dataset:
+    def _stack_files(
+        self, dataset: xr.Dataset, _paths: Sequence[Path], /
+    ) -> xr.Dataset:
         """
         Stack a dataset knowing the files it was read from.
 
-        The default ignores ``paths`` and calls :meth:`stack`. Conventions
+        The default ignores the paths and calls :meth:`stack`. Conventions
         made of members override it so that each member stacks only the
         variables of the files it claimed.
 
         Args:
-            dataset: The dataset read from ``paths``.
-            paths: The files the dataset was read from.
+            dataset: The dataset read from the paths.
+            _paths: The files the dataset was read from.
 
         Returns:
             The stacked dataset.
