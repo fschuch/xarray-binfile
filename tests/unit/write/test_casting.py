@@ -60,7 +60,6 @@ def test_a_lazy_array_is_refused_without_being_computed(tmp_path):
     assert _written(tmp_path) == []
 
 
-@pytest.mark.xfail(strict=True, reason="Dataset.to_file skips the check (#69)")
 def test_a_dataset_is_refused_before_its_first_variable_is_written(tmp_path):
     dataset = xr.Dataset(
         {"a": ("x", np.array([1, 2], "<i4")), "b": ("x", np.array([1.9, 2.5]))}

@@ -59,7 +59,8 @@ class BinaryEngineDataset:
         to the same file, for example a stacked ``u`` whose x component is
         ``ux-0000.bin`` next to a variable ``ux``, or ``U`` and ``u`` where
         the filesystem ignores case
-        (https://github.com/fschuch/xarray-binfile/issues/67).
+        (https://github.com/fschuch/xarray-binfile/issues/67), or when a
+        ``dtype`` would change the kind of a variable's data.
 
         The variables are then written one after the other, so the warning
         there about writing over the inputs also covers one variable computed
@@ -75,15 +76,15 @@ class BinaryEngineDataset:
             FileNotFoundError: If a relative filename is used and ``directory`` does not exist.
             ValueError: If a relative filename escapes ``directory``, or if
                 two write specifications map to the same file.
+            TypeError: If a write specification's ``dtype`` would change the
+                kind of its data.
         """
         _directory = Path(directory) if directory is not None else Path.cwd()
         planned = [
             list(write_specs_getter(data_array))
             for data_array in self._data_set.data_vars.values()
         ]
-        _require_distinct_files(
-            _directory, [spec for specs in planned for spec in specs]
-        )
+        _require_writable(_directory, [spec for specs in planned for spec in specs])
         for specs in planned:
             _write_specs(_directory, specs, progress)
 
@@ -153,7 +154,11 @@ class BinaryEngineDataArray:
 
         Each file is written with the in-memory dtype and native byte order,
         unless the write specification sets ``dtype``, in which case the
-        values are cast right before serialization. Bytes are laid out in
+        values are cast right before serialization. That cast may narrow
+        within a kind (``f8`` to ``f4``, ``i8`` to ``i4``, without a range
+        check) or widen (``i4`` to ``f8``), but a cast that changes the kind
+        (float to integer, which truncates and turns NaN into 0, or complex
+        to float) is refused before any file is written. Bytes are laid out in
         the memory order declared by ``WriteSpecs.order``: ``"C"`` (last
         axis fastest, the default) or ``"F"`` (first axis fastest).
 
@@ -173,7 +178,10 @@ class BinaryEngineDataArray:
         written. The specs hold their ``sub_array`` until written, which is
         free for the shipped conventions (views of the array), but a custom
         getter that computes each ``sub_array`` keeps all of them in memory
-        at once. Each call is independent: an existing file is replaced.
+        at once. Each call is independent: an existing file is replaced. A
+        symbolic link at the destination is followed, so the file it points
+        to is replaced and the link stays. New files get the permissions the
+        process umask allows, as with any other new file.
 
         Args:
             write_specs_getter: A callable that generates write specifications for the data array.
@@ -187,12 +195,29 @@ class BinaryEngineDataArray:
             FileNotFoundError: If a relative filename is used and ``directory`` does not exist.
             ValueError: If a relative filename escapes ``directory``, or if
                 two write specifications map to the same file.
+            TypeError: If a write specification's ``dtype`` would change the
+                kind of its data.
         """
         _directory = Path(directory) if directory is not None else Path.cwd()
         specs = list(write_specs_getter(self._data_array))
-        _require_distinct_files(_directory, specs)
-        _require_same_kind_casts(specs)
+        _require_writable(_directory, specs)
         _write_specs(_directory, specs, progress)
+
+
+def _require_writable(directory: Path, specs: list[WriteSpecs]) -> None:
+    """
+    Check every spec of one ``to_file`` call before the first file is written.
+
+    Args:
+        directory: Base directory for relative filenames.
+        specs: Every write spec of the call.
+
+    Raises:
+        ValueError: If two specs map to the same file.
+        TypeError: If a cast would change the kind of the data.
+    """
+    _require_distinct_files(directory, specs)
+    _require_same_kind_casts(specs)
 
 
 def _require_same_kind_casts(specs: Iterable[WriteSpecs]) -> None:
