@@ -32,7 +32,7 @@ Contract:
 - `dtype`: data type on disk (for example `np.float32`, `"<f4"`, `">f8"`). The values come back in the machine's native byte order, as with xarray's netCDF and zarr backends, so a `">f8"` file reads as `float64`
 - `coords`: mapping of dimension name to coordinate array, in on-disk order
 - `name`: variable name
-- `attrs`: optional attributes of the Dataset, not of the variable. When several files are opened together, xarray keeps the first file's, so give every file the same ones. Attributes of a variable, such as its `units`, can be set after loading (`dataset["ux"].attrs["units"] = "m/s"`); setting them from the read specs is tracked in [#91](https://github.com/fschuch/xarray-binfile/issues/91)
+- `attrs`: optional attributes of the Dataset, not of the variable. When several files are opened together, xarray keeps one file's, chosen by how it orders and combines the files (not necessarily the first path), so give every file the same ones. Attributes of a variable, such as its `units`, can be set after loading (`dataset["ux"].attrs["units"] = "m/s"`); setting them from the read specs is tracked in [#91](https://github.com/fschuch/xarray-binfile/issues/91)
 - `order`: memory layout of the file, `"C"` (default, last dimension varies fastest, as NumPy's `tofile` and C programs write) or `"F"` (first dimension varies fastest, as Fortran programs such as 2DECOMP&FFT and Xcompact3d write). Both describe the same bytes: a Fortran file with dims `(x, y, z)` is also a C file with dims `(z, y, x)`. Pick the one that keeps your dimension names in their natural order
 - `coord_attrs`: optional attributes per coordinate, attached on read (for example `{"x": {"units": "m"}}`)
 
