@@ -36,7 +36,7 @@ Contract:
 - `order`: memory layout of the file, `"C"` (default, last dimension varies fastest, as NumPy's `tofile` and C programs write) or `"F"` (first dimension varies fastest, as Fortran programs such as 2DECOMP&FFT and Xcompact3d write). Both describe the same bytes: a Fortran file with dims `(x, y, z)` is also a C file with dims `(z, y, x)`. Pick the one that keeps your dimension names in their natural order
 - `coord_attrs`: optional attributes per coordinate, attached on read (for example `{"x": {"units": "m"}}`)
 
-The backend validates the file size against `coords` and `dtype` before reading anything, so a wrong shape or byte order fails early instead of producing garbage.
+The backend validates the file size against `coords` and `dtype` before reading anything, so a wrong number of elements or item size fails early. It cannot catch a wrong byte order, or a shape with the same number of elements (two dimensions swapped, for example): those open and read garbage.
 
 ## Write protocol
 

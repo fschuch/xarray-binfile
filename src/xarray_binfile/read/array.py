@@ -68,9 +68,10 @@ class BinaryEngineBackendArray(BackendArray):
         Ensure the file size matches the metadata shape and dtype.
 
         Raw binary files carry no metadata, so a size mismatch is the earliest
-        possible signal that the declared shape, dtype, or byte order is wrong.
-        Failing fast here avoids confusing downstream errors or silently
-        misread data.
+        possible signal that the declared shape or dtype is wrong. Failing fast
+        here avoids confusing downstream errors. It cannot catch a wrong byte
+        order, or a shape with the same number of elements (two dimensions
+        swapped, for example), which still read as garbage.
 
         Raises:
             ValueError: If the file size does not match the expected size.
@@ -82,7 +83,7 @@ class BinaryEngineBackendArray(BackendArray):
                 f"Size mismatch for {self.metadata.filepath}: file has "
                 f"{actual_bytes} bytes, but the read specs expect "
                 f"{expected_bytes} bytes (shape {self.shape}, dtype {self.dtype}). "
-                "Check the shape, dtype, and byte order declared by the read specs getter."
+                "Check the shape and dtype declared by the read specs getter."
             )
             raise ValueError(error_message)
 
